@@ -2369,7 +2369,7 @@ def distance_object_x_upd  (self,context):
     active= bpy.context.active_object
     number_x = bpy.context.scene.Arc_Blend.distribute_x
     number_y = bpy.context.scene.Arc_Blend.distribute_y
-    number_z = bpy.context.scene.Arc_Blend.distribute_z
+    
     
     
     for i in range (1,len(selected)):
@@ -2386,7 +2386,7 @@ def distance_object_y_upd  (self,context):
     active= bpy.context.active_object
     number_x = bpy.context.scene.Arc_Blend.distribute_x
     number_y = bpy.context.scene.Arc_Blend.distribute_y
-    number_z = bpy.context.scene.Arc_Blend.distribute_z
+    
     
    
         
@@ -2404,7 +2404,7 @@ def distance_object_z_upd  (self,context):
     active= bpy.context.active_object
     number_x = bpy.context.scene.Arc_Blend.distribute_x
     number_y = bpy.context.scene.Arc_Blend.distribute_y
-    number_z = bpy.context.scene.Arc_Blend.distribute_z
+    
     
     
     
