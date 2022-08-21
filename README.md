@@ -1,3 +1,37 @@
+# Installation
+
+1.) Go to main area :  https://github.com/stunmuffin/Arc_Blend
+
+2.) Go to Code section.
+
+
+![1](https://user-images.githubusercontent.com/48792613/185794561-b18ed752-b5f4-4278-b3c3-523df34911f3.png)
+
+3.) Download the file as a zip. Extract as a file.
+![2](https://user-images.githubusercontent.com/48792613/185794564-df033d43-b8bb-4f7c-a812-c43174fcb337.png)
+
+4.) Open your Blender. Edit >> Preferences
+![3](https://user-images.githubusercontent.com/48792613/185794586-9e637b21-0b22-472e-bf38-eabeaea7f535.png)
+
+5.) Addons >> Install and chose the "ArcBlend.py" and Install Add-on
+![5](https://user-images.githubusercontent.com/48792613/185794588-7c7876f1-2dea-4800-bdae-d8425d8d6e90.png)
+
+6.)Go to search  area and type : "Arc_Blend_Tools" and enable to add-on.
+![6](https://user-images.githubusercontent.com/48792613/185794589-dc843eab-e14c-40d6-893e-0d2175afa9d0.png)
+
+7.)Congrats! You installed the addon. And go to blender and press "N" button to activate tool panel. Then you can see Arc Blend Tools there.
+![7](https://user-images.githubusercontent.com/48792613/185794590-83d4d070-aa6e-47a4-9892-abb3e07fd842.png)
+
+Thank you for download and using Arc Blend Tools!
+I hope you like it!
+If you get any trouble you can reach me:
+
+Gmail: ozgurhan38@gmail.com 
+Twitter: https://twitter.com/muffin_stun
+For now I don't have any discord!
+
+
+
 # Arc Blend
 Blender minimum version required : v3.2
 
