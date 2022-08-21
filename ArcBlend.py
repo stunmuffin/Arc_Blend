@@ -1,12 +1,12 @@
-bl_info= {
-     "name"      : "Arc_Blend_Tools",
-     "author"    : "Stun Muffin (KB)",
-     "version"   : (0,5,0),
-     "blender"   : (3, 20, 0),
-     "location"  : "View3d >Tool> Arc Blend",
-     "support"   : "COMMUNITY",
-     "category"  : "Development",
-     "description": "A free and opensource Blender add-on to help with your models",
+bl_info = {
+     "name": "Arc_Blend_Tools",
+     "author": "Stun Muffin (KB)",
+     "version": (0, 5, 0),
+     "blender": (3, 20, 0),
+     "location": "View3d >Tool> Arc Blend",
+     "support": "COMMUNITY",
+     "category": "Development",
+     "description": "Free opensource Blender add-on to help with your models",
 }
 
 # ##### BEGIN GPL LICENSE BLOCK #####
@@ -14,7 +14,7 @@ bl_info= {
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
 #  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
+#  of the License, or (at your option)any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,2206 +26,1823 @@ bl_info= {
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-#--------------------------------------------------------------------------------------------------------------
-#----------------------------------------------INSTALL GUIDE-------------------------------------------------
+# ------------------------------------------------------------------------------
+# INSTALL GUIDE----------------------------------------------------------------
 # Installation info
 #
 # Download file to your computer.
-# In Blender go to Edit > Preferences > Addons 
+# In Blender go to Edit > Preferences > Addons
 # Click install and select the file.
-# Location "N" Panel 
-#--------------------------------------------------------------------------------------------------------------
-#----------------------------------------------ARC BLEND INFORMATIONS------------------------------------------
+# Location "N"Panel
 
-
-     
-
-#----------------------------------------------ARC BLEND IMPORTS-----------------------------------------------
-#--------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# ARC BLEND IMPORTS-----------------------------------------------------------
 import bpy
 import bmesh
 from bpy.types import Menu
 import math
 import numpy as np
 import time
-from mathutils import Matrix,Vector
+from mathutils import Matrix, Vector
 import sys
 import random
 
-
-
-
-
-#--------------------------------------------------------------------------------------------------------------
-#----------------------------------------------ARC BLEND PANEL-------------------------------------------------
-
+# ------------------------------------------------------------------------------
+# ARC BLEND PANEL
 
 
 class arcblend (bpy.types.Panel):
-    bl_label= "AB Create"                                                                        #Panel's Name
-    bl_idname= "PT_ArcBlend"                                                                     #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name
-    
-    def draw(self,context):
-        layout=self.layout                                                                       #Label Layout
-        
-        
-        
-#--------------------------------------------------------------------------------------------------------------
-#----------------------------------------------MESH PANEL------------------------------------------------------
-class Add_Mesh (bpy.types.Panel):
-    bl_label= "Mesh"                                                                             #Panel's Name
-    bl_idname= "PT_AddMesh"                                                                      #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"      
-         
-    def draw(self,context):
-        layout=self.layout                                                                       #Label Layout
-        
-        row=layout.row()                                                                         #New Row
-        row.label(text="Add Mesh")                                                               #Create Cube Label
-        row=layout.row()                                                              
-        row.operator("mesh.primitive_plane_add" , icon="MESH_PLANE")                             #Button for Plane
-        row.operator("mesh.primitive_cube_add", icon="CUBE")                                     #Button for Cube
-        row=layout.row()
-        row.operator("mesh.primitive_circle_add" , icon="MESH_CIRCLE")                           #Button for Circle
-        row.operator("mesh.primitive_uv_sphere_add" , icon="MESH_UVSPHERE")                      #Button for UV Sphere
-        row=layout.row()
-        row.operator("mesh.primitive_ico_sphere_add" , icon="MESH_ICOSPHERE")                    #Button for Ico Sphere
-        row.operator("mesh.primitive_cylinder_add" , icon="MESH_CYLINDER")                       #Button for Cylinder
-        row=layout.row()
-        row.operator("mesh.primitive_cone_add" , icon="MESH_CONE")                               #Button for Cone
-        row.operator("mesh.primitive_torus_add" , icon="MESH_TORUS")                             #Button for Torus
-        row=layout.row()
-        row.operator("mesh.primitive_grid_add" , icon="MESH_GRID")                               #Button for Grid
-        row.operator("mesh.primitive_monkey_add" , icon="MESH_MONKEY")                           #Button for Monkey
-        row=layout.row()
-        
-        
-#--------------------------------------------------------------------------------------------------------------
-#----------------------------------------------CURVE PANEL-----------------------------------------------------     
-        
-class Add_Curve (bpy.types.Panel):
-    bl_label= "Curve"                                                                        #Panel's Name
-    bl_idname= "PT_AddCurve"                                                                     #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"   
-         
-    def draw(self,context):
-        layout=self.layout                                                                       #Label Layout
-        
-        row=layout.row()
-        row.label(text="Add Curve")                                                              #Create Curve Label 
-        row=layout.row()
-        row.operator("curve.primitive_bezier_curve_add" , icon="CURVE_BEZCURVE")                 #Button for Bezier Curve
-        row.operator("curve.primitive_bezier_circle_add" , icon="CURVE_BEZCIRCLE")               #Button for Bezier Circle
-        row=layout.row()
-        row.operator("curve.primitive_nurbs_curve_add" , icon="CURVE_NCURVE")                    #Button for Nurbs Curve
-        row.operator("curve.primitive_nurbs_circle_add" , icon="CURVE_NCIRCLE")                  #Button for Nurbs Circle
-        row=layout.row()
-        row.operator("curve.primitive_nurbs_path_add" , icon="CURVE_PATH")                       #Button for Nurbs Path
-        row=layout.row()
-        
-#--------------------------------------------------------------------------------------------------------------
-#----------------------------------------------SURFACE PANEL---------------------------------------------------
-class Add_Surface (bpy.types.Panel):
-    bl_label= "Surface"                                                                      #Panel's Name
-    bl_idname= "PT_AddSurface"                                                                   #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"   
-         
-    def draw(self,context):
-        layout=self.layout                                                                       #Label Layout
-        
-        row=layout.row()
-        row.label(text="Add Surface")                                                            #Create Surface Label 
-        row=layout.row() 
-        row.operator("surface.primitive_nurbs_surface_curve_add" , icon="SURFACE_NCURVE")        #Button for Nurbs Surface Curve 
-        row.operator("surface.primitive_nurbs_surface_circle_add" , icon="SURFACE_NCIRCLE")      #Button for Nurbs Surface Circle 
-        row=layout.row()
-        row.operator("surface.primitive_nurbs_surface_surface_add" , icon="SURFACE_NSURFACE")    #Button for Nurbs Surface Surface 
-        row.operator("surface.primitive_nurbs_surface_cylinder_add" , icon="SURFACE_NCYLINDER")  #Button for Nurbs Surface Cylinder 
-        row=layout.row()
-        row.operator("surface.primitive_nurbs_surface_sphere_add" , icon="SURFACE_NSPHERE")      #Button for Nurbs Surface Sphere
-        row.operator("surface.primitive_nurbs_surface_torus_add" , icon="SURFACE_NTORUS")        #Button for Nurbs Surface Torus
-        row=layout.row()                                                               
+    bl_label = "AB Create"
+    bl_idname = "PT_ArcBlend"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
 
-#-----------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------METABALL BUTTON "BALL" OPERATOR-----------------------------------
+    def draw(self, context):
+        layout = self.layout
+
+# ------------------------------------------------------------------------------
+# MESH PANEL
+
+
+class Add_Mesh (bpy.types.Panel):
+    bl_label = "Mesh"
+    bl_idname = "PT_AddMesh"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.label(text="Add Mesh")
+        row = layout.row()
+        row.operator("mesh.primitive_plane_add", icon="MESH_PLANE")
+        row.operator("mesh.primitive_cube_add", icon="CUBE")
+        row = layout.row()
+        row.operator("mesh.primitive_circle_add", icon="MESH_CIRCLE")
+        row.operator("mesh.primitive_uv_sphere_add", icon="MESH_UVSPHERE")
+        row = layout.row()
+        row.operator("mesh.primitive_ico_sphere_add", icon="MESH_ICOSPHERE")
+        row.operator("mesh.primitive_cylinder_add", icon="MESH_CYLINDER")
+        row = layout.row()
+        row.operator("mesh.primitive_cone_add", icon="MESH_CONE")
+        row.operator("mesh.primitive_torus_add", icon="MESH_TORUS")
+        row = layout.row()
+        row.operator("mesh.primitive_grid_add", icon="MESH_GRID")
+        row.operator("mesh.primitive_monkey_add", icon="MESH_MONKEY")
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# CURVE PANEL
+
+
+class Add_Curve (bpy.types.Panel):
+    bl_label = "Curve"
+    bl_idname = "PT_AddCurve"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.label(text="Add Curve")
+        row = layout.row()
+        row.operator("curve.primitive_bezier_curve_add", icon="CURVE_BEZCURVE")
+        row.operator("curve.primitive_bezier_circle_add", icon="CURVE_BEZCIRCLE")
+        row = layout.row()
+        row.operator("curve.primitive_nurbs_curve_add", icon="CURVE_NCURVE")
+        row.operator("curve.primitive_nurbs_circle_add", icon="CURVE_NCIRCLE")
+        row = layout.row()
+        row.operator("curve.primitive_nurbs_path_add", icon="CURVE_PATH")
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# SURFACE PANEL----------------------------------------------------------------
+
+
+class Add_Surface (bpy.types.Panel):
+    bl_label = "Surface"
+    bl_idname = "PT_AddSurface"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.label(text="Add Surface")
+        row = layout.row()
+        row.operator("surface.primitive_nurbs_surface_curve_add", icon="SURFACE_NCURVE")
+        row.operator("surface.primitive_nurbs_surface_circle_add", icon="SURFACE_NCIRCLE")
+        row = layout.row()
+        row.operator("surface.primitive_nurbs_surface_surface_add", icon="SURFACE_NSURFACE")
+        row.operator("surface.primitive_nurbs_surface_cylinder_add", icon="SURFACE_NCYLINDER")
+        row = layout.row()
+        row.operator("surface.primitive_nurbs_surface_sphere_add", icon="SURFACE_NSPHERE")
+        row.operator("surface.primitive_nurbs_surface_torus_add", icon="SURFACE_NTORUS")
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# METABALL BUTTON "BALL"OPERATOR
+
+
 class mball_ball (bpy.types.Operator):
     """Create Metaball : Ball"""
-    bl_label= ""                                                                             #Operator's Name
-    bl_idname= "object.button_mball_ball"                                                           #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_mball_ball"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.metaball_add(type='BALL', radius=2, enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------METABALL BUTTON "CAPSULE" OPERATOR--------------------------------
+
+# ------------------------------------------------------------------------------
+# METABALL BUTTON "CAPSULE"OPERATOR
+
+
 class mball_capsule (bpy.types.Operator):
     """Create Metaball : Capsule"""
-    bl_label= ""                                                                          #Operator's Name
-    bl_idname= "object.button_mball_capsule"                                                           #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_mball_capsule"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.metaball_add(type='CAPSULE', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"}     
-#-----------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------METABALL BUTTON "PLANE" OPERATOR----------------------------------
+# ------------------------------------------------------------------------------
+# METABALL BUTTON "PLANE"OPERATOR
+
+
 class mball_plane (bpy.types.Operator):
     """Create Metaball : Plane"""
-    bl_label= ""                                                                             #Operator's Name
-    bl_idname= "object.button_mball_plane"                                                            #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_mball_plane"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.metaball_add(type='PLANE', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"}      
-#-----------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------METABALL BUTTON "ELLIPSOID" OPERATOR------------------------------
+# ------------------------------------------------------------------------------
+# METABALL BUTTON "ELLIPSOID"OPERATOR
+
+
 class mball_ellipsoid (bpy.types.Operator):
     """Create Metaball : Ellipsoid"""
-    bl_label= ""                                                                         #Operator's Name
-    bl_idname= "object.button_mball_ellipsoid"                                                            #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_mball_ellipsoid"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.metaball_add(type='ELLIPSOID', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"} 
-    
-#----------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------METABALL BUTTON "CUBE" OPERATOR----------------------------------
+# ------------------------------------------------------------------------------
+# METABALL BUTTON "CUBE"OPERATOR
+
+
 class mball_cube (bpy.types.Operator):
     """Create Metaball : Cube"""
-    bl_label= ""                                                                              #Operator's Name
-    bl_idname= "object.button_mball_cube"                                                            #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_mball_cube"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.metaball_add(type='CUBE', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"}            
+# ------------------------------------------------------------------------------
+# METABALL PANEL
 
 
-
-#--------------------------------------------------------------------------------------------------------------
-#----------------------------------------------METABALL PANEL--------------------------------------------------
 class Add_Metaball (bpy.types.Panel):
-    bl_label= "METABALL"                                                                         #Panel's Name
-    bl_idname= "PT_AddMetaball"                                                                  #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-    def draw(self,context):
-        layout=self.layout
-        
-        col=layout.column() 
-        row=layout.row()                                                               
-        col.label(text="ADD METABALL",icon="OUTLINER_OB_META")
-        row=layout.row()
-        row.operator("object.button_mball_ball",icon="META_BALL")
-        row.operator("object.button_mball_capsule",icon="META_CAPSULE")
-        row.operator("object.button_mball_plane",icon="META_PLANE")
-        row.operator("object.button_mball_ellipsoid",icon="META_ELLIPSOID")
-        row.operator("object.button_mball_cube",icon="META_CUBE")
-        row=layout.row()  
-#--------------------------------------------------------------------------------------------------------------
-#----------------------------------------------TEXT PANEL------------------------------------------------------
+    bl_label = "METABALL"
+    bl_idname = "PT_AddMetaball"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column()
+        row = layout.row()
+        col.label(text="ADD METABALL", icon="OUTLINER_OB_META")
+        row = layout.row()
+        row.operator("object.button_mball_ball", icon="META_BALL")
+        row.operator("object.button_mball_capsule", icon="META_CAPSULE")
+        row.operator("object.button_mball_plane", icon="META_PLANE")
+        row.operator("object.button_mball_ellipsoid", icon="META_ELLIPSOID")
+        row.operator("object.button_mball_cube", icon="META_CUBE")
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# ----------------------------------------------TEXT PANEL------------------------------------------------------
+
+
 class Add_Text (bpy.types.Panel):
-    bl_label= "Add Text"                                                                         #Panel's Name
-    bl_idname= "PT_AddText"                                                                      #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout  
-        
-        
-        row=layout.row()                                                               
+    bl_label = "Add Text"
+    bl_idname = "PT_AddText"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
         row.label(text="Add Text")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.text_add", icon="OUTLINER_OB_FONT")
-        row=layout.row()
-        
-        
-        
-#--------------------------------------------------------------------------------------------------------------
-#----------------------------------------------VOLUME PANEL----------------------------------------------------
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# ----------------------------------------------VOLUME PANEL----------------------------------------------------
+
+
 class Add_Volume (bpy.types.Panel):
-    bl_label= "Volume"                                                                           #Panel's Name
-    bl_idname= "PT_AddVolume"                                                                    #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout  
-        
-        
-        row=layout.row()                                                               
+    bl_label = "Volume"
+    bl_idname = "PT_AddVolume"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
         row.label(text="Add Volume")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.volume_add", icon="VOLUME_DATA")
-        row=layout.row()
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------GREASE PENCIL "BLANK" OPERATOR-----------------------------------------------
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# GREASE PENCIL "BLANK"OPERATOR
+
+
 class grease_pencil_blank (bpy.types.Operator):
     """Add a Grease pencil object to the Scene: Blank"""
-    bl_label= ""                                                                          #Operator's Name
-    bl_idname= "object.button_grease_pencil_blank"                                                            #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_grease_pencil_blank"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.gpencil_add(align='WORLD', location=(0, 0, 0), scale=(1, 1, 1), type='LRT_SCENE')
-
         return {"FINISHED"}
 
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------GREASE PENCIL "STROKE" OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# GREASE PENCIL "STROKE"OPERATOR
+
+
 class grease_pencil_stroke (bpy.types.Operator):
     """Add a Grease pencil object to the Scene : Stroke"""
-    bl_label= ""                                                                         #Operator's Name
-    bl_idname= "object.button_grease_pencil_stroke"                                                            #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_grease_pencil_stroke"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.gpencil_add(align='WORLD', location=(0, 0, 0), scale=(1, 1, 1), type='STROKE')
-
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------GREASE PENCIL "MONKEY" OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# GREASE PENCIL "MONKEY"OPERATOR
+
+
 class grease_pencil_monkey (bpy.types.Operator):
     """Add a Grease pencil object to the Scene : Monkey"""
-    bl_label= ""                                                                         #Operator's Name
-    bl_idname= "object.button_grease_pencil_monkey"                                                            #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_grease_pencil_monkey"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.gpencil_add(align='WORLD', location=(0, 0, 0), scale=(1, 1, 1), type='MONKEY')
+        return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# GREASE PENCIL "SCENE LINE ART"OPERATOR
 
-        return {"FINISHED"}      
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------GREASE PENCIL "SCENE LINE ART" OPERATOR-----------------------------------------------
+
 class grease_pencil_sla (bpy.types.Operator):
     """Add a Grease pencil object to the Scene: Scene Line Art"""
-    bl_label= ""                                                                 #Operator's Name
-    bl_idname= "object.button_grease_pencil_sla"                                                            #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_grease_pencil_sla"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.gpencil_add(align='WORLD', location=(0, 0, 0), scale=(1, 1, 1), type='LRT_SCENE')
-
         return {"FINISHED"}
 
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------GREASE PENCIL "COLLECTION LINE ART" OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# GREASE PENCIL "COLLECTION LINE ART"OPERATOR
+
+
 class grease_pencil_cla (bpy.types.Operator):
     """Add a Grease pencil object to the Scene : Collection Line Art"""
-    bl_label= ""                                                            #Operator's Name
-    bl_idname= "object.button_grease_pencil_cla"                                                            #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_grease_pencil_cla"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.gpencil_add(align='WORLD', location=(0, 0, 0), scale=(1, 1, 1), type='LRT_COLLECTION')
-
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------GREASE PENCIL "OBJECT LINE ART" OPERATOR-----------------------------------------------
+
+# ------------------------------------------------------------------------------
+# GREASE PENCIL "OBJECT LINE ART"OPERATOR
+
+
 class grease_pencil_ola (bpy.types.Operator):
     """Add a Grease pencil object to the Scene : Object Line Art"""
-    bl_label= ""                                                                #Operator's Name
-    bl_idname= "object.button_grease_pencil_ola"                                                            #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_grease_pencil_ola"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.gpencil_add(align='WORLD', location=(0, 0, 0), scale=(1, 1, 1), type='LRT_OBJECT')
+        return {"FINISHED"}
 
-        return {"FINISHED"}           
-        
-#--------------------------------------------------------------------------------------------------------------
-#----------------------------------------------GREASE PENCIL PANEL---------------------------------------------
+# ------------------------------------------------------------------------------
+# GREASE PENCIL PANEL
+
+
 class Add_Grease_Pencil (bpy.types.Panel):
-    bl_label= "GREASE PENCIL"                                                                    #Panel's Name
-    bl_idname= "PT_AddGreasePencil"                                                              #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout  
-        
-        
-        row=layout.row()                                                               
-        row.label(text="ADD GREASE PENCIL",icon="GP_SELECT_STROKES")
-        row=layout.row()
+    bl_label = "GREASE PENCIL"
+    bl_idname = "PT_AddGreasePencil"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.label(text="ADD GREASE PENCIL", icon="GP_SELECT_STROKES")
+        row = layout.row()
         row.operator("object.button_grease_pencil_blank", icon="EMPTY_AXIS")
         row.operator("object.button_grease_pencil_stroke", icon="STROKE")
         row.operator("object.button_grease_pencil_monkey", icon="MONKEY")
         row.operator("object.button_grease_pencil_sla", icon="SCENE_DATA")
         row.operator("object.button_grease_pencil_cla", icon="OUTLINER_COLLECTION")
         row.operator("object.button_grease_pencil_ola", icon="OBJECT_DATA")
-        row=layout.row()
-        
-#--------------------------------------------------------------------------------------------------------------
-#----------------------------------------------ARMATURE PANEL--------------------------------------------------
-class Add_Armature (bpy.types.Panel):
-    bl_label= "Armature"                                                                         #Panel's Name
-    bl_idname= "PT_AddArmature"                                                                  #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout  
-        
-        
-        row=layout.row()                                                               
-        row.label(text="Add Armature")
-        row=layout.row()
-        row.operator("object.armature_add", icon="OUTLINER_OB_ARMATURE")
-        row=layout.row()
+        row = layout.row()
 
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------LATTICE OPERATOR BUTTON--------------------------------------------
+# ------------------------------------------------------------------------------
+# ARMATURE PANEL
+
+
+class Add_Armature (bpy.types.Panel):
+    bl_label = "Armature"
+    bl_idname = "PT_AddArmature"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.label(text="Add Armature")
+        row = layout.row()
+        row.operator("object.armature_add", icon="OUTLINER_OB_ARMATURE")
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# LATTICE OPERATOR BUTTON
+
+
 class lattice_button (bpy.types.Operator):
     """Add an Object to the scene"""
-    bl_label= "Lattice"                                                                           #Operator's Name
-    bl_idname= "object.button_lattice"                                                      #Operator's Type
+    bl_label = "Lattice"
+    bl_idname = "object.button_lattice"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.add(type='LATTICE', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"}       
+# ------------------------------------------------------------------------------
+# LATTICE PANEL
 
 
-
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------LATTICE PANEL------------------------------------------------------
 class Add_Lattice (bpy.types.Panel):
-    bl_label= "Lattice"                                                                          #Panel's Name
-    bl_idname= "PT_AddLattice"                                                                   #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout  
-        
-        
-        row=layout.row()                                                               
+    bl_label = "Lattice"
+    bl_idname = "PT_AddLattice"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+
+        row = layout.row()
         row.label(text="Add Lattice")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_lattice", icon="OUTLINER_OB_LATTICE")
-        row=layout.row()
-        
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------EMPTY PLAIN AXES BUTTON--------------------------------------------
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# EMPTY PLAIN AXES BUTTON
+
+
 class empty_plain_axes (bpy.types.Operator):
     """Add an empty object to the scene : Empty Plain Axes"""
-    bl_label= "Plain Axes"                                                                       #Operator's Name
-    bl_idname= "object.button_empty_plain_axes"                                                           #Operator's Type
+    bl_label = "Plain Axes"
+    bl_idname = "object.button_empty_plain_axes"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.empty_add(type='PLAIN_AXES', radius=1, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-    
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------EMPTY ARROWS BUTTON--------------------------------------------
+
+# ------------------------------------------------------------------------------
+# EMPTY ARROWS BUTTON
+
+
 class empty_arrows (bpy.types.Operator):
     """Add an empty object to the scene : Arrows"""
-    bl_label= "Arrows"                                                                           #Operator's Name
-    bl_idname= "object.button_empty_arrows"                                                           #Operator's Type
+    bl_label = "Arrows"
+    bl_idname = "object.button_empty_arrows"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.empty_add(type='ARROWS', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------EMPTY SINGLE ARROW BUTTON--------------------------------------------
+
+# ------------------------------------------------------------------------------
+# EMPTY SINGLE ARROW BUTTON
+
+
 class empty_single_arrow (bpy.types.Operator):
     """Add an empty object to the scene : Single Arrow"""
-    bl_label= "Single Arrow"                                                                 #Operator's Name
-    bl_idname= "object.button_empty_single_arrow"                                                           #Operator's Type
+    bl_label = "Single Arrow"
+    bl_idname = "object.button_empty_single_arrow"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.empty_add(type='SINGLE_ARROW', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------EMPTY CIRCLE BUTTON--------------------------------------------
+
+# ------------------------------------------------------------------------------
+# EMPTY CIRCLE BUTTON
+
+
 class empty_circle (bpy.types.Operator):
     """Add an empty object to the scene : Circle"""
-    bl_label= "Circle"                                                                 #Operator's Name
-    bl_idname= "object.button_empty_circle"                                                           #Operator's Type
+    bl_label = "Circle"
+    bl_idname = "object.button_empty_circle"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.empty_add(type='CIRCLE', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------EMPTY CUBE BUTTON--------------------------------------------
+
+# ------------------------------------------------------------------------------
+# EMPTY CUBE BUTTON
+
+
 class empty_cube (bpy.types.Operator):
     """Add an empty object to the scene : Cube"""
-    bl_label= "Cube"                                                                 #Operator's Name
-    bl_idname= "object.button_empty_cube"                                                           #Operator's Type
+    bl_label = "Cube"
+    bl_idname = "object.button_empty_cube"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.empty_add(type='CUBE', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------EMPTY SPHERE BUTTON--------------------------------------------
+
+# ------------------------------------------------------------------------------
+# EMPTY SPHERE BUTTON
+
+
 class empty_sphere (bpy.types.Operator):
     """Add an empty object to the scene : Sphere"""
-    bl_label= "Sphere"                                                                 #Operator's Name
-    bl_idname= "object.button_empty_sphere"                                                           #Operator's Type
+    bl_label = "Sphere"
+    bl_idname = "object.button_empty_sphere"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.empty_add(type='SPHERE', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------EMPTY CONE BUTTON--------------------------------------------
+
+# ------------------------------------------------------------------------------
+# EMPTY CONE BUTTON
+
+
 class empty_cone (bpy.types.Operator):
     """Add an empty object to the scene : Cone"""
-    bl_label= "Cone"                                                                 #Operator's Name
-    bl_idname= "object.button_empty_cone"                                                           #Operator's Type
+    bl_label = "Cone"
+    bl_idname = "object.button_empty_cone"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.empty_add(type='CONE', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------EMPTY IMAGE BUTTON--------------------------------------------
+
+# ------------------------------------------------------------------------------
+# EMPTY IMAGE BUTTON
+
+
 class empty_image (bpy.types.Operator):
     """Add an empty object to the scene : Image"""
-    bl_label= "Image"                                                                 #Operator's Name
-    bl_idname= "object.button_empty_image"                                                           #Operator's Type
+    bl_label = "Image"
+    bl_idname = "object.button_empty_image"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.empty_add(type='IMAGE', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-#----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------EMPTY PANEL-------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# EMPTY PANEL
+
+
 class Add_Empty (bpy.types.Panel):
-    bl_label= "Empty"                                                                            #Panel's Name
-    bl_idname= "PT_AddEmpty"                                                                     #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout  
-        
-        
-        row=layout.row()                                                               
+    bl_label = "Empty"
+    bl_idname = "PT_AddEmpty"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
         row.label(text="Add Empty")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_empty_plain_axes", icon="EMPTY_AXIS")
         row.operator("object.button_empty_arrows", icon="EMPTY_ARROWS")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_empty_single_arrow", icon="EMPTY_SINGLE_ARROW")
         row.operator("object.button_empty_circle", icon="MESH_CIRCLE")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_empty_cube", icon="CUBE")
         row.operator("object.button_empty_sphere", icon="SPHERE")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_empty_cone", icon="CONE")
         row.operator("object.button_empty_image", icon="IMAGE_DATA")
-        row=layout.row()
-        
-        
-        
-#----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------IMAGE PANEL-------------------------------------------------------
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# IMAGE PANEL
+
+
 class Add_Image (bpy.types.Panel):
-    bl_label= "Image"                                                                            #Panel's Name
-    bl_idname= "PT_AddImage"                                                                     #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout
- 
-        
-        
-        row=layout.row()
-        col=layout.column()                                                               
+    bl_label = "Image"
+    bl_idname = "PT_AddImage"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+
+        row = layout.row()
+        col = layout.column()
         row.label(text="Add Image")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.empty_add", icon="IMAGE_BACKGROUND")
-        row=layout.row()
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------LIGHT POINT BUTTON-------------------------------------------------
+        row = layout.row()
+# ------------------------------------------------------------------------------
+# LIGHT POINT BUTTON
+
+
 class light_point (bpy.types.Operator):
     """Add a light object to the scene : Point Light"""
-    bl_label= "Point Light"                                                                      #Operator's Name
-    bl_idname= "object.button_light_point"                                                       #Operator's Type
+    bl_label = "Point Light"
+    bl_idname = "object.button_light_point"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
+
         bpy.ops.object.light_add(type='POINT', radius=1, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# LIGHT SUN BUTTON
 
-        return {"FINISHED"}  
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------LIGHT SUN BUTTON-------------------------------------------------
+
 class light_sun (bpy.types.Operator):
     """Add a light object to the scene : Sun"""
-    bl_label= "Sun"                                                                      #Operator's Name
-    bl_idname= "object.button_light_sun"                                                       #Operator's Type
+    bl_label = "Sun"
+    bl_idname = "object.button_light_sun"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.light_add(type='SUN', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------LIGHT SPOT BUTTON-------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# LIGHT SPOT BUTTON
+
+
 class light_spot (bpy.types.Operator):
     """Add a light object to the scene : Spot Light"""
-    bl_label= "Spot Light"                                                                      #Operator's Name
-    bl_idname= "object.button_light_spot"                                                       #Operator's Type
+    bl_label = "Spot Light"
+    bl_idname = "object.button_light_spot"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.light_add(type='SPOT', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------LIGHT AREA BUTTON-------------------------------------------------
+# ------------------------------------------------------------------------------
+# LIGHT AREA BUTTON
+
+
 class light_area (bpy.types.Operator):
     """Add a light object to the scene : Area Light"""
-    bl_label= "Area Light"                                                                      #Operator's Name
-    bl_idname= "object.button_light_area"                                                       #Operator's Type
+    bl_label = "Area Light"
+    bl_idname = "object.button_light_area"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.light_add(type='AREA', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"}  
+# ------------------------------------------------------------------------------
+# LIGHT PANEL
 
-#----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------LIGHT PANEL-------------------------------------------------------
+
 class Add_Light (bpy.types.Panel):
-    bl_label= "Light"                                                                            #Panel's Name
-    bl_idname= "PT_AddLight"                                                                     #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout
- 
-        
-        
-        row=layout.row()
-        col=layout.column()                                                               
+    bl_label = "Light"
+    bl_idname = "PT_AddLight"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        col = layout.column()
         row.label(text="Add Light")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_light_point", icon="LIGHT_POINT")
         row.operator("object.button_light_sun", icon="LIGHT_SUN")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_light_spot", icon="LIGHT_SPOT")
         row.operator("object.button_light_area", icon="LIGHT_AREA")
-        row=layout.row()
-        
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------LIGHT PROBE REFLECTION CUBEMAP BUTTON-------------------------------------------------
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# LIGHT PROBE REFLECTION CUBEMAP BUTTON
+
+
 class light_probe_cubemap (bpy.types.Operator):
     """Add a light probe object to the scene : Cubemap"""
-    bl_label= "Reflection Cubemap"                                                                      #Operator's Name
-    bl_idname= "object.button_light_probe_cubemap"                                                       #Operator's Type
+    bl_label = "Reflection Cubemap"
+    bl_idname = "object.button_light_probe_cubemap"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.lightprobe_add(type='CUBEMAP', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# LIGHT PROBE REFLECTION PLANE BUTTON
 
-        return {"FINISHED"}  
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------LIGHT PROBE REFLECTION PLANE BUTTON-------------------------------------------------
+
 class light_probe_reflectionplane (bpy.types.Operator):
     """Add a light probe object to the scene : Cubemap"""
-    bl_label= "Reflection Plane"                                                                      #Operator's Name
-    bl_idname= "object.button_light_probe_reflectionplane"                                                       #Operator's Type
+    bl_label = "Reflection Plane"
+    bl_idname = "object.button_light_probe_reflectionplane"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.lightprobe_add(type='PLANAR', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"} 
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------LIGHT PROBE IRRADIENCE VOLUME BUTTON-------------------------------------------------
+# ------------------------------------------------------------------------------
+# LIGHT PROBE IRRADIENCE VOLUME BUTTON
+
+
 class light_probe_irradiencevolume (bpy.types.Operator):
     """Add a light probe object to the scene : Cubemap"""
-    bl_label= "Reflection Irradience Volume"                                                                      #Operator's Name
-    bl_idname= "object.button_light_probe_irradiencevolume"                                                       #Operator's Type
+    bl_label = "Reflection Irradience Volume"
+    bl_idname = "object.button_light_probe_irradiencevolume"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.lightprobe_add(type='GRID', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"}         
-        
-#----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------LIGHT PROBE PANEL-------------------------------------------------
+# ------------------------------------------------------------------------------
+# LIGHT PROBE PANEL
+
+
 class Add_Light_Probe (bpy.types.Panel):
-    bl_label= "Light Probe"                                                                      #Panel's Name
-    bl_idname= "PT_AddLightProbe"                                                                #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout
- 
-        
-        
-        row=layout.row()
-        col=layout.column()                                                               
+    bl_label = "Light Probe"
+    bl_idname = "PT_AddLightProbe"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        col = layout.column()
         row.label(text="Add Light Probe")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_light_probe_cubemap", icon="LIGHTPROBE_CUBEMAP")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_light_probe_reflectionplane", icon="LIGHTPROBE_PLANAR")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_light_probe_irradiencevolume", icon="LIGHTPROBE_GRID")
-        row=layout.row()
-        
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------ADD CAMERA BUTTON-------------------------------------------------
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# ADD CAMERA BUTTON
+
+
 class camera_normal (bpy.types.Operator):
     """Add a camera object to the scene"""
-    bl_label= "Add Camera"                                                                            #Operator's Name
-    bl_idname= "object.button_camera_normal"                                       #Operator's Type
+    bl_label = "Add Camera"
+    bl_idname = "object.button_camera_normal"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.camera_add(enter_editmode=False, align='VIEW', location=(0, 0, 0), rotation=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"}        
-#----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------CAMERA PANEL-------------------------------------------------
+# ------------------------------------------------------------------------------
+# CAMERA PANEL
+
+
 class Add_Camera (bpy.types.Panel):
-    bl_label= "Camera"                                                                           #Panel's Name
-    bl_idname= "PT_AddCamera"                                                                    #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout
- 
-        
-        
-        row=layout.row()
-        col=layout.column()                                                               
+    bl_label = "Camera"
+    bl_idname = "PT_AddCamera"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        col = layout.column()
         row.label(text="Add Camera")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_camera_normal", icon="OUTLINER_OB_CAMERA")
-        row=layout.row()
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------ADD SPEAKER BUTTON-------------------------------------------------
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# ADD SPEAKER BUTTON
+
+
 class speaker_button (bpy.types.Operator):
     """Add a speaker object to the scene"""
-    bl_label= "Add Speaker"                                                                       #Operator's Name
-    bl_idname= "object.button_speaker_button"                                                      #Operator's Type
+    bl_label = "Add Speaker"
+    bl_idname = "object.button_speaker_button"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.speaker_add(enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"}        
-#----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------SPEAKER PANEL-------------------------------------------------
+# ------------------------------------------------------------------------------
+# SPEAKER PANEL
+
+
 class Add_Speaker (bpy.types.Panel):
-    bl_label= "Speaker"                                                                           #Panel's Name
-    bl_idname= "PT_AddSpeaker"                                                                    #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout
- 
-        
-        
-        row=layout.row()
-        col=layout.column()                                                               
+    bl_label = "Speaker"
+    bl_idname = "PT_AddSpeaker"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        col = layout.column()
         row.label(text="Add Speaker")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_speaker_button", icon="OUTLINER_OB_SPEAKER")
-        row=layout.row()        
-        
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "FORCE" BUTTON-----------------------------------------
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# FORCE FIELD "FORCE"BUTTON
+
+
 class forcefield_force (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Force"""
-    bl_label= "Force"                                                                           #Operator's Name
-    bl_idname= "object.button_forcefield_force"                                                  #Operator's Type
+    bl_label = "Force"
+    bl_idname = "object.button_forcefield_force"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='FORCE', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# FORCE FIELD "WIND"BUTTON
 
-        return {"FINISHED"}    
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "WIND" BUTTON-----------------------------------------
+
 class forcefield_wind (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Wind"""
-    bl_label= "Wind"                                                                           #Operator's Name
-    bl_idname= "object.button_forcefield_wind"                                                  #Operator's Type
+    bl_label = "Wind"
+    bl_idname = "object.button_forcefield_wind"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='WIND', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "VORTEX" BUTTON-----------------------------------------
+
+# ------------------------------------------------------------------------------
+# FORCE FIELD "VORTEX"BUTTON
+
+
 class forcefield_vortex (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Vortex"""
-    bl_label= "Vortex"                                                                           #Operator's Name
-    bl_idname= "object.button_forcefield_vortex"                                                  #Operator's Type
+    bl_label = "Vortex"
+    bl_idname = "object.button_forcefield_vortex"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='VORTEX', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
 
-        return {"FINISHED"}   
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "MAGNETİC" BUTTON-----------------------------------------
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# FORCE FIELD "MAGNETİC"BUTTON
+
+
 class forcefield_magnetic (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Magnetic"""
-    bl_label= "Magnetic"                                                                           #Operator's Name
-    bl_idname= "object.button_forcefield_magnetic"                                                  #Operator's Type
+    bl_label = "Magnetic"
+    bl_idname = "object.button_forcefield_magnetic"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='MAGNET', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
 
-        return {"FINISHED"}  
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "HARMONIC" BUTTON-----------------------------------------
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# FORCE FIELD "HARMONIC"BUTTON
+
+
 class forcefield_harmonic (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Harmonic"""
-    bl_label= "Harmonic"                                                                           #Operator's Name
-    bl_idname= "object.button_forcefield_harmonic"                                                  #Operator's Type
+    bl_label = "Harmonic"
+    bl_idname = "object.button_forcefield_harmonic"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='HARMONIC', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
 
-        return {"FINISHED"} 
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "CHARGE" BUTTON-----------------------------------------
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# FORCE FIELD "CHARGE"BUTTON
+
+
 class forcefield_charge (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Charge"""
-    bl_label= "Charge"                                                                           #Operator's Name
-    bl_idname= "object.button_forcefield_charge"                                                  #Operator's Type
+    bl_label = "Charge"
+    bl_idname = "object.button_forcefield_charge"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='CHARGE', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"}   
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "LENNARD JONES" BUTTON-----------------------------------------
+# ------------------------------------------------------------------------------
+# FORCE FIELD "LENNARD JONES"BUTTON
+
+
 class forcefield_lennardj (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Lennard Jones"""
-    bl_label= "Lennard Jones"                                                                           #Operator's Name
-    bl_idname= "object.button_forcefield_lennardj"                                                  #Operator's Type
+    bl_label = "Lennard Jones"
+    bl_idname = "object.button_forcefield_lennardj"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='LENNARDJ', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+        return {"FINISHED"}
 
-        return {"FINISHED"} 
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "TEXTURE" BUTTON-----------------------------------------
+# ------------------------------------------------------------------------------
+# FORCE FIELD "TEXTURE"BUTTON
+
+
 class forcefield_texture (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Texture"""
-    bl_label= "Texture"                                                                           #Operator's Name
-    bl_idname= "object.button_forcefield_texture"                                                  #Operator's Type
+    bl_label = "Texture"
+    bl_idname = "object.button_forcefield_texture"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='TEXTURE', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
 
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "CURVE GUIDE" BUTTON-----------------------------------------
+
+# ------------------------------------------------------------------------------
+# FORCE FIELD "CURVE GUIDE"BUTTON
+
+
 class forcefield_curveguide (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Curve Guide"""
-    bl_label= "Curve Guide"                                                                           #Operator's Name
-    bl_idname= "object.button_forcefield_curveguide"                                                  #Operator's Type
+    bl_label = "Curve Guide"
+    bl_idname = "object.button_forcefield_curveguide"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='GUIDE', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
 
         return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "BOID" BUTTON-----------------------------------------
+
+# ------------------------------------------------------------------------------
+# FORCE FIELD "BOID"BUTTON
+
+
 class forcefield_boid (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Boid"""
-    bl_label= "Boid"                                                                            #Operator's Name
-    bl_idname= "object.button_forcefield_boid"                                                  #Operator's Type
+    bl_label = "Boid"
+    bl_idname = "object.button_forcefield_boid"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='BOID', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
 
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "TURBULANCE" BUTTON------------------------------------
+
+# ------------------------------------------------------------------------------
+# FORCE FIELD "TURBULANCE"BUTTON
+
+
 class forcefield_turbulance (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Turbulance"""
-    bl_label= "Turbulance"                                                                       #Operator's Name
-    bl_idname= "object.button_forcefield_turbulance"                                             #Operator's Type
+    bl_label = "Turbulance"
+    bl_idname = "object.button_forcefield_turbulance"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='TURBULENCE', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
 
         return {"FINISHED"}
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "DRAG" BUTTON------------------------------------------
+
+# ------------------------------------------------------------------------------
+# FORCE FIELD "DRAG"BUTTON
+
+
 class forcefield_drag (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Drag"""
-    bl_label= "Drag"                                                                            #Operator's Name
-    bl_idname= "object.button_forcefield_drag"                                                  #Operator's Type
+    bl_label = "Drag"
+    bl_idname = "object.button_forcefield_drag"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='DRAG', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
 
         return {"FINISHED"}
-#-------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------FORCE FIELD "FLUID FLOW" BUTTON-------------------------------------
+
+# ------------------------------------------------------------------------------
+# FORCE FIELD "FLUID FLOW"BUTTON
+
+
 class forcefield_fluidflow (bpy.types.Operator):
     """Add an empty object with a physics effector to the scene: Fluid Flow"""
-    bl_label= "Fluid Flow"                                                                       #Operator's Name
-    bl_idname= "object.button_forcefield_fluidflow"                                              #Operator's Type
+    bl_label = "Fluid Flow"
+    bl_idname = "object.button_forcefield_fluidflow"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.effector_add(type='FLUID', enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
 
-        return {"FINISHED"} 
-#----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------FORCE FIELD PANEL-------------------------------------------------
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# FORCE FIELD PANEL
+
+
 class Add_Force_Field (bpy.types.Panel):
-    bl_label= "Force Field"                                                                      #Panel's Name
-    bl_idname= "PT_AddForcefield"                                                                #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout
- 
-        
-        
-        row=layout.row()
-        col=layout.column()                                                               
+    bl_label = "Force Field"
+    bl_idname = "PT_AddForcefield"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        col = layout.column()
         row.label(text="Add Force Field")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_forcefield_force", icon="FORCE_FORCE")
         row.operator("object.button_forcefield_wind", icon="FORCE_WIND")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_forcefield_vortex", icon="FORCE_VORTEX")
         row.operator("object.button_forcefield_magnetic", icon="FORCE_MAGNETIC")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_forcefield_harmonic", icon="FORCE_HARMONIC")
         row.operator("object.button_forcefield_charge", icon="FORCE_CHARGE")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_forcefield_lennardj", icon="FORCE_LENNARDJONES")
         row.operator("object.button_forcefield_texture", icon="FORCE_TEXTURE")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_forcefield_curveguide", icon="FORCE_CURVE")
         row.operator("object.button_forcefield_boid", icon="FORCE_BOID")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_forcefield_turbulance", icon="FORCE_TURBULENCE")
         row.operator("object.button_forcefield_drag", icon="FORCE_DRAG")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_forcefield_fluidflow", icon="FORCE_FLUIDFLOW")
-        row=layout.row()
-#------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------COLLECTION INSTANCE "COLLECTION" BUTTON----------------------------
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# COLLECTION INSTANCE "COLLECTION"BUTTON
+
+
 class collection_instance_collection (bpy.types.Operator):
     """Add a Collection Instance : Collection"""
-    bl_label= "Collection"                                                                        #Operator's Name
-    bl_idname= "object.button_collection_instance_collection"                                     #Operator's Type
+    bl_label = "Collection"
+    bl_idname = "object.button_collection_instance_collection"
 
-    
-    def execute(self,context):
-        
+    def execute(self, context):
         bpy.ops.object.collection_instance_add(collection='Collection', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
 
-        return {"FINISHED"} 
-#----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------COLLECTION PANEL-------------------------------------------------
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# COLLECTION PANEL
+
+
 class Add_Collection_instance (bpy.types.Panel):
-    bl_label= "Collection"                                                                       #Panel's Name
-    bl_idname= "PT_AddCollectioninstance"                                                        #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlend"                                                                  #Parent ID
-         
-         
-         
-    def draw(self,context):
-        layout=self.layout
-        
-        
-        row=layout.row()
-        col=layout.column()                                                               
+    bl_label = "Collection"
+    bl_idname = "PT_AddCollectioninstance"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlend"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        col = layout.column()
         row.label(text="Add Collection Instance")
-        row=layout.row()
+        row = layout.row()
         row.operator("object.button_collection_instance_collection", icon="OUTLINER_COLLECTION")
-        row=layout.row()
-        
-  
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ARC BLEND MODIFIERS PANEL------------------------------------
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# ARC BLEND MODIFIERS PANEL
 
 
 class ArcBlendModifiers (bpy.types.Panel):
-    bl_label= "AB Modify"                                                                        #Panel's Name
-    bl_idname= "PT_ArcBlendModifiers"                                                            #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name
-    
-    def draw(self,context):
-        layout=self.layout         
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------EDGE LOOP OPERATOR----------------------------------------------
+    bl_label = "AB Modify"
+    bl_idname = "PT_ArcBlendModifiers"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+
+    def draw(self, context):
+        layout = self.layout
+
+# ------------------------------------------------------------------------------
+# EDGE LOOP OPERATOR
+
+
 class loop_multiple_select (bpy.types.Operator):
     """Select a loop of connected edges by connection type"""
-    bl_label= "Edge Loop"                                                                      #Operator's Name
-    bl_idname= "object.button_loop_multiple_select"                                                            #Operator's Type
-    
+    bl_label = "Edge Loop"
+    bl_idname = "object.button_loop_multiple_select"
 
-    def execute(self,context):
-           layout=self.layout
-           win      = bpy.context.window
-           scr      = win.screen
-           areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
-           region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
-           override = {'window':win,
-            'screen':scr,
-            'area'  :areas3d[0],
-            'region':region,
-            'scene' :bpy.context.scene,
-            }       
-            
-           bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-           
-           bpy.ops.mesh.loop_multi_select(ring=False)
-           
-           return {"FINISHED"} 
-       
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------RING LOOP OPERATOR----------------------------------------------
+    def execute(self, context):
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.loop_multi_select(ring=False)
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# RING LOOP OPERATOR
+
+
 class loop_multiple_select_ring (bpy.types.Operator):
     """Select a loop of connected edges by connection type"""
-    bl_label= "Ring Loop"                                                                      #Operator's Name
-    bl_idname= "object.button_loop_multiple_select_ring"                                                            #Operator's Type
-    
+    bl_label = "Ring Loop"
+    bl_idname = "object.button_loop_multiple_select_ring"
 
-    def execute(self,context):
-           layout=self.layout
-           win      = bpy.context.window
-           scr      = win.screen
-           areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
-           region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
-           override = {'window':win,
-            'screen':scr,
-            'area'  :areas3d[0],
-            'region':region,
-            'scene' :bpy.context.scene,
-            }       
-            
-           bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-           
-           bpy.ops.mesh.loop_multi_select(ring=True)
-           
-           return {"FINISHED"} 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SELECT LOOP OPERATOR----------------------------------------------
+    def execute(self, context):
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.loop_multi_select(ring=True)
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# SELECT LOOP OPERATOR
+
+
 class loop_select (bpy.types.Operator):
     """Select region of faces inside of a selected loop of edges"""
-    bl_label= "Loop to Region"                                                                      #Operator's Name
-    bl_idname= "object.button_loop_select"                                                            #Operator's Type
-    
+    bl_label = "Loop to Region"
+    bl_idname = "object.button_loop_select"
 
-    def execute(self,context):
-           layout=self.layout
-           win      = bpy.context.window
-           scr      = win.screen
-           areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
-           region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
-           override = {'window':win,
-            'screen':scr,
-            'area'  :areas3d[0],
-            'region':region,
-            'scene' :bpy.context.scene,
-            }       
-            
-           bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-           
-           bpy.ops.mesh.loop_to_region(select_bigger=False)
-           
-           return {"FINISHED"} 
-       
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SELECT BOUNDRY EDGES OPERATOR--------------------------------------
+    def execute(self, context):
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.loop_to_region(select_bigger=False)
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# SELECT BOUNDRY EDGES OPERATOR
+
+
 class loop_select_boundry_faces (bpy.types.Operator):
     """Select boundary edges around the selected faces"""
-    bl_label= "Select Boundry Edges"                                                                      #Operator's Name
-    bl_idname= "object.button_loop_select_boundry_faces"                                                  #Operator's Type
-    
+    bl_label = "Select Boundry Edges"
+    bl_idname = "object.button_loop_select_boundry_faces"
 
-    def execute(self,context):
-           layout=self.layout
-           win      = bpy.context.window
-           scr      = win.screen
-           areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
-           region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
-           override = {'window':win,
-            'screen':scr,
-            'area'  :areas3d[0],
-            'region':region,
-            'scene' :bpy.context.scene,
-            }       
-            
-           bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-           bpy.ops.mesh.region_to_loop()
-           
-           return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------MESH SEPERATE OPERATOR--------------------------------------
+    def execute(self, context):
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.region_to_loop()
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# MESH SEPERATE OPERATOR
+
+
 class loop_mesh_seperate (bpy.types.Operator):
     """Separate selected geometry into a new mesh"""
-    bl_label= "Seperate Selected Geometry"                                                         #Operator's Name
-    bl_idname= "object.button_loop_mesh_seperate"                                                  #Operator's Type
-    
+    bl_label = "Seperate Selected Geometry"
+    bl_idname = "object.button_loop_mesh_seperate"
 
-    def execute(self,context):
-           layout=self.layout
-           win      = bpy.context.window
-           scr      = win.screen
-           areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
-           region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
-           override = {'window':win,
-            'screen':scr,
-            'area'  :areas3d[0],
-            'region':region,
-            'scene' :bpy.context.scene,
-            }       
-            
-           bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-           bpy.ops.mesh.separate(type='SELECTED')
-           
-           return {"FINISHED"} 
-       
-       
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SHORTEST PATH PICK OPERATOR--------------------------------------
+    def execute(self, context):
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.separate(type='SELECTED')
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# SHORTEST PATH PICK OPERATOR
+
+
 class loop_mesh_shortest_path_pick (bpy.types.Operator):
     """Select shortest path between two selections"""
-    bl_label= "Shortest Path Select"                                                         #Operator's Name
-    bl_idname= "object.button_loop_mesh_shortest_path_pick"                                                  #Operator's Type
-    
+    bl_label = "Shortest Path Select"
+    bl_idname = "object.button_loop_mesh_shortest_path_pick"
 
-    def execute(self,context):
-           layout=self.layout
-           win      = bpy.context.window
-           scr      = win.screen
-           areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
-           region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
-           override = {'window':win,
-            'screen':scr,
-            'area'  :areas3d[0],
-            'region':region,
-            'scene' :bpy.context.scene,
-            }       
-            
-           bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-           bpy.ops.mesh.shortest_path_select(edge_mode='SELECT', use_face_step=False, use_topology_distance=False, use_fill=False, skip=0, nth=1, offset=0)
-           return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------MESH SPLİT OFF OPERATOR--------------------------------------
+    def execute(self, context):
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.shortest_path_select(edge_mode='SELECT', use_face_step=False, use_topology_distance=False, use_fill=False, skip=0, nth=1, offset=0)
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# MESH SPLİT OFF OPERATOR
+
+
 class loop_mesh_split (bpy.types.Operator):
     """Split off selected geometry from connected unselected geometry"""
-    bl_label= "Split Off Selected Geometry"                                                         #Operator's Name
-    bl_idname= "object.button_loop_mesh_split"                                                  #Operator's Type
-    
+    bl_label = "Split Off Selected Geometry"
+    bl_idname = "object.button_loop_mesh_split"
 
-    def execute(self,context):
-           layout=self.layout
-           win      = bpy.context.window
-           scr      = win.screen
-           areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
-           region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
-           override = {'window':win,
-            'screen':scr,
-            'area'  :areas3d[0],
-            'region':region,
-            'scene' :bpy.context.scene,
-            }       
-            
-           bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-           
-           bpy.ops.mesh.split()
-           
-           
-           return {"FINISHED"} 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------QUADS TO TRIOS OPERATOR--------------------------------------
+    def execute(self, context):
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.split()
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# QUADS TO TRIOS OPERATOR
+
+
 class loop_mesh_quads_convert_to_tris (bpy.types.Operator):
     """Triangulate selected faces"""
-    bl_label= "Quads to Trios"                                                         #Operator's Name
-    bl_idname= "object.button_loop_mesh_quads_convert_to_tris"                                                  #Operator's Type
-    
+    bl_label = "Quads to Trios"
+    bl_idname = "object.button_loop_mesh_quads_convert_to_tris"
 
-    def execute(self,context):
-           layout=self.layout
-           win      = bpy.context.window
-           scr      = win.screen
-           areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
-           region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
-           override = {'window':win,
-            'screen':scr,
-            'area'  :areas3d[0],
-            'region':region,
-            'scene' :bpy.context.scene,
-            }       
-            
-           bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-           
-           bpy.ops.mesh.quads_convert_to_tris(quad_method='FIXED', ngon_method='BEAUTY')
-           
-           return {"FINISHED"}   
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------TRIOS TO QUADS OPERATOR--------------------------------------
+    def execute(self, context):
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.quads_convert_to_tris(quad_method='FIXED', ngon_method='BEAUTY')
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# TRIOS TO QUADS OPERATOR
+
+
 class loop_mesh_tris_convert_to_quads (bpy.types.Operator):
     """Join triangles into quads"""
-    bl_label= "Trios to Quads"                                                         #Operator's Name
-    bl_idname= "object.button_loop_mesh_tris_convert_to_quads"                                                  #Operator's Type
-    
+    bl_label = "Trios to Quads"
+    bl_idname = "object.button_loop_mesh_tris_convert_to_quads"
 
-    def execute(self,context):
-           layout=self.layout
-           win      = bpy.context.window
-           scr      = win.screen
-           areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
-           region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
-           override = {'window':win,
-            'screen':scr,
-            'area'  :areas3d[0],
-            'region':region,
-            'scene' :bpy.context.scene,
-            }       
-            
-           bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-           
-           bpy.ops.mesh.tris_convert_to_quads(
-           face_threshold=0.698132,                     #0.698132
-           shape_threshold=0.698132, 
-           uvs=False,
-           vcols=False, 
-           seam=False, 
-           sharp=False, 
-           materials=False)
-           
-           
-           return {"FINISHED"} 
-       
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------FIND TRIOS OPERATOR--------------------------------------
+    def execute(self, context):
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.tris_convert_to_quads(face_threshold=0.698132, shape_threshold=0.698132, uvs=False, vcols=False, seam=False, sharp=False, materials=False)
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# FIND TRIOS OPERATOR
+
+
 class loop_mesh_find_trios (bpy.types.Operator):
     """Select vertices or faces to find trios (3 sides)"""
-    bl_label= "Find Trios"                                                         #Operator's Name
-    bl_idname= "object.button_loop_mesh_find_trios"                                                  #Operator's Type
-    
+    bl_label = "Find Trios"
+    bl_idname = "object.button_loop_mesh_find_trios"
 
-    def execute(self,context):
-           layout=self.layout
-           win      = bpy.context.window
-           scr      = win.screen
-           areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
-           region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
-           override = {'window':win,
-            'screen':scr,
-            'area'  :areas3d[0],
-            'region':region,
-            'scene' :bpy.context.scene,
-            }       
-           if bpy.context.active_object ==True:
-             bpy.ops.object.mode_set(mode='EDIT', toggle=True)
-           else:
-             bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-         
-            
-                
-                      
-           bpy.ops.mesh.select_face_by_sides(number=3, type='EQUAL', extend=True)
-           
-           return {"FINISHED"} 
-       
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------FIND QUADS OPERATOR--------------------------------------
+    def execute(self, context):
+        if bpy.context.active_object:
+            bpy.ops.object.mode_set(mode='EDIT', toggle=True)
+        else:
+            bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.select_face_by_sides(number=3, type='EQUAL', extend=True)
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# FIND QUADS OPERATOR
+
+
 class loop_mesh_find_quads (bpy.types.Operator):
     """Select vertices or faces to find quads (4 sides)"""
-    bl_label= "Find Quads"                                                         #Operator's Name
-    bl_idname= "object.button_loop_mesh_find_quads"                                                  #Operator's Type
-    
+    bl_label = "Find Quads"
+    bl_idname = "object.button_loop_mesh_find_quads"
 
-    def execute(self,context):
-           layout=self.layout
-           win      = bpy.context.window
-           scr      = win.screen
-           areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
-           region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
-           override = {'window':win,
-            'screen':scr,
-            'area'  :areas3d[0],
-            'region':region,
-            'scene' :bpy.context.scene,
-            }       
-            
-           if bpy.context.active_object ==True:
-               
-             bpy.ops.object.mode_set(mode='EDIT', toggle=True)
-             
-           else:
-               
-             bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-                      
-           bpy.ops.mesh.select_face_by_sides(number=4, type='EQUAL', extend=True)
-           
-           return {"FINISHED"} 
-        
-#-----------------------------------------------------------------------------------------------------------------
-#------------------------------------------------------Loopm Menu PANEL-----------------------------------------------
+    def execute(self, context):
+        if bpy.context.active_object:
+            bpy.ops.object.mode_set(mode='EDIT', toggle=True)
+        else:
+            bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.select_face_by_sides(number=4, type='EQUAL', extend=True)
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# Loopm Menu PANEL
 
 
 class Loop_Menu (bpy.types.Panel):
-    bl_label= "Export Object Data"                                                                     #Panel's Name
-    bl_idname= "PT_ArcBlendCreateBox"                                                            #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name
-    bl_parent_id= "PT_ArcBlendModifiers" 
-    
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        scene=context.scene
-        Arc_Blend=scene.Arc_Blend
-        
-        layout.label(text= "File Path : ")
-        layout.prop(Arc_Blend,"filepath", text="")
+    bl_label = "Export Object Data"
+    bl_idname = "PT_ArcBlendCreateBox"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlendModifiers"
 
-        
-        
-        col=layout.column()
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        scene = context.scene
+        Arc_Blend = scene.Arc_Blend
+        layout.label(text="File Path : ")
+        layout.prop(Arc_Blend, "filepath", text="")
+        col = layout.column()
         col1 = col.column(align=True)
-        col1.operator("object.button_loop_sde",text="Export Data")
-        
+        col1.operator("object.button_loop_sde", text="Export Data")
 
-        
-       
-        
-        
-        
-        #col.operator("object.button_loop_idtm", text="Import Data to Mesh")
-        
-        
-        
-        
-        
-        
-        
-        
-       
-        
-        
-        
-        
-        
-        
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SELECTED DATA EXPORT----------------------------------------        
+        # col.operator("object.button_loop_idtm", text="Import Data to Mesh")
+
+# ------------------------------------------------------------------------------
+# SELECTED DATA EXPORT
+
+
 class loop_sde(bpy.types.Operator):
-    bl_label =  "Export Data"
-    bl_description="Exports Selected Meshes All Data to .TXT File"
+    bl_label = "Export Data"
+    bl_description = "Exports Selected Meshes All Data to .TXT File"
     bl_idname = "object.button_loop_sde"
-    
 
     def execute(self, context):
-        obj=context.object
-        scene=context.scene
-        Arc_Blend=scene.Arc_Blend
-        
-        filepath=bpy.context.scene.Arc_Blend.filepath
-   
-             
+        obj = context.object
+        scene = context.scene
+        Arc_Blend = scene.Arc_Blend
+        filepath = bpy.context.scene.Arc_Blend.filepath
         abverts = bpy.context.active_object.data.vertices
         abedges = bpy.context.active_object.data.edges
         abfaces = bpy.context.active_object.data.polygons
         verts = []
         edges = []
         faces = []
-        
         for vertex in abverts:
-             verts.append(tuple(vertex.co))
-              
+            verts.append(tuple(vertex.co))
         for edgs in abedges:
-              edges.append(tuple(edgs.vertices))
-              
+            edges.append(tuple(edgs.vertices))
         for face in abfaces:
-              faces.append(tuple(face.vertices))
-        
-        
+            faces.append(tuple(face.vertices))
         file = open(filepath, 'w')
         file.writelines(str("verts="))
-        file.write(str(" "))
+        file.write(str(""))
         file.writelines(str(verts))
         file.write(str("\n"))
-
-        
         file.write(str("edges="))
-        file.write(str(" "))
+        file.write(str(""))
         file.write(str(edges))
         file.write(str("\n"))
-        
-
         file.write(str("faces="))
-        file.write(str(" "))
+        file.write(str(""))
         file.write(str(faces))
-        
         file.close()
-     
         return {'FINISHED'}
-    
-        
 
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------IMPORT DATA TO MESH----------------------------------------        
-#WORK IN PROGRESS!!!
+# ------------------------------------------------------------------------------
+# IMPORT DATA TO MESH
+# WORK IN PROGRESS!!!
+
+
 class loop_idtm(bpy.types.Operator):
-    bl_label =  "Import Data to Mesh"
-    bl_description="verts,edges and faces to mesh"
+    bl_label = "Import Data to Mesh"
+    bl_description = "verts,edges and faces to mesh"
     bl_idname = "object.button_loop_idtm"
-    
 
     def execute(self, context):
-        
-        
-        scene=context.scene
-        Arc_Blend=scene.Arc_Blend
- 
-        mesh = bpy.data.meshes.new("Mesh")  # add the new mesh
+        scene = context.scene
+        Arc_Blend = scene.Arc_Blend
+        mesh = bpy.data.meshes.new("Mesh")
         obj = bpy.data.objects.new(mesh.name, mesh)
         col = bpy.data.collections.get("Collection")
         col.objects.link(obj)
         bpy.context.view_layer.objects.active = obj
-         
-                    
-        verts= []
-        edges= []
-        faces= []
-        
- 
-        mesh.from_pydata(verts,edges,faces)
-        
-             
-        return {'FINISHED'}    
-#WORK IN PROGRESS!!!
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------TRANSFORM & EDİT PANEL----------------------------------------
+        verts = []
+        edges = []
+        faces = []
+        mesh.from_pydata(verts, edges, faces)
+        return {'FINISHED'}
+
+# WORK IN PROGRESS!!!
+# ------------------------------------------------------------------------------
+# TRANSFORM & EDİT PANEL
+
+
 class modifier (bpy.types.Panel):
-    bl_label= "Transform & Edit"                                                                 #Panel's Name
-    bl_idname= "PT_Transform"                                                                    #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_ArcBlendModifiers"                                                         #Parent ID
-         
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        
-        
-        
-        
-        row=layout.row()
-     
-        
-        
-        
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------OBJECT  PANEL----------------------------------------
+    bl_label = "Transform & Edit"
+    bl_idname = "PT_Transform"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_ArcBlendModifiers"
+
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# OBJECT  PANEL
+
+
 class transform_edit_object_panel (bpy.types.Panel):
-    bl_label= "Object"                                                                        #Panel's Name
-    bl_idname= "PT_Object_Transform"                                                               #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_Transform"                                                                 #Parent ID
-         
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        collection=context.collection
-        
-        scene=context.scene
-        Arc_Blend=scene.Arc_Blend
-  
-       
-        
-        #row=layout.row()
-        col=layout.column() 
-        
-        
-        
+    bl_label = "Object"
+    bl_idname = "PT_Object_Transform"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Transform"
+
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        collection = context.collection
+        scene = context.scene
+        Arc_Blend = scene.Arc_Blend
+        col = layout.column()
         if bpy.context.selected_objects != []:
-            
-         col.prop(obj, "name")
-         
-         
-         col.prop(obj, "type")
-         col.prop(obj, "active_material")
-         col.prop(obj, "data")
-         col.prop(obj, "parent")
-         col.prop(obj, "parent_type")
-         col.prop(Arc_Blend, "arc_blend_set_origin")
-        
-         col=layout.column()
-         
-         col.prop(Arc_Blend, "arc_blend_manuel_axis" ,text="Set Origin to Manuel Axis:" , icon="EMPTY_AXIS")
-         if bpy.context.scene.Arc_Blend.arc_blend_manuel_axis == True:
-             box1= layout.box()
-             box1.prop(Arc_Blend, "arc_blend_manuel_origin_x" ,text="Origin X Level")
-             box1.prop(Arc_Blend, "arc_blend_manuel_origin_y" ,text="Origin Y Level")
-             box1.prop(Arc_Blend, "arc_blend_manuel_origin" ,text="Origin Z Level")
-         else:
-             pass
-         
-         
-         
-         
-         col=layout.column() 
-         sub=col.row(align=True)
-         sub.prop(Arc_Blend, "align_objects_xyz" ,text="Align Objects",icon="OUTLINER_OB_POINTCLOUD")
-                 
-         if bpy.context.scene.Arc_Blend.align_objects_xyz == True:
-             box= layout.box()
-             #col=layout.column() 
-             box.label(text="Align Objects (Fast) : ")
-             sub=box.row(align=True)
-             sub.operator("object.button_transform_edit_object_align_x", text="X")
-             sub.operator("object.button_transform_edit_object_align_y", text="Y")
-             sub.operator("object.button_transform_edit_object_align_z", text="Z")
-             sub.operator("object.button_transform_edit_object_align_bound", text="All")
-             
-             box.prop(Arc_Blend,"distribute_objects",text="Distribute Objects " , icon="MOD_ARRAY")
-             if bpy.context.scene.Arc_Blend.distribute_objects == True:
-                 sub=box.column(align=True)
-                 sub.label(text="Distribute Objects : ")
-                 sub.prop(Arc_Blend, "distribute_x" , text="X Copy : ")
-                 sub.prop(Arc_Blend, "distribute_y" , text="Y Copy : ")
-                 #sub.prop(Arc_Blend, "distribute_z" , text="Z Copy : ")
-                 sub=box.column(align=True)
-                 sub.label(text="Distribute Distance : ")
-                 sub.prop(Arc_Blend, "distribute_distance_object_x" , text="X Distance : ")
-                 sub.prop(Arc_Blend, "distribute_distance_object_y" , text="Y Distance : ")
-                 #sub.prop(Arc_Blend, "distribute_distance_object_z" , text="Z Distance : ")
-
-                 
-             else:
-                 pass   
-             
-             
-             
-             box.prop(Arc_Blend,"proportional_align",text="Proportional Align " , icon="ALIGN_JUSTIFY")
-             if bpy.context.scene.Arc_Blend.proportional_align == True:
-
-                 #col=layout.column() 
-                 box.label(text="Align Objects Distance : ")
-                 sub=box.column(align=True)
-                 sub.prop(Arc_Blend, "distance_object_x" ,text="X Distance:")
-                 sub.prop(Arc_Blend, "distance_object_y" ,text="Y Distance:")
-                 sub.prop(Arc_Blend, "distance_object_z" ,text="Z Distance:")
-                 #col=layout.column() 
-                 box.label(text="Align Objects Rotation : ")
-                 sub=box.column(align=True)
-                 sub.prop(Arc_Blend, "rotation_object_x" ,text="X Rotation:")
-                 sub.prop(Arc_Blend, "rotation_object_y" ,text="Y Rotation:")
-                 sub.prop(Arc_Blend, "rotation_object_z" ,text="Z Rotation:")
-                 #col=layout.column() 
-                 box.label(text="Align Objects Scale : ")
-                 sub=box.column(align=True)
-                 sub.prop(Arc_Blend, "scale_object_x" ,text="X Scale:")
-                 sub.prop(Arc_Blend, "scale_object_y" ,text="Y Scale:")
-                 sub.prop(Arc_Blend, "scale_object_z" ,text="Z Scale:")
-         else:
-             pass
-         
-         row=layout.row()
-         
-         
-         row=layout.row(align=True)
-         row.operator ("object.shade_smooth")
-         row.operator ("object.shade_flat")
-         row=layout.row()
-         
-         
-         row=layout.row()
-         sub=row.row(align=True)
-         sub.scale_x = 1.5
-         sub.label(text="Color : ")
-         sub.scale_x = 4.6
-         sub.prop(obj, "color", text="")
-         row=layout.row()
-         row=layout.row(align=True)
-         row.operator("object.button_transform_edit_object_randomize_colors", text="Randomize Colors")
-         row.operator( "object.button_transform_edit_object_reset_colors", text="Reset Colors")
-         
-        
-         
-       
+            col.prop(obj, "name")
+            col.prop(obj, "type")
+            col.prop(obj, "active_material")
+            col.prop(obj, "data")
+            col.prop(obj, "parent")
+            col.prop(obj, "parent_type")
+            col.prop(Arc_Blend, "arc_blend_set_origin")
+            col = layout.column()
+            col.prop(Arc_Blend, "arc_blend_manuel_axis", text="Set Origin to Manuel Axis:", icon="EMPTY_AXIS")
+            if bpy.context.scene.Arc_Blend.arc_blend_manuel_axis:
+                box1 = layout.box()
+                box1.prop(Arc_Blend, "arc_blend_manuel_origin_x", text="Origin X Level")
+                box1.prop(Arc_Blend, "arc_blend_manuel_origin_y", text="Origin Y Level")
+                box1.prop(Arc_Blend, "arc_blend_manuel_origin", text="Origin Z Level")
+            else:
+                pass
+            col = layout.column()
+            sub = col.row(align=True)
+            sub.prop(Arc_Blend, "align_objects_xyz", text="Align Objects", icon="OUTLINER_OB_POINTCLOUD")
+            if bpy.context.scene.Arc_Blend.align_objects_xyz:
+                box = layout.box()
+                box.label(text="Align Objects (Fast): ")
+                sub = box.row(align=True)
+                sub.operator("object.button_transform_edit_object_align_x", text="X")
+                sub.operator("object.button_transform_edit_object_align_y", text="Y")
+                sub.operator("object.button_transform_edit_object_align_z", text="Z")
+                sub.operator("object.button_transform_edit_object_align_bound", text="All")
+                box.prop(Arc_Blend, "distribute_objects", text="Distribute Objects ", icon="MOD_ARRAY")
+                if bpy.context.scene.Arc_Blend.distribute_objects:
+                    sub = box.column(align=True)
+                    sub.label(text="Distribute Objects : ")
+                    sub.prop(Arc_Blend, "distribute_x", text="X Copy : ")
+                    sub.prop(Arc_Blend, "distribute_y", text="Y Copy : ")
+                    # sub.prop(Arc_Blend, "distribute_z", text="Z Copy : ")
+                    sub = box.column(align=True)
+                    sub.label(text="Distribute Distance : ")
+                    sub.prop(Arc_Blend, "distribute_distance_object_x", text="X Distance : ")
+                    sub.prop(Arc_Blend, "distribute_distance_object_y", text="Y Distance : ")
+                    # sub.prop(Arc_Blend, "distribute_distance_object_z", text="Z Distance : ")
+                else:
+                    pass
+                box.prop(Arc_Blend, "proportional_align", text="Proportional Align ", icon="ALIGN_JUSTIFY")
+                if bpy.context.scene.Arc_Blend.proportional_align:
+                    # col = layout.column()
+                    box.label(text="Align Objects Distance : ")
+                    sub = box.column(align=True)
+                    sub.prop(Arc_Blend, "distance_object_x", text="X Distance:")
+                    sub.prop(Arc_Blend, "distance_object_y", text="Y Distance:")
+                    sub.prop(Arc_Blend, "distance_object_z", text="Z Distance:")
+                    # col = layout.column()
+                    box.label(text="Align Objects Rotation : ")
+                    sub = box.column(align=True)
+                    sub.prop(Arc_Blend, "rotation_object_x", text="X Rotation:")
+                    sub.prop(Arc_Blend, "rotation_object_y", text="Y Rotation:")
+                    sub.prop(Arc_Blend, "rotation_object_z", text="Z Rotation:")
+                    # col = layout.column()
+                    box.label(text="Align Objects Scale : ")
+                    sub = box.column(align=True)
+                    sub.prop(Arc_Blend, "scale_object_x", text="X Scale:")
+                    sub.prop(Arc_Blend, "scale_object_y", text="Y Scale:")
+                    sub.prop(Arc_Blend, "scale_object_z", text="Z Scale:")
+            else:
+                pass
+            row = layout.row()
+            row = layout.row(align=True)
+            row.operator("object.shade_smooth")
+            row.operator("object.shade_flat")
+            row = layout.row()
+            row = layout.row()
+            sub = row.row(align=True)
+            sub.scale_x = 1.5
+            sub.label(text="Color : ")
+            sub.scale_x = 4.6
+            sub.prop(obj, "color", text="")
+            row = layout.row()
+            row = layout.row(align=True)
+            row.operator("object.button_transform_edit_object_randomize_colors", text="Randomize Colors")
+            row.operator("object.button_transform_edit_object_reset_colors", text="Reset Colors")
         else:
             pass
-        
-        col=layout.column() 
+        col = layout.column()
         col.label(text="Turn ON/OFF Display Color : ")
         col.prop(Arc_Blend, "color_mode_display", text="", icon="FILE_REFRESH")
         col.label(text="Purge unused data objects : ")
         col.operator("object.button_transform_edit_object_purge", text="Purge")
-        col=layout.column()
-        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------RANDOMIZE COLOR OPERATOR-----------------------------------------------
+        col = layout.column()
+
+# ------------------------------------------------------------------------------
+# RANDOMIZE COLOR OPERATOR
+
+
 class transform_edit_object_randomize_colors (bpy.types.Operator):
     """Randomize colors to selected Objects """
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_transform_edit_object_randomize_colors"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_transform_edit_object_randomize_colors"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           
-           
-           selected = bpy.context.selected_objects
-           color = bpy.context.object.color
-           
+    def execute(self, context):
+        layout = self.layout
+        obj = context.object
+        scene = context.scene
+        selected = bpy.context.selected_objects
+        color = bpy.context.object.color
+        for i in selected:
+            if i.type == "MESH":
+                alpha = i.color[3]
+                red = random.random()
+                green = random.random()
+                blue = random.random()
+                i.color = (red, green, blue, alpha)
+        return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# RESET COLOR OPERATOR
 
-           for i in selected:
-               
-               if i.type == "MESH":
-                   alpha = i.color[3]
-                   red = random.random()
-                   green = random.random()
-                   blue = random.random()
-                   i.color = (red,green,blue,alpha)
 
-           return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------RESET COLOR OPERATOR-----------------------------------------------
 class transform_edit_object_reset_colors (bpy.types.Operator):
     """Reset colors to selected Objects colors came from Color """
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_transform_edit_object_reset_colors"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_transform_edit_object_reset_colors"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           
-           
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
            selected = bpy.context.selected_objects
            color = bpy.context.object.color
-           
 
            for i in selected:
-               
                if i.type == "MESH":
                    alpha = i.color[3]
                    i.color = bpy.context.object.color
 
-
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------PURGE OPERATOR-----------------------------------------------
+
+# ------------------------------------------------------------------------------
+# PURGE OPERATOR
+
+
 class transform_edit_object_purge (bpy.types.Operator):
     """Purge All Un-Used  Data  """
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_transform_edit_object_purge"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_transform_edit_object_purge"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           
-           
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
            bpy.ops.outliner.orphans_purge()
-
-           
-             
            return {"FINISHED"}
-       
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ALIGN OBJECTS X AXIS OPERATOR-----------------------------------------------
+
+# ------------------------------------------------------------------------------
+# ALIGN OBJECTS X AXIS OPERATOR
+
+
 class transform_edit_object_align_x (bpy.types.Operator):
     """Align Objects to Active Objects' X Axis"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_transform_edit_object_align_x"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_transform_edit_object_align_x"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
-           
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            selected= bpy.context.selected_objects
            active= bpy.context.active_object
-           
            for i in selected:
                i.location.x= active.location.x
-               
+           return {"FINISHED"}
 
-                      
-             
-           return {"FINISHED"}   
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ALIGN OBJECTS Y AXIS OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ALIGN OBJECTS Y AXIS OPERATOR
+
+
 class transform_edit_object_align_y (bpy.types.Operator):
     """Align Objects to Active Objects' Y Axis"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_transform_edit_object_align_y"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_transform_edit_object_align_y"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
-           selected= bpy.context.selected_objects
-           active= bpy.context.active_object
+           selected = bpy.context.selected_objects
+           active = bpy.context.active_object
            
            for i in selected:
-               i.location.y= active.location.y
-               
-
-                      
-             
-           return {"FINISHED"}       
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ALIGN OBJECTS Z AXIS OPERATOR-----------------------------------------------
-class transform_edit_object_align_z (bpy.types.Operator):
-    """Align Objects to Active Objects' Z Axis"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_transform_edit_object_align_z"                                                  #Operator's Type
-    
-
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
-           
-           selected= bpy.context.selected_objects
-           active= bpy.context.active_object
-           
-           for i in selected:
-               i.location.z= active.location.z
+               i.location.y = active.location.y
                
 
                       
              
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ALIGN OBJECTS BOUND OPERATOR-----------------------------------------------
-class transform_edit_object_align_bound (bpy.types.Operator):
-    """Align objects with sequence.(Sort the selected objects)"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_transform_edit_object_align_bound"                                                  #Operator's Type
-    
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
-           
+# ------------------------------------------------------------------------------
+# ALIGN OBJECTS Z AXIS OPERATOR
+
+
+class transform_edit_object_align_z (bpy.types.Operator):
+    """Align Objects to Active Objects' Z Axis"""
+    bl_label = ""
+    bl_idname = "object.button_transform_edit_object_align_z"
+
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            selected= bpy.context.selected_objects
            active= bpy.context.active_object
-           
+           for i in selected:
+               i.location.z= active.location.z
+
+           return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# ALIGN OBJECTS BOUND OPERATOR
+
+
+class transform_edit_object_align_bound (bpy.types.Operator):
+    """Align objects with sequence.(Sort the selected objects)"""
+    bl_label = ""
+    bl_idname = "object.button_transform_edit_object_align_bound"
+
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
+           selected = bpy.context.selected_objects
+           active = bpy.context.active_object
            for i in range(1,len(selected)):
                selected[i].bound_box.data.location[0] =  selected[i-1].bound_box.data.location[0]+bpy.context.active_object.bound_box.data.dimensions[0]
                selected[i].bound_box.data.location[1] =  selected[i-1].bound_box.data.location[1]
                selected[i].bound_box.data.location[2] =  selected[i-1].bound_box.data.location[2]
+           return {"FINISHED"}
 
-                      
-             
-           return {"FINISHED"}       
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------TRANSFORM  PANEL----------------------------------------
+# ------------------------------------------------------------------------------
+# TRANSFORM  PANEL
+
+
 class transform (bpy.types.Panel):
-    bl_label= "Transform"                                                                        #Panel's Name
-    bl_idname= "PT_Transformpanel"                                                               #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_Transform"                                                                 #Parent ID
+    bl_label = "Transform"
+    bl_idname = "PT_Transformpanel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Transform"#Parent ID
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
         
-        row=layout.row()
-        col=layout.column() 
+        row = layout.row()
+        col = layout.column()
         if bpy.context.selected_objects != []:
          col.prop(obj, "location")
          col.prop(obj, "rotation_euler")
          col.prop(obj, "scale")
          col.prop(obj, "dimensions")
-         row=layout.row() 
+         row = layout.row()
         else:
             pass
-        
 
-        
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------MODIFIER PANEL----------------------------------------
+# ------------------------------------------------------------------------------
+# MODIFIER PANEL
+
+
 class modifier_panel (bpy.types.Panel):
-    bl_label= "Modifiers Panel"                                                                  #Panel's Name
-    bl_idname= "PT_modifier_panel"                                                               #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_Transform"                                                                 #Parent ID
+    bl_label = "Modifiers Panel"
+    bl_idname = "PT_modifier_panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Transform"#Parent ID
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        row = layout.row()
 
-        row=layout.row()
-        
-        
+# ------------------------------------------------------------------------------
+# MODIFY PANEL
 
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------MODIFY PANEL------------------------------------------------
+
 class modify_panel (bpy.types.Panel):
-    bl_label= "Modify"                                                                           #Panel's Name
-    bl_idname= "PT_modify_panel"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_modifier_panel"                                                            #Parent ID
+    bl_label = "Modify"
+    bl_idname = "PT_modify_panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_modifier_panel"#Parent ID
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        
-        
-        row=layout.row()
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ARRAY PANEL---------------------------------------------------
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        row = layout.row()
+
+# ------------------------------------------------------------------------------
+# ARRAY PANEL
+
+
 class array_panel (bpy.types.Panel):
-    bl_label= "Array"                                                                           #Panel's Name
-    bl_idname= "PT_array_panel"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_modify_panel"                                                            #Parent ID
-         
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        scene=context.scene
-        Arc_Blend=scene.Arc_Blend
+    bl_label = "Array"
+    bl_idname = "PT_array_panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_modify_panel"#Parent ID
+
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        scene = context.scene
+        Arc_Blend = scene.Arc_Blend
         split = layout.split()
-        
-        
+
         if bpy.context.selected_objects != []:        
             #layout.prop(Arc_Blend, "text_area")
             layout.prop(Arc_Blend,"fit_type_area")
-            
             if Arc_Blend.fit_type_area == "FIXED_COUNT":
                 layout.prop(Arc_Blend,"count_area")
                 layout.prop(Arc_Blend,"y_axes_copy")
                 layout.prop(Arc_Blend,"z_axes_copy")
-                
             if Arc_Blend.fit_type_area == "FIT_LENGTH":
                 layout.prop(Arc_Blend, "length_area")
                 layout.prop(Arc_Blend, "y_axes_length")
                 layout.prop(Arc_Blend, "z_axes_length")
-                
-                
-                
             if Arc_Blend.fit_type_area == "FIT_CURVE":
                 layout.prop(Arc_Blend, "curve_select")
             else :
               pass
-     
-            row=layout.row()
-            col=layout.column()
-            
-            
-            
-            
+            row = layout.row()
+            col = layout.column()
             col.label(text="-----------------------------------------------------------------")
-            row=layout.row()
+            row = layout.row()
             row.operator("object.button_modifier_array", icon="MOD_ARRAY")
             row.operator("object.button_modifier_array_detail_executer", text="Result")
             row.operator("object.button_modifier_array_apply", icon="CHECKMARK")
         else:
             pass
-        
-        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ARRAY OPERATOR-----------------------------------------------
+
+# ------------------------------------------------------------------------------
+# ARRAY OPERATOR
+
+
 class modifier_array (bpy.types.Operator):
     """Add a procedural operation/effect to the active object: Array"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modifier_array"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modifier_array"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
-           
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            bpy.ops.object.modifier_add(type='ARRAY')
-
            bpy.ops.object.modifier_add(type='ARRAY')
-
            bpy.ops.object.modifier_add(type='ARRAY')
-           
-             
            return {"FINISHED"}
-       
-       
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------OBJECT MODE CHANGE DISPLAY------------------------------------
-       
-def color_mode_display_upd(self,context):
+# ------------------------------------------------------------------------------
+# OBJECT MODE CHANGE DISPLAY
+def color_mode_display_upd(self, context):
         try:
-        
             if  bpy.context.scene.Arc_Blend.color_mode_display == True:
-                
                 bpy.context.space_data.shading.color_type = 'OBJECT'
-            
             else :
                 bpy.context.space_data.shading.color_type = 'MATERIAL'
-                
         except ValueError:
             pass
-            
         return None 
-    
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ORIGIN SET LOW------------------------------------
-#Answer: https://blender.stackexchange.com/questions/42105/set-origin-to-bottom-center-of-multiple-objects       
-def origin_set_low_upd(ob, matrix=Matrix()):
-    
-    
-    if bpy.context.scene.Arc_Blend.arc_blend_set_origin == 'origin_to_low':
 
-        
+# ------------------------------------------------------------------------------
+# ORIGIN SET LOW
+# Answer: https://blender.stackexchange.com/questions/42105/set-origin-to-bottom-center-of-multiple-objects  
+
+def origin_set_low_upd(ob, matrix=Matrix()):
+    if bpy.context.scene.Arc_Blend.arc_blend_set_origin == 'origin_to_low':
         me = ob.data
         mw = ob.matrix_world
-        local_verts = [matrix @ Vector(v[:]) for v in ob.bound_box]
-        o = sum(local_verts, Vector()) / 8
+        local_verts = [matrix @ Vector(v[:])for v in ob.bound_box]
+        o = sum(local_verts, Vector())/ 8
         o.z = min(v.z for v in local_verts)
-        o = matrix.inverted() @ o
+        o = matrix.inverted()@ o
         me.transform(Matrix.Translation(-o))
-
         mw.translation = mw @ o
-               
-           
-           
+    return {"FINISHED"}
 
-       
-    return {"FINISHED"}   
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ORIGIN SET HIGH------------------------------------
-#I added to  max values :).
+# ------------------------------------------------------------------------------
+# ORIGIN SET HIGH
+# I added to  max values :).
 
 def origin_set_high_upd(ob, matrix=Matrix()):
-    
-    
-    if bpy.context.scene.Arc_Blend.arc_blend_set_origin == 'origin_to_high':
 
-        
+    if bpy.context.scene.Arc_Blend.arc_blend_set_origin == 'origin_to_high':
         me = ob.data
         mw = ob.matrix_world
-        local_verts = [matrix @ Vector(v[:]) for v in ob.bound_box]
-        o = sum(local_verts, Vector()) / 8
+        local_verts = [matrix @ Vector(v[:])for v in ob.bound_box]
+        o = sum(local_verts, Vector())/ 8
         o.z = max(v.z for v in local_verts)
-        o = matrix.inverted() @ o
+        o = matrix.inverted()@ o
         me.transform(Matrix.Translation(-o))
-
         mw.translation = mw @ o
-               
-           
-           
+    return {"FINISHED"}
 
-       
-    return {"FINISHED"}   
-
-
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ORIGIN SET MANUEL Z LEVEL------------------------------------
-
+# ------------------------------------------------------------------------------
+# ORIGIN SET MANUEL Z LEVEL
 
 def origin_set_manuel_matrix(ob, matrix=Matrix()):
-      
- 
         me = ob.data
         mw = ob.matrix_world
-        local_verts = [matrix @ Vector(v[:]) for v in ob.bound_box]
-        o = sum(local_verts, Vector()) / 8 
+        local_verts = [matrix @ Vector(v[:])for v in ob.bound_box]
+        o = sum(local_verts, Vector())/ 8 
         o.x = min(v.x for v in local_verts)+bpy.context.object.dimensions.x*int(bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_x)/100
         o.y = min(v.y for v in local_verts)+bpy.context.object.dimensions.y*int(bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_y)/100
         o.z = min(v.z for v in local_verts)+bpy.context.object.dimensions.z*int(bpy.context.scene.Arc_Blend.arc_blend_manuel_origin)/100
-        o = matrix.inverted() @ o
+        o = matrix.inverted()@ o
         me.transform(Matrix.Translation(-o))
-
         mw.translation = mw @ o
-               
- 
-        return {"FINISHED"} 
+        return {"FINISHED"}
 
+# ------------------------------------------------------------------------------
+# ORIGIN SET MANUEL Z UPDATE
 
-
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ORIGIN SET MANUEL Z UPDATE------------------------------------
-
-def origin_set_manuel_upd(self,context):
-          
-          
+def origin_set_manuel_upd(self, context):
           if bpy.context.scene.Arc_Blend.arc_blend_manuel_origin>=0 :
               for i in bpy.context.selected_objects:
                if i.type == 'MESH':
                  ob=i
-                 origin_set_manuel_matrix(ob) 
-    
+                 origin_set_manuel_matrix(ob)
           return None
 
-
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ORIGIN SET MANUEL Y LEVEL------------------------------------
-
+# ------------------------------------------------------------------------------
+# ORIGIN SET MANUEL Y LEVEL
 
 def origin_set_manuel_matrix_y(ob, matrix=Matrix()):
-      
- 
         me = ob.data
         mw = ob.matrix_world
-        local_verts = [matrix @ Vector(v[:]) for v in ob.bound_box]
-        o = sum(local_verts, Vector()) / 8 
+        local_verts = [matrix @ Vector(v[:])for v in ob.bound_box]
+        o = sum(local_verts, Vector())/ 8 
         o.x = min(v.x for v in local_verts)+bpy.context.object.dimensions.x*int(bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_x)/100
         o.y = min(v.y for v in local_verts)+bpy.context.object.dimensions.y*int(bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_y)/100
         o.z = min(v.z for v in local_verts)+bpy.context.object.dimensions.z*int(bpy.context.scene.Arc_Blend.arc_blend_manuel_origin)/100
-        o = matrix.inverted() @ o
+        o = matrix.inverted()@ o
         me.transform(Matrix.Translation(-o))
-
         mw.translation = mw @ o
-               
- 
-        return {"FINISHED"} 
+        return {"FINISHED"}
 
+# ------------------------------------------------------------------------------
+# ORIGIN SET MANUEL Y UPDATE
 
+def origin_set_manuel_upd_y(self, context):
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ORIGIN SET MANUEL Y UPDATE------------------------------------
-
-def origin_set_manuel_upd_y(self,context):
-          
-          
           if bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_y>=0 :
              for i in bpy.context.selected_objects:
               if i.type == 'MESH':
                  ob=i
-                 origin_set_manuel_matrix_y(ob) 
-    
+                 origin_set_manuel_matrix_y(ob)
           return None
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ORIGIN SET MANUEL X LEVEL------------------------------------
-
+# ------------------------------------------------------------------------------
+# ORIGIN SET MANUEL X LEVEL
 
 def origin_set_manuel_matrix_x(ob, matrix=Matrix()):
-      
- 
         me = ob.data
         mw = ob.matrix_world
-        local_verts = [matrix @ Vector(v[:]) for v in ob.bound_box]
-        o = sum(local_verts, Vector()) / 8 
+        local_verts = [matrix @ Vector(v[:])for v in ob.bound_box]
+        o = sum(local_verts, Vector())/ 8 
         o.x = min(v.x for v in local_verts)+bpy.context.object.dimensions.x*int(bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_x)/100
         o.y = min(v.y for v in local_verts)+bpy.context.object.dimensions.y*int(bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_y)/100
         o.z = min(v.z for v in local_verts)+bpy.context.object.dimensions.z*int(bpy.context.scene.Arc_Blend.arc_blend_manuel_origin)/100
-        o = matrix.inverted() @ o
+        o = matrix.inverted()@ o
         me.transform(Matrix.Translation(-o))
-
         mw.translation = mw @ o
-               
- 
-        return {"FINISHED"} 
+        return {"FINISHED"}
 
+# ------------------------------------------------------------------------------
+# ORIGIN SET MANUEL X UPDATE
 
-
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ORIGIN SET MANUEL X UPDATE------------------------------------
-
-def origin_set_manuel_upd_x(self,context):
-          
-           
-            
+def origin_set_manuel_upd_x(self, context):
            if bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_x>=0 :
-                  
+
                 for i in bpy.context.selected_objects:
                  if i.type == 'MESH':
                      ob=i
-                     origin_set_manuel_matrix_x(ob)  
-    
+                     origin_set_manuel_matrix_x(ob)
            return None
 
-
-
-
-
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------OBJECT ORIGIN SET--------------------------------------------
-#I use the blender's origin operators and converting to update mode. If enumProperty values change then 
+# ------------------------------------------------------------------------------
+# OBJECT ORIGIN SET
+# I use the blender's origin operators and converting to update mode. If enumProperty values change then 
 # automatically values runs the operator.
 
-def object_set_origin_upd(self,context):
-    
+def object_set_origin_upd(self, context):
      if bpy.context.scene.Arc_Blend.arc_blend_set_origin == 'geometry_to_origin':
-
       bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN')
 
      elif bpy.context.scene.Arc_Blend.arc_blend_set_origin == 'origin_to_geometry':
@@ -2259,17 +1876,17 @@ def object_set_origin_upd(self,context):
          for i in bpy.context.selected_objects:
              if i.type == 'MESH':
                  ob=i
-                 origin_set_high_upd(ob)  
+                 origin_set_high_upd(ob)
    
     
     
     
     
      return None 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------Scatter updaate------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------Scatter updaate------------------------------------
 
-def object_scatter_upd(self,context): 
+def object_scatter_upd(self, context): 
         try:
             if self.object_scatter == True:
         
@@ -2286,12 +1903,12 @@ def object_scatter_upd(self,context):
         
         return None     
  
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------OBJECT ORIGIN SET--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------OBJECT ORIGIN SET--------------------------------------------
 #I use the blender's origin operators and converting to update mode. If enumProperty values change then 
 # automatically values runs the operator.
 
-def object_scatter_view_as_upd(self,context):
+def object_scatter_view_as_upd(self, context):
     
      if bpy.context.scene.Arc_Blend.scatter_view_as == 'arc_blend_scatter_as_none':
 
@@ -2309,10 +1926,10 @@ def object_scatter_view_as_upd(self,context):
          
        bpy.data.particles[bpy.context.object.particle_systems.data.particle_systems.active.settings.name].render_type = 'COLLECTION'
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------PAINT GROUP DEF--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------PAINT GROUP DEF--------------------------------------------
 
-def object_scatter_paint_panel_upd(self,context):
+def object_scatter_paint_panel_upd(self, context):
     
       if bpy.context.scene.Arc_Blend.object_scatter_paint_panel == True:
 
@@ -2322,10 +1939,10 @@ def object_scatter_paint_panel_upd(self,context):
       else:
           bpy.ops.paint.weight_paint_toggle()
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------MODELLING EDIT MODE DEF--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------MODELLING EDIT MODE DEF--------------------------------------------
 
-def modelling_edit_mode_upd (self,context):
+def modelling_edit_mode_upd (self, context):
       try:
           if bpy.context.scene.Arc_Blend.modelling_edit_mode == True:
               
@@ -2339,10 +1956,10 @@ def modelling_edit_mode_upd (self,context):
               
       except (RuntimeError,AttributeError):
           pass
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------MODELLING EDIT MODE VERTEX DEF--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------MODELLING EDIT MODE VERTEX DEF--------------------------------------------
 
-def modelling_edit_mode_auto_edge_loop_upd (self,context):
+def modelling_edit_mode_auto_edge_loop_upd (self, context):
     
     #o = bpy.context.active_object
     #m = o.data
@@ -2360,10 +1977,10 @@ def modelling_edit_mode_auto_edge_loop_upd (self,context):
  
     else:
         pass
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ALIGN OBJECT X UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ALIGN OBJECT X UPDATE--------------------------------------------
 
-def distance_object_x_upd  (self,context):
+def distance_object_x_upd  (self, context):
     
     selected= bpy.context.selected_objects
     active= bpy.context.active_object
@@ -2377,10 +1994,10 @@ def distance_object_x_upd  (self,context):
             selected[i].location.x = selected[i-1].location.x+ bpy.context.scene.Arc_Blend.distance_object_x
     
   
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ALIGN OBJECT Y UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ALIGN OBJECT Y UPDATE--------------------------------------------
 
-def distance_object_y_upd  (self,context):
+def distance_object_y_upd  (self, context):
     
     selected= bpy.context.selected_objects
     active= bpy.context.active_object
@@ -2395,10 +2012,10 @@ def distance_object_y_upd  (self,context):
         selected[i].location.y = selected[i-1].location.y+bpy.context.scene.Arc_Blend.distance_object_y
         
  
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ALIGN OBJECT Z UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ALIGN OBJECT Z UPDATE--------------------------------------------
 
-def distance_object_z_upd  (self,context):
+def distance_object_z_upd  (self, context):
     
     selected= bpy.context.selected_objects
     active= bpy.context.active_object
@@ -2416,10 +2033,10 @@ def distance_object_z_upd  (self,context):
     
         
      
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ROTATION OBJECT X UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ROTATION OBJECT X UPDATE--------------------------------------------
 
-def rotation_object_x_upd  (self,context):
+def rotation_object_x_upd  (self, context):
     
     selected= bpy.context.selected_objects
     active= bpy.context.active_object
@@ -2427,10 +2044,10 @@ def rotation_object_x_upd  (self,context):
     for i in range (1,len(selected)):
         selected[i].rotation_euler[0] = selected[i-1].rotation_euler[0] + bpy.context.scene.Arc_Blend.rotation_object_x
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ROTATION OBJECT Y UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ROTATION OBJECT Y UPDATE--------------------------------------------
 
-def rotation_object_y_upd  (self,context):
+def rotation_object_y_upd  (self, context):
     
     selected= bpy.context.selected_objects
     active= bpy.context.active_object
@@ -2438,10 +2055,10 @@ def rotation_object_y_upd  (self,context):
     for i in range (1,len(selected)):
         selected[i].rotation_euler[1] = selected[i-1].rotation_euler[1]+ bpy.context.scene.Arc_Blend.rotation_object_y
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ROTATION OBJECT Z UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ROTATION OBJECT Z UPDATE--------------------------------------------
 
-def rotation_object_z_upd  (self,context):
+def rotation_object_z_upd  (self, context):
     
     selected= bpy.context.selected_objects
     active= bpy.context.active_object
@@ -2449,10 +2066,10 @@ def rotation_object_z_upd  (self,context):
     for i in range (1,len(selected)):
         selected[i].rotation_euler[2] = selected[i-1].rotation_euler[2]+ bpy.context.scene.Arc_Blend.rotation_object_z
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCALE OBJECT X UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCALE OBJECT X UPDATE--------------------------------------------
 
-def scale_object_x_upd  (self,context):
+def scale_object_x_upd  (self, context):
     
     selected= bpy.context.selected_objects
     active= bpy.context.active_object
@@ -2460,10 +2077,10 @@ def scale_object_x_upd  (self,context):
     for i in range (1,len(selected)):
         selected[i].scale[0] = selected[i-1].scale[0]+ bpy.context.scene.Arc_Blend.scale_object_x
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCALE OBJECT Y UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCALE OBJECT Y UPDATE--------------------------------------------
 
-def scale_object_y_upd  (self,context):
+def scale_object_y_upd  (self, context):
     
     selected= bpy.context.selected_objects
     active= bpy.context.active_object
@@ -2471,10 +2088,10 @@ def scale_object_y_upd  (self,context):
     for i in range (1,len(selected)):
         selected[i].scale[1] = selected[i-1].scale[1]+ bpy.context.scene.Arc_Blend.scale_object_y
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCALE OBJECT Z UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCALE OBJECT Z UPDATE--------------------------------------------
 
-def scale_object_z_upd  (self,context):
+def scale_object_z_upd  (self, context):
     
     selected= bpy.context.selected_objects
     active= bpy.context.active_object
@@ -2486,10 +2103,10 @@ def scale_object_z_upd  (self,context):
 
 
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DISTRIBUTE DISTANCE OBJECT X UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DISTRIBUTE DISTANCE OBJECT X UPDATE--------------------------------------------
 
-def distribute_distance_object_x_upd(self,context):
+def distribute_distance_object_x_upd(self, context):
     
     selected = bpy.context.selected_objects
     active = bpy.context.active_object
@@ -2517,10 +2134,10 @@ def distribute_distance_object_x_upd(self,context):
     except IndexError:
             pass
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DISTRIBUTE DISTANCE OBJECT Y UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DISTRIBUTE DISTANCE OBJECT Y UPDATE--------------------------------------------
 
-def distribute_distance_object_y_upd(self,context):
+def distribute_distance_object_y_upd(self, context):
     
     selected = bpy.context.selected_objects
     active = bpy.context.active_object
@@ -2555,10 +2172,10 @@ def distribute_distance_object_y_upd(self,context):
     except IndexError:
             pass  
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DISTRIBUTE DISTANCE OBJECT Z UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DISTRIBUTE DISTANCE OBJECT Z UPDATE--------------------------------------------
 
-def distribute_distance_object_z_upd(self,context):
+def distribute_distance_object_z_upd(self, context):
     
     selected = bpy.context.selected_objects
     active = bpy.context.active_object
@@ -2590,10 +2207,10 @@ def distribute_distance_object_z_upd(self,context):
 
 
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DISTRIBUTE OBJECT X UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DISTRIBUTE OBJECT X UPDATE--------------------------------------------
 
-def distribute_x_upd(self,context):
+def distribute_x_upd(self, context):
     
     selected = bpy.context.selected_objects
     active = bpy.context.active_object
@@ -2608,18 +2225,14 @@ def distribute_x_upd(self,context):
     bound_z = bpy.context.active_object.bound_box.data.dimensions[2]
     #Max distance of all elements
     #maximum_x = bound_x*quantity
-    
-    
-    
+
     distance_x = bpy.context.scene.Arc_Blend.distribute_distance_object_x
     distance_y = bpy.context.scene.Arc_Blend.distribute_distance_object_y
     #distance_z = bpy.context.scene.Arc_Blend.distribute_distance_object_z
-    
-    
+
     x_copy = distance_x
     y_copy = distance_y
     
- 
     
     try:
        
@@ -2645,10 +2258,10 @@ def distribute_x_upd(self,context):
     
 
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DISTRIBUTE OBJECT Y UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DISTRIBUTE OBJECT Y UPDATE--------------------------------------------
 
-def distribute_y_upd(self,context):
+def distribute_y_upd(self, context):
     
     selected = bpy.context.selected_objects
     active = bpy.context.active_object
@@ -2704,10 +2317,10 @@ def distribute_y_upd(self,context):
     
     
         
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DISTRIBUTE OBJECT Z UPDATE--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DISTRIBUTE OBJECT Z UPDATE--------------------------------------------
 
-def distribute_z_upd(self,context):
+def distribute_z_upd(self, context):
     
     selected = bpy.context.selected_objects
     active = bpy.context.active_object
@@ -2757,20 +2370,21 @@ def distribute_z_upd(self,context):
     except IndexError:
          pass  
     
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DEF TOGGLE X-RAY------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DEF TOGGLE X-RAY------------------------------------
 
-def toggle_xray_mode_upd(self,context):
+def toggle_xray_mode_upd(self, context):
 
       
       bpy.ops.view3d.toggle_xray()
          
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ARRAY CLASS PROPERTYGROUP------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ARRAY CLASS PROPERTYGROUP------------------------------------
+
 class modifier_array_detail (bpy.types.PropertyGroup):
     
-    #text_area: bpy.props.StringProperty(name="Text Area")  #Text Area
+    #text_area: bpy.props.StringProperty(name="Text Area")#Text Area
     
     fit_type_area: bpy.props.EnumProperty(
     name="Fit Type",
@@ -2871,11 +2485,11 @@ class modifier_array_detail (bpy.types.PropertyGroup):
     
     edges_strings: bpy.props.StringProperty(
     name="edges",
-    description="Enter All edges coordinates,if you want to blank, don't write anything")
+    description="Enter All edges coordinates, if you want to blank, don't write anything")
     
     faces_strings: bpy.props.StringProperty(
     name="faces",
-    description="Enter All faces coordinates,if you want to blank, don't write anything")
+    description="Enter All faces coordinates, if you want to blank, don't write anything")
     
     #----------Layer----------------------------------
     layer : bpy.props.IntProperty(
@@ -3003,38 +2617,39 @@ class modifier_array_detail (bpy.types.PropertyGroup):
     marks_edit_geometry: bpy.props.BoolProperty(name="Marks and Clears ", default=False,)
 
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------RELATIVE OFFSET----------------------------------------------    
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------RELATIVE OFFSET----------------------------------------------    
 
  
+
 class Relative_Offset (bpy.types.Panel):
-        bl_label= "Relative Offset"                                                                  #Panel's Name
-        bl_idname= "PT_Relative_Offset"                                                              #Panel's Type
-        bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-        bl_region_type= "UI"                                                                         #Region Type
-        bl_category= "Arc Blend"                                                                     #Add-on Name        
-        bl_parent_id= "PT_array_panel"                                                               #Parent ID
+        bl_label = "Relative Offset"
+        bl_idname = "PT_Relative_Offset"
+        bl_space_type = "VIEW_3D"
+        bl_region_type = "UI"
+        bl_category = "Arc Blend"
+        bl_parent_id = "PT_array_panel"#Parent ID
         
 
-        def draw(self,context):
-            layout=self.layout
-            obj=context.object
-            scene=context.scene
-            Arc_Blend=scene.Arc_Blend
+        def draw(self, context):
+            layout = self.layout
+            obj = context.object
+            scene = context.scene
+            Arc_Blend = scene.Arc_Blend
             
 
-            row=layout.row()
-            col=layout.column()
+            row = layout.row()
+            col = layout.column()
             box=layout.box()
             
             if bpy.context.selected_objects != []:
                 row.prop(Arc_Blend,"relative_offset_a")
                 row.prop(Arc_Blend,"relative_offset_b")
                 row.prop(Arc_Blend,"relative_offset_c")
-                row=layout.row()
+                row = layout.row()
                 
                 box.prop(Arc_Blend,"hide_unhide_Relative_Offset")
-                row=layout.row()
+                row = layout.row()
                 
                 box.prop(Arc_Blend,"hide_unhide_Relative_Offset_Y")
                 box.prop(Arc_Blend,"hide_unhide_Relative_Offset_Z")
@@ -3060,16 +2675,16 @@ class Relative_Offset (bpy.types.Panel):
             else:
                 pass
     
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ARRAY APPLY OPERATOR-----------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ARRAY APPLY OPERATOR-----------------------------------------
+
 class modifier_array_apply (bpy.types.Operator):
     """Apply to Object : Arrays"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modifier_array_apply"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modifier_array_apply"
 
-    def execute(self,context):
-          layout=self.layout
+    def execute(self, context):
+          layout = self.layout
           
           
                             
@@ -3096,17 +2711,17 @@ class modifier_array_apply (bpy.types.Operator):
           return {"FINISHED"}
 
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ARRAY EXECUTER OPERATOR-----------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ARRAY EXECUTER OPERATOR-----------------------------------------
+
 class modifier_array_detail_executer (bpy.types.Operator):
     """Add a procedural operation/effect to the active object: Array"""
-    bl_label= "OK"                                                         #Operator's Name
-    bl_idname= "object.button_modifier_array_detail_executer"                                                  #Operator's Type
-    
+    bl_label = "OK"
+    bl_idname = "object.button_modifier_array_detail_executer"
 
-    def execute(self,context):
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            if Arc_Blend.fit_type_area == "FIXED_COUNT":
@@ -3163,26 +2778,27 @@ class modifier_array_detail_executer (bpy.types.Operator):
            return {"FINISHED"}
     
     
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BEVEL PANEL---------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BEVEL PANEL---------------------------------------------------
+
 class bevel_panel (bpy.types.Panel):
-    bl_label= "Bevel"                                                                           #Panel's Name
-    bl_idname= "PT_bavel_panel"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_modify_panel"                                                            #Parent ID
+    bl_label = "Bevel"
+    bl_idname = "PT_bavel_panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_modify_panel"#Parent ID
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        scene=context.scene
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        scene = context.scene
         AB_Bevel=scene.AB_Bevel
                 
         
  
-        row=layout.row()
-        col=layout.column()
+        row = layout.row()
+        col = layout.column()
         
         if bpy.context.selected_objects != []:
         
@@ -3227,21 +2843,21 @@ class bevel_panel (bpy.types.Panel):
                 False
                 
                 
-            row=layout.row()
-            col=layout.column()
-            row=layout.row()
-            col=layout.column()
+            row = layout.row()
+            col = layout.column()
+            row = layout.row()
+            col = layout.column()
             col.label(text="------------------Result Tab--------------------")
-            row=layout.row()
+            row = layout.row()
                 
             
-            row.operator("object.button_modifier_bevel_v_button" ,text="Vertices")
-            row.operator("object.button_modifier_bevel_e_button" ,text="Edges")
-            row=layout.row()
+            row.operator("object.button_modifier_bevel_v_button",text="Vertices")
+            row.operator("object.button_modifier_bevel_e_button",text="Edges")
+            row = layout.row()
             
-            row.operator("object.button_modifier_bevel_button" ,icon="MOD_BEVEL")
-            row.operator("object.button_modifier_bevel_detail_executer" , text="Result")
-            row.operator("object.button_modifier_bevel_apply" ,icon="CHECKMARK")
+            row.operator("object.button_modifier_bevel_button", icon="MOD_BEVEL")
+            row.operator("object.button_modifier_bevel_detail_executer", text="Result")
+            row.operator("object.button_modifier_bevel_apply", icon="CHECKMARK")
         else:
             pass
 
@@ -3251,19 +2867,17 @@ class bevel_panel (bpy.types.Panel):
         
         
         
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BEVEL  BUTTON PANEL---------------------------------------------------
-
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BEVEL  BUTTON PANEL---------------------------------------------------
 
 class modifier_bevel_button (bpy.types.Operator):
     """Add a procedural operation/effect to the active object: Bevel"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modifier_bevel_button"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modifier_bevel_button"
 
-    def execute(self,context):
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            
@@ -3275,18 +2889,16 @@ class modifier_bevel_button (bpy.types.Operator):
            
            return {"FINISHED"}
        
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BEVEL VERTICES BUTTON PANEL-----------------------------------
-
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BEVEL VERTICES BUTTON PANEL-----------------------------------
 
 class modifier_bevel_v_button (bpy.types.Operator):
     """Affect edges or Vertices: Vertices"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modifier_bevel_v_button"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modifier_bevel_v_button"
 
-    def execute(self,context):
-           scene=context.scene
+    def execute(self, context):
+           scene = context.scene
            AB_Bevel=scene.AB_Bevel
            
            bpy.context.object.modifiers["Bevel"].affect = 'VERTICES'
@@ -3295,18 +2907,16 @@ class modifier_bevel_v_button (bpy.types.Operator):
 
            return {"FINISHED"}
        
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BEVEL EDGES BUTTON PANEL-----------------------------------
-
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BEVEL EDGES BUTTON PANEL-----------------------------------
 
 class modifier_bevel_e_button (bpy.types.Operator):
     """Affect edges or Vertices: Edges"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modifier_bevel_e_button"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modifier_bevel_e_button"
 
-    def execute(self,context):
-           scene=context.scene
+    def execute(self, context):
+           scene = context.scene
            object=context.object
            AB_Bevel=scene.AB_Bevel
            
@@ -3316,16 +2926,16 @@ class modifier_bevel_e_button (bpy.types.Operator):
 
            return {"FINISHED"}
  
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BEVEL APPLY OPERATOR-----------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BEVEL APPLY OPERATOR-----------------------------------------
+
 class modifier_bevel_apply (bpy.types.Operator):
     """Apply to Object : Bevels"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modifier_bevel_apply"                          #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modifier_bevel_apply"
 
-    def execute(self,context):
-          layout=self.layout
+    def execute(self, context):
+          layout = self.layout
           
                             
           try:
@@ -3354,12 +2964,13 @@ class modifier_bevel_apply (bpy.types.Operator):
  
        
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BEVEL PROPERTYGROUP------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BEVEL PROPERTYGROUP------------------------------------------
+
 class modifier_bevel_detail (bpy.types.PropertyGroup):
 
     
-    #text_area: bpy.props.StringProperty(name="Text Area")  #Text Area
+    #text_area: bpy.props.StringProperty(name="Text Area")#Text Area
     
     Width_Type_area: bpy.props.EnumProperty(
     name="Width Type: ",
@@ -3411,17 +3022,16 @@ class modifier_bevel_detail (bpy.types.PropertyGroup):
     
     
     
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BEVEL EXECUTER OPERATOR--------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BEVEL EXECUTER OPERATOR--------------------------------------
 
 class modifier_bevel_detail_executer (bpy.types.Operator):
     """See the Result. This button does not apply just sets the values and operations"""
-    bl_label= "Result"                                                         #Operator's Name
-    bl_idname= "object.button_modifier_bevel_detail_executer"                                                  #Operator's Type
-    
+    bl_label = "Result"
+    bl_idname = "object.button_modifier_bevel_detail_executer"
 
-    def execute(self,context):
-           scene=context.scene
+    def execute(self, context):
+           scene = context.scene
            AB_Bevel=scene.AB_Bevel
            
            if AB_Bevel.Width_Type_area == 'OFFSET':
@@ -3483,76 +3093,80 @@ class modifier_bevel_detail_executer (bpy.types.Operator):
                
 
            return {"FINISHED"}
-           
+   
 
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------GENERATE PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------GENERATE PANEL------------------------------------------------
+
 class generate_panel (bpy.types.Panel):
-    bl_label= "Generate"                                                                         #Panel's Name
-    bl_idname= "PT_generate_panel"                                                               #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_modifier_panel"                                                            #Parent ID
+    bl_label = "Generate"
+    bl_idname = "PT_generate_panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_modifier_panel"#Parent ID
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
         
 
-        row=layout.row()     
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DEFORM PANEL--------------------------------------------------
+        row = layout.row()
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DEFORM PANEL--------------------------------------------------
+
 class deform_panel (bpy.types.Panel):
-    bl_label= "Deform"                                                                           #Panel's Name
-    bl_idname= "PT_deform_panel"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_modifier_panel"                                                            #Parent ID
+    bl_label = "Deform"
+    bl_idname = "PT_deform_panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_modifier_panel"#Parent ID
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
         
 
-        row=layout.row()          
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------PHYSICS PANEL-------------------------------------------------
+        row = layout.row()
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------PHYSICS PANEL-------------------------------------------------
+
 class physics_panel (bpy.types.Panel):
-    bl_label= "Physics"                                                                          #Panel's Name
-    bl_idname= "PT_dphysics_panel"                                                               #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_modifier_panel"                                                            #Parent ID
+    bl_label = "Physics"
+    bl_idname = "PT_dphysics_panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_modifier_panel"#Parent ID
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
         
 
-        row=layout.row()               
+        row = layout.row()
         
         
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DISPLAY  PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DISPLAY  PANEL------------------------------------------------
+
 class display_panel (bpy.types.Panel):
-    bl_label= "Display Panel"                                                                    #Panel's Name
-    bl_idname= "PT_display_panel"                                                                #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_Transform"                                                                 #Parent ID
+    bl_label = "Display Panel"
+    bl_idname = "PT_display_panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Transform"#Parent ID
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
         space_data=context.space_data
         sdo=space_data.overlay
         
-        row=layout.row()
-        col=layout.column() 
+        row = layout.row()
+        col = layout.column()
         
         
         if  bpy.context.selected_objects!=[]:
@@ -3571,60 +3185,60 @@ class display_panel (bpy.types.Panel):
         col.prop(sdo,  "show_face_orientation")
         
         
-        row.operator("object.button_display_panel_show_xray",icon="XRAY")
-        row.operator("object.button_display_panel_show_wireframe" ,icon="SHADING_WIRE")
-        row.operator("object.button_display_panel_show_solid" ,icon="SHADING_SOLID")
-        row.operator("object.button_display_panel_show_material" ,icon="MATERIAL")
-        row.operator("object.button_display_panel_show_rendered" ,icon="SHADING_RENDERED")
+        row.operator("object.button_display_panel_show_xray", icon="XRAY")
+        row.operator("object.button_display_panel_show_wireframe", icon="SHADING_WIRE")
+        row.operator("object.button_display_panel_show_solid", icon="SHADING_SOLID")
+        row.operator("object.button_display_panel_show_material", icon="MATERIAL")
+        row.operator("object.button_display_panel_show_rendered", icon="SHADING_RENDERED")
         
-        row=layout.row()
+        row = layout.row()
         
         row.prop(sdo, "show_axis_x")
         row.prop(sdo, "show_axis_y")
         row.prop(sdo, "show_axis_z")
-        row=layout.row()
-        col=layout.column() 
+        row = layout.row()
+        col = layout.column()
         
         col.prop(sdo, "show_floor")
         
     
 
 
-        row=layout.row()                  
+        row = layout.row()
  
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SHOW X-RAY OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SHOW X-RAY OPERATOR-----------------------------------------------
+
 class display_panel_show_xray (bpy.types.Operator):
     """Show X-Ray"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_display_panel_show_xray"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_display_panel_show_xray"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            bpy.ops.view3d.toggle_xray()
            
            
            
              
-           return {"FINISHED"} 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SHOW WIREFRAME OPERATOR-----------------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SHOW WIREFRAME OPERATOR-----------------------------------------------
+
 class display_panel_show_wireframe (bpy.types.Operator):
     """Show Wireframe"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_display_panel_show_wireframe"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_display_panel_show_wireframe"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            bpy.context.space_data.shading.type = 'WIREFRAME'
 
@@ -3632,20 +3246,20 @@ class display_panel_show_wireframe (bpy.types.Operator):
            
            
              
-           return {"FINISHED"}         
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SOLID DISPLAY OPERATOR-----------------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SOLID DISPLAY OPERATOR-----------------------------------------------
+
 class display_panel_show_solid (bpy.types.Operator):
     """Show Solid Display"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_display_panel_show_solid"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_display_panel_show_solid"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            bpy.context.space_data.shading.type = 'SOLID'
 
@@ -3653,20 +3267,20 @@ class display_panel_show_solid (bpy.types.Operator):
            
            
              
-           return {"FINISHED"}                 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------MATERIAL DISPLAY OPERATOR-----------------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------MATERIAL DISPLAY OPERATOR-----------------------------------------------
+
 class display_panel_show_material (bpy.types.Operator):
     """Show Material Preview"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_display_panel_show_material"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_display_panel_show_material"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            bpy.context.space_data.shading.type = 'MATERIAL'
 
@@ -3676,19 +3290,19 @@ class display_panel_show_material (bpy.types.Operator):
              
            return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------RENDERED DISPLAY OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------RENDERED DISPLAY OPERATOR-----------------------------------------------
+
 class display_panel_show_rendered (bpy.types.Operator):
     """Show Rendered Preview"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_display_panel_show_rendered"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_display_panel_show_rendered"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            bpy.context.space_data.shading.type = 'RENDERED'
 
@@ -3696,40 +3310,41 @@ class display_panel_show_rendered (bpy.types.Operator):
            
            
              
-           return {"FINISHED"}                      
+           return {"FINISHED"}
+
         
-        
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------VERTEX EDİT PANEL----------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------VERTEX EDİT PANEL----------------------------------------
+
 class edit_mode_vertex (bpy.types.Panel):
-    bl_label= "Vertex Edit Panel"                                                                 #Panel's Name
-    bl_idname= "PT_Vertex_Edit"                                                                    #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
+    bl_label = "Vertex Edit Panel"
+    bl_idname = "PT_Vertex_Edit"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
                                                         
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
         
         
-        row=layout.row()
-        col=layout.column()
+        row = layout.row()
+        col = layout.column()
         
         
         col.operator("object.button_edit_mode_add_vertex", text="Add Single Vertex")
         col.label( text="Vertex Edit Panel")
-        row=layout.row()
-        col=layout.column()
+        row = layout.row()
+        col = layout.column()
         
         
         
-        row=layout.row()
-        row.operator("object.button_edit_mode_just_vertices" ,text="Just Vertices")
-        row.operator("object.button_edit_mode_just_edges"    , text="Just Edges")
-        row=layout.row()
-        row.operator("object.button_edit_mode_create_faces" ,text="Create Faces")
+        row = layout.row()
+        row.operator("object.button_edit_mode_just_vertices",text="Just Vertices")
+        row.operator("object.button_edit_mode_just_edges", text="Just Edges")
+        row = layout.row()
+        row.operator("object.button_edit_mode_create_faces",text="Create Faces")
         
         
         
@@ -3740,19 +3355,17 @@ class edit_mode_vertex (bpy.types.Panel):
         
         
         
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ADD SINGLE VERTEX OPERATOR-----------------------------------------
-class edit_mode_add_vertex (bpy.types.Operator):
-    """Add a Single Vertex in (0,0,0) location. And it creates 'AB_Vertex' to Scene Collection."""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_edit_mode_add_vertex"                          #Operator's Type
-    
-    
-    
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ADD SINGLE VERTEX OPERATOR-----------------------------------------
 
-    def execute(self,context):
-          layout=self.layout
-          scene=context.scene
+class edit_mode_add_vertex (bpy.types.Operator):
+    """Add a Single Vertex in (0,0,0)location. And it creates 'AB_Vertex' to Scene Collection."""
+    bl_label = ""
+    bl_idname = "object.button_edit_mode_add_vertex"
+
+    def execute(self, context):
+          layout = self.layout
+          scene = context.scene
           
 
           # make mesh
@@ -3777,18 +3390,16 @@ class edit_mode_add_vertex (bpy.types.Operator):
           
 
           return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BRIDGE VERTICES OPERATOR-----------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BRIDGE VERTICES OPERATOR-----------------------------------------
+
 class edit_mode_bridge_vertices (bpy.types.Operator):
     """Bridge selected Vertices..."""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_edit_mode_bridge_vertices"                          #Operator's Type
-    
-    
-    
+    bl_label = ""
+    bl_idname = "object.button_edit_mode_bridge_vertices"
 
-    def execute(self,context):
-           layout=self.layout
+    def execute(self, context):
+           layout = self.layout
            win      = bpy.context.window
            scr      = win.screen
            areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
@@ -3798,7 +3409,7 @@ class edit_mode_bridge_vertices (bpy.types.Operator):
             'area'  :areas3d[0],
             'region':region,
             'scene' :bpy.context.scene,
-            }       
+            }
             
            bpy.ops.object.mode_set(mode='EDIT', toggle=False)
            
@@ -3806,19 +3417,17 @@ class edit_mode_bridge_vertices (bpy.types.Operator):
 
 
   
-           return {"FINISHED"}   
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DELETE VERTICES OPERATOR-----------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DELETE VERTICES OPERATOR-----------------------------------------
+
 class edit_mode_delete_vertices (bpy.types.Operator):
     """Delete selected Vertices..."""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_edit_mode_delete_vertices"                          #Operator's Type
-    
-    
-    
+    bl_label = ""
+    bl_idname = "object.button_edit_mode_delete_vertices"
 
-    def execute(self,context):
-           layout=self.layout
+    def execute(self, context):
+           layout = self.layout
            win      = bpy.context.window
            scr      = win.screen
            areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
@@ -3828,7 +3437,7 @@ class edit_mode_delete_vertices (bpy.types.Operator):
             'area'  :areas3d[0],
             'region':region,
             'scene' :bpy.context.scene,
-            }     
+            }
               
            
            
@@ -3837,21 +3446,19 @@ class edit_mode_delete_vertices (bpy.types.Operator):
            bpy.ops.mesh.delete(type='VERT')
            
 
-           return {"FINISHED"}   
+           return {"FINISHED"}
        
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------JUST VERTICES OPERATOR-----------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------JUST VERTICES OPERATOR-----------------------------------------
+
 class edit_mode_just_vertices (bpy.types.Operator):
     """Leave the all Vertices to selected Object...(Removes all Edges and Faces leaves Vertices)"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_edit_mode_just_vertices"                          #Operator's Type
-    
-    
-    
+    bl_label = ""
+    bl_idname = "object.button_edit_mode_just_vertices"
 
-    def execute(self,context):
-           layout=self.layout
+    def execute(self, context):
+           layout = self.layout
            win      = bpy.context.window
            scr      = win.screen
            areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
@@ -3861,7 +3468,7 @@ class edit_mode_just_vertices (bpy.types.Operator):
             'area'  :areas3d[0],
             'region':region,
             'scene' :bpy.context.scene,
-            }       
+            }
             
            bpy.ops.object.mode_set(mode='EDIT', toggle=False)
            
@@ -3874,20 +3481,18 @@ class edit_mode_just_vertices (bpy.types.Operator):
 
 
   
-           return {"FINISHED"}   
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------JUST EDGES OPERATOR-----------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------JUST EDGES OPERATOR-----------------------------------------
+
 class edit_mode_just_edges (bpy.types.Operator):
     """Leave the all Edges to selected Object...(Removes all  Faces leaves Edges and Vertices)"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_edit_mode_just_edges"                          #Operator's Type
-    
-    
-    
+    bl_label = ""
+    bl_idname = "object.button_edit_mode_just_edges"
 
-    def execute(self,context):
-           layout=self.layout
+    def execute(self, context):
+           layout = self.layout
            win      = bpy.context.window
            scr      = win.screen
            areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
@@ -3897,7 +3502,7 @@ class edit_mode_just_edges (bpy.types.Operator):
             'area'  :areas3d[0],
             'region':region,
             'scene' :bpy.context.scene,
-            }       
+            }
             
            bpy.ops.object.mode_set(mode='EDIT', toggle=False)
            
@@ -3915,27 +3520,25 @@ class edit_mode_just_edges (bpy.types.Operator):
            
 
   
-           return {"FINISHED"}   
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DEF ORDER-----------------------------------------   
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DEF ORDER-----------------------------------------   
        
 #Weights for order. Left>>Right Down>>Up
 def order(vector):
     return vector[0]+200*vector[1]       
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------CREATE FACES OPERATOR-----------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------CREATE FACES OPERATOR-----------------------------------------
+
 class edit_mode_create_faces (bpy.types.Operator):
     """Create points to Faces... (Work in Progress...Don't use so much!!!)"""
-    bl_label= ""                                                               #Operator's Name
-    bl_idname= "object.button_edit_mode_create_faces"                          #Operator's Type
-    
-    
-    
+    bl_label = ""
+    bl_idname = "object.button_edit_mode_create_faces"
 
     def execute(self, context):
-           layout=self.layout
+           layout = self.layout
            scene=bpy.context.scene
            mesh_list=context.object.data.mesh_list
            index = context.object.data.list_index
@@ -3949,7 +3552,7 @@ class edit_mode_create_faces (bpy.types.Operator):
             'area'  :areas3d[0],
             'region':region,
             'scene' :bpy.context.scene,
-            }   
+            }
             
             
            
@@ -3974,10 +3577,10 @@ class edit_mode_create_faces (bpy.types.Operator):
            face_list=[]
            
            
-           points_of_object = [ob.matrix_parent_inverse @ Vector(points) for points in object_in_vertices_co]
+           points_of_object = [ob.matrix_parent_inverse @ Vector(points)for points in object_in_vertices_co]
            
            
-           #List of points' Vectors Coordinates every vectors append to "o" list
+           #List of points' Vectors Coordinates every vectors append to "o"list
            for i in object_in_vertices:
              object_in_vertices_co.append(i.co)
            
@@ -4000,7 +3603,7 @@ class edit_mode_create_faces (bpy.types.Operator):
            
            for j in range (1,points_count+1):
               
-                  z.append(j) 
+                  z.append(j)
                   
            #list 2 type edge       
            all_edges=list(zip(object_edges,z))
@@ -4066,15 +3669,15 @@ class edit_mode_create_faces (bpy.types.Operator):
            just_same_xyz=[]
            
            #Sphere formula is r is radius.
-           #distance_two_points =math.sqrt((ov[i][0] -ov[i-1][0]) ** 2 + (ov[i][1] - ov[i-1][1]) ** 2 + (ov[i][2] - ov[i-1][2]) ** 2) #distance points
+           #distance_two_points =math.sqrt((ov[i][0] -ov[i-1][0])** 2 + (ov[i][1] - ov[i-1][1])** 2 + (ov[i][2] - ov[i-1][2])** 2)#distance points
            
-           #Let's Create Sphere formula  "r" is radius. And focus is (0,0,0) Origin and find all points.
+           #Let's Create Sphere formula  "r"is radius. And focus is (0,0,0)Origin and find all points.
            # ov[i][0]= X Coordinates and x on the surface points coordinate and x0 is origin x values =0,
            # ov[i][1]= Y Coordinates and y on the surface points coordinate and y0 is origin y values =0,
            # ov[i][2]= Z Coordinates and z on the surface points coordinate and z0 is origin z values =0
            # Sphere formula is r**2 = (x-xo)**2 + (y-y0)**2 + (z-z0)**2
            
-           #Sphere_r= math.sqrt((ov[0][0]-0)**2 + (ov[0][1]-0)**2 + (ov[0][2]-0)**2) # Our r radius formula
+           #Sphere_r= math.sqrt((ov[0][0]-0)**2 + (ov[0][1]-0)**2 + (ov[0][2]-0)**2)# Our r radius formula
            
           
                  
@@ -4158,13 +3761,13 @@ class edit_mode_create_faces (bpy.types.Operator):
                 same_xy_level.append([])
                 
            for p in range(len(just_same_xz_values)):
-                same_xz_level.append([])   
+                same_xz_level.append([])
                 
            for p in range(len(just_same_yz_values)):
-                same_yz_level.append([])     
+                same_yz_level.append([])
                 
            for p in range(len(just_same_xyz_values)):
-                same_xyz_level.append([])        
+                same_xyz_level.append([])
            
            
            
@@ -4199,11 +3802,11 @@ class edit_mode_create_faces (bpy.types.Operator):
                     
             for yz in range(len(just_same_yz_values)):
                 if distance_y == just_same_yz_values[yz] or distance_z==just_same_yz_values[yz]:
-                    same_yz_level[yz].append(i)        
+                    same_yz_level[yz].append(i)
                     
             for xyz in range(len(just_same_xyz_values)):
                 if distance_x == just_same_xyz_values[xyz] and distance_y==just_same_xyz_values[xyz] and distance_z==just_same_xyz_values[xyz]:
-                    same_xyz_level[xyz].append(i)           
+                    same_xyz_level[xyz].append(i)
                     
                     
              
@@ -4213,31 +3816,31 @@ class edit_mode_create_faces (bpy.types.Operator):
            
            obj = bpy.context.active_object
            for n in range(len(same_z_level)):
-            bpy.ops.object.mode_set(mode = 'EDIT') 
+            bpy.ops.object.mode_set(mode = 'EDIT')
             bpy.ops.mesh.select_mode(type="VERT")
             bpy.ops.mesh.select_all(action = 'DESELECT')
-            bpy.ops.object.mode_set(mode = 'OBJECT')    
+            bpy.ops.object.mode_set(mode = 'OBJECT')
             for m in same_z_level[n]:
                try:
                    obj.data.vertices[m].select = True
                except IndexError:
                    pass
-            bpy.ops.object.mode_set(mode = 'EDIT') 
-            bpy.ops.mesh.edge_face_add() 
+            bpy.ops.object.mode_set(mode = 'EDIT')
+            bpy.ops.mesh.edge_face_add()
             bpy.ops.object.editmode_toggle()
             
             
            #Select every level and create faces "This will work rectangeler elements..."
            obj = bpy.context.active_object
-           bpy.ops.object.mode_set(mode = 'EDIT') 
+           bpy.ops.object.mode_set(mode = 'EDIT')
            bpy.ops.mesh.select_mode(type="VERT")
            bpy.ops.mesh.select_all(action = 'DESELECT')
-           bpy.ops.object.mode_set(mode = 'OBJECT')  
+           bpy.ops.object.mode_set(mode = 'OBJECT')
            for p in range(1,len(obj.data.polygons)):
                obj.data.polygons[p-1].select = True
                obj.data.polygons[p].select = True
            bpy.ops.object.mode_set(mode = 'EDIT')
-           bpy.ops.mesh.bridge_edge_loops()    
+           bpy.ops.mesh.bridge_edge_loops()
            bpy.ops.object.editmode_toggle()
           
            
@@ -4247,83 +3850,83 @@ class edit_mode_create_faces (bpy.types.Operator):
            #All same y values are faced
            #obj = bpy.context.active_object
            #for yyy in range(len(same_y_level)):
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
+            #bpy.ops.object.mode_set(mode = 'EDIT')
             #bpy.ops.mesh.select_mode(type="VERT")
-            #bpy.ops.mesh.select_all(action = 'DESELECT') 
-            #bpy.ops.object.mode_set(mode = 'OBJECT')  
+            #bpy.ops.mesh.select_all(action = 'DESELECT')
+            #bpy.ops.object.mode_set(mode = 'OBJECT')
             #for y0 in same_y_level[yyy]:
              #    obj.data.vertices[y0].select = True
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
-            #bpy.ops.mesh.edge_face_add() 
+            #bpy.ops.object.mode_set(mode = 'EDIT')
+            #bpy.ops.mesh.edge_face_add()
             #bpy.ops.object.editmode_toggle()
            
            
            #All same x values are faced
            #obj = bpy.context.active_object
            #for xxx in range(len(same_x_level)):
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
+            #bpy.ops.object.mode_set(mode = 'EDIT')
             #bpy.ops.mesh.select_mode(type="VERT")
             #bpy.ops.mesh.select_all(action = 'DESELECT')
-            #bpy.ops.object.mode_set(mode = 'OBJECT')   
+            #bpy.ops.object.mode_set(mode = 'OBJECT')
             #for x0 in same_x_level[xxx]:
              #    obj.data.vertices[x0].select = True
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
-            #bpy.ops.mesh.edge_face_add() 
+            #bpy.ops.object.mode_set(mode = 'EDIT')
+            #bpy.ops.mesh.edge_face_add()
             #bpy.ops.object.editmode_toggle()
             
            
            #All same xy values are faced
            #obj = bpy.context.active_object
            #for xy in range(len(same_xy_level)):
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
+            #bpy.ops.object.mode_set(mode = 'EDIT')
             #bpy.ops.mesh.select_mode(type="VERT")
             #bpy.ops.mesh.select_all(action = 'DESELECT')
-            #bpy.ops.object.mode_set(mode = 'OBJECT')   
+            #bpy.ops.object.mode_set(mode = 'OBJECT')
             #for xyxt in same_xy_level[xy]:
             #     obj.data.vertices[xyxt].select = True
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
-            #bpy.ops.mesh.edge_face_add() 
+            #bpy.ops.object.mode_set(mode = 'EDIT')
+            #bpy.ops.mesh.edge_face_add()
             #bpy.ops.object.editmode_toggle()
            
            
            #All same xz values are faced
            #obj = bpy.context.active_object
            #for xz in range(len(same_xz_level)):
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
+            #bpy.ops.object.mode_set(mode = 'EDIT')
             #bpy.ops.mesh.select_mode(type="VERT")
             #bpy.ops.mesh.select_all(action = 'DESELECT')
-            #bpy.ops.object.mode_set(mode = 'OBJECT')   
+            #bpy.ops.object.mode_set(mode = 'OBJECT')
             #for xyxz in same_xz_level[xz]:
              #    obj.data.vertices[xyxz].select = True
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
-            #bpy.ops.mesh.edge_face_add() 
-            #bpy.ops.object.editmode_toggle()    
+            #bpy.ops.object.mode_set(mode = 'EDIT')
+            #bpy.ops.mesh.edge_face_add()
+            #bpy.ops.object.editmode_toggle()
                
            #All same yz values are faced
            #obj = bpy.context.active_object
            #for yz in range(len(same_yz_level)):
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
+            #bpy.ops.object.mode_set(mode = 'EDIT')
             #bpy.ops.mesh.select_mode(type="VERT")
             #bpy.ops.mesh.select_all(action = 'DESELECT')
-            #bpy.ops.object.mode_set(mode = 'OBJECT')   
+            #bpy.ops.object.mode_set(mode = 'OBJECT')
             #for xyyz in same_yz_level[yz]:
              #   obj.data.vertices[xyyz].select = True
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
-            #bpy.ops.mesh.edge_face_add() 
-            #bpy.ops.object.editmode_toggle()         
+            #bpy.ops.object.mode_set(mode = 'EDIT')
+            #bpy.ops.mesh.edge_face_add()
+            #bpy.ops.object.editmode_toggle()
             
            #All same xyz values are faced
            #obj = bpy.context.active_object
            #for xyz in range(len(same_xyz_level)):
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
+            #bpy.ops.object.mode_set(mode = 'EDIT')
             #bpy.ops.mesh.select_mode(type="VERT")
             #bpy.ops.mesh.select_all(action = 'DESELECT')
-            #bpy.ops.object.mode_set(mode = 'OBJECT')   
+            #bpy.ops.object.mode_set(mode = 'OBJECT')
             #for xyxyz in same_xyz_level[xyz]:
              #    obj.data.vertices[xyxyz].select = True
-            #bpy.ops.object.mode_set(mode = 'EDIT') 
-            #bpy.ops.mesh.edge_face_add() 
-            #bpy.ops.object.editmode_toggle()  
+            #bpy.ops.object.mode_set(mode = 'EDIT')
+            #bpy.ops.mesh.edge_face_add()
+            #bpy.ops.object.editmode_toggle()
                   
                   
                   
@@ -4331,13 +3934,13 @@ class edit_mode_create_faces (bpy.types.Operator):
             #if distance_two_points <= i:
                    
                     #obj = bpy.context.active_object
-                    #bpy.ops.object.mode_set(mode = 'EDIT') 
+                    #bpy.ops.object.mode_set(mode = 'EDIT')
                     #bpy.ops.mesh.select_mode(type="VERT")
                     #bpy.ops.mesh.select_all(action = 'DESELECT')
                     #bpy.ops.object.mode_set(mode = 'OBJECT')
                     #obj.data.vertices[i].select = True
                     #obj.data.vertices[i-1].select = True
-                    #bpy.ops.object.mode_set(mode = 'EDIT') 
+                    #bpy.ops.object.mode_set(mode = 'EDIT')
                     #bpy.ops.mesh.edge_face_add()
                     #bpy.ops.object.editmode_toggle()
           
@@ -4347,13 +3950,13 @@ class edit_mode_create_faces (bpy.types.Operator):
              
             #if ov[i][0] == ov[i-1][0] :
                     #obj = bpy.context.active_object
-                    #bpy.ops.object.mode_set(mode = 'EDIT') 
+                    #bpy.ops.object.mode_set(mode = 'EDIT')
                     #bpy.ops.mesh.select_mode(type="VERT")
                     #bpy.ops.mesh.select_all(action = 'DESELECT')
                     #bpy.ops.object.mode_set(mode = 'OBJECT')
                     #obj.data.vertices[i].select = True
                     #obj.data.vertices[i-1].select = True
-                    #bpy.ops.object.mode_set(mode = 'EDIT') 
+                    #bpy.ops.object.mode_set(mode = 'EDIT')
                     #bpy.ops.mesh.edge_face_add()
                     #bpy.ops.object.editmode_toggle()
                 
@@ -4361,13 +3964,13 @@ class edit_mode_create_faces (bpy.types.Operator):
              
             #elif ov[i][1] == ov[i-1][1]:
                     #obj = bpy.context.active_object
-                    #bpy.ops.object.mode_set(mode = 'EDIT') 
+                    #bpy.ops.object.mode_set(mode = 'EDIT')
                     #bpy.ops.mesh.select_mode(type="VERT")
                     #bpy.ops.mesh.select_all(action = 'DESELECT')
                     #bpy.ops.object.mode_set(mode = 'OBJECT')
                     #obj.data.vertices[i].select = True
                     #obj.data.vertices[i-1].select = True
-                    #bpy.ops.object.mode_set(mode = 'EDIT') 
+                    #bpy.ops.object.mode_set(mode = 'EDIT')
                     #bpy.ops.mesh.edge_face_add()
                     #bpy.ops.object.editmode_toggle()
                 
@@ -4375,13 +3978,13 @@ class edit_mode_create_faces (bpy.types.Operator):
                     
             #elif ov[i][2] == ov[i-1][2]:
                     #obj = bpy.context.active_object
-                    #bpy.ops.object.mode_set(mode = 'EDIT') 
+                    #bpy.ops.object.mode_set(mode = 'EDIT')
                     #bpy.ops.mesh.select_mode(type="VERT")
                     #bpy.ops.mesh.select_all(action = 'DESELECT')
                     #bpy.ops.object.mode_set(mode = 'OBJECT')
                     #obj.data.vertices[i].select = True
                     #obj.data.vertices[i-1].select = True
-                    #bpy.ops.object.mode_set(mode = 'EDIT') 
+                    #bpy.ops.object.mode_set(mode = 'EDIT')
                     #bpy.ops.mesh.edge_face_add()
                     #bpy.ops.object.editmode_toggle()
                 
@@ -4406,22 +4009,23 @@ class edit_mode_create_faces (bpy.types.Operator):
  
        
        
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------THEMES PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------THEMES PANEL------------------------------------------------
+
 class Themes_Panel (bpy.types.Panel):
-    bl_label= "AB Themes"                                                                           #Panel's Name
-    bl_idname= "PT_Themes_Panel"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
+    bl_label = "AB Themes"
+    bl_idname = "PT_Themes_Panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
                                                   
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
    
-        row=layout.row()
-        col=layout.column()
+        row = layout.row()
+        col = layout.column()
         
         
         
@@ -4431,18 +4035,16 @@ class Themes_Panel (bpy.types.Panel):
         
         
         
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DARK THEME-----------------------------------------
-class themes_panel_mak (bpy.types.Operator):
-    """Dark Theme.Background "Black" Shows color object."""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_themes_panel_mak"                          #Operator's Type
-    
-    
-    
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DARK THEME-----------------------------------------
 
-    def execute(self,context):
-           layout=self.layout
+class themes_panel_mak (bpy.types.Operator):
+    """Dark Theme.Background "Black"Shows color object."""
+    bl_label = ""
+    bl_idname = "object.button_themes_panel_mak"
+
+    def execute(self, context):
+           layout = self.layout
            
            
            bpy.context.space_data.shading.background_type = 'VIEWPORT'
@@ -4460,19 +4062,17 @@ class themes_panel_mak (bpy.types.Operator):
 
 
 
-           return {"FINISHED"}   
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------WHITE CHALK THEME-----------------------------------------------
-class themes_panel_white_chalk (bpy.types.Operator):
-    """White Chalk Theme.Background "White" Shows white color object."""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_themes_panel_white_chalk"                          #Operator's Type
-    
-    
-    
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------WHITE CHALK THEME-----------------------------------------------
 
-    def execute(self,context):
-           layout=self.layout
+class themes_panel_white_chalk (bpy.types.Operator):
+    """White Chalk Theme.Background "White"Shows white color object."""
+    bl_label = ""
+    bl_idname = "object.button_themes_panel_white_chalk"
+
+    def execute(self, context):
+           layout = self.layout
            
            
            bpy.context.space_data.shading.background_type = 'VIEWPORT'
@@ -4492,20 +4092,18 @@ class themes_panel_white_chalk (bpy.types.Operator):
 
 
 
-           return {"FINISHED"}   
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------RESET THEME-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------RESET THEME-----------------------------------------------
+
 class themes_panel_reset (bpy.types.Operator):
     """Reset Theme.(This theme sets the originals)"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_themes_panel_reset"                          #Operator's Type
-    
-    
-    
+    bl_label = ""
+    bl_idname = "object.button_themes_panel_reset"
 
-    def execute(self,context):
-           layout=self.layout
+    def execute(self, context):
+           layout = self.layout
            
            bpy.context.space_data.shading.light = 'STUDIO'
            bpy.context.space_data.shading.studio_light = 'Default'
@@ -4574,23 +4172,24 @@ class themes_panel_reset (bpy.types.Operator):
 
            return {"FINISHED"}
        
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------MODELLING PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------MODELLING PANEL------------------------------------------------
+
 class Modelling_Panel (bpy.types.Panel):
-    bl_label= "AB Modelling"                                                                           #Panel's Name
-    bl_idname= "PT_Modelling_Panel"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
+    bl_label = "AB Modelling"
+    bl_idname = "PT_Modelling_Panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
                                                   
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        scene=context.scene
-        Arc_Blend=scene.Arc_Blend
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        scene = context.scene
+        Arc_Blend = scene.Arc_Blend
         
-        col=layout.column()
+        col = layout.column()
         
         col.prop(Arc_Blend,"modelling_edit_mode", text="Edit Mode", icon="EDITMODE_HLT")
         col=layout.column(align=False)
@@ -4602,67 +4201,68 @@ class Modelling_Panel (bpy.types.Panel):
         row1.template_header_3D_mode()
         if bpy.context.scene.Arc_Blend.modelling_edit_mode == True:
            
-           row1.prop(Arc_Blend,"toggle_xray_mode", text="",icon='XRAY')
+           row1.prop(Arc_Blend,"toggle_xray_mode", text="", icon='XRAY')
            row1.prop(context.tool_settings, "use_mesh_automerge", text="")
             
            row1.scale_x= 2
            row1.scale_y= 2   
       
         
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------VERTEX SELECTION PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------VERTEX SELECTION PANEL------------------------------------------------
+
 class Modelling_Panel_Vertex_Selection (bpy.types.Panel):
-    bl_label= ""                                                                           #Panel's Name
-    bl_idname= "Vertex_Selection"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_Modelling_Panel"    
+    bl_label = ""
+    bl_idname = "Vertex_Selection"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Modelling_Panel"
     
     
     def draw_header(self, context):
         
        layout = self.layout
             
-       layout.label(text="Vertex Modify Selection", icon="VERTEXSEL")   
+       layout.label(text="Vertex Modify Selection", icon="VERTEXSEL")
         
 
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        scene=context.scene
-        Arc_Blend=scene.Arc_Blend
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        scene = context.scene
+        Arc_Blend = scene.Arc_Blend
         
    
-        #row=layout.row()
+        #row = layout.row()
         
         
         try:
-          if bpy.context.tool_settings.mesh_select_mode[0] and bpy.context.active_object.mode=="EDIT" :
+          if bpy.context.tool_settings.mesh_select_mode[0] and bpy.context.active_object.mode=="EDIT":
              row=layout.row(align=True)
-             row.operator("object.button_edit_mode_bridge_vertices" ,text="New Edge/Face From Vertices", icon="MATPLANE")
+             row.operator("object.button_edit_mode_bridge_vertices",text="New Edge/Face From Vertices", icon="MATPLANE")
              row.operator("object.button_edit_mode_delete_vertices", text="Delete Vertices", icon="PANEL_CLOSE")
              
              row=layout.row(align=True)
-             row.operator("object.button_vertex_selection_rip_vertex", text="Vertex RIP (FAST)" ,icon="STICKY_UVS_VERT")
-             row.operator("object.button_vertex_selection_merge_vertex_last", text="Vertex Merge (LAST)" ,icon="PIVOT_CURSOR")
+             row.operator("object.button_vertex_selection_rip_vertex", text="Vertex RIP (FAST)", icon="STICKY_UVS_VERT")
+             row.operator("object.button_vertex_selection_merge_vertex_last", text="Vertex Merge (LAST)", icon="PIVOT_CURSOR")
              
              row=layout.row(align=True)
-             row.operator("MESH_OT_remove_doubles", text="Vertex Merge (DISTANCE)" ,icon="CENTER_ONLY")
+             row.operator("MESH_OT_remove_doubles", text="Vertex Merge (DISTANCE)", icon="CENTER_ONLY")
              row.operator("object.button_vertex_selection_dissolve_vertex", text="Dissolve Vertex", icon="SHADERFX")
              
              row=layout.row(align=True)
              row.operator("object.button_loop_mesh_shortest_path_pick", text="Shortest Path Select", icon="PARTICLE_POINT")
-             row.operator("object.button_vertex_selection_connect_vertex_path", text="Connect Vertex Path" ,icon="MOD_LENGTH")
+             row.operator("object.button_vertex_selection_connect_vertex_path", text="Connect Vertex Path", icon="MOD_LENGTH")
              
              row=layout.row(align=True)
-             row.operator("object.button_vertex_selection_create_vertices", text="Create Vertices" ,icon="NORMALS_VERTEX")
-             row.operator("object.button_vertex_selection_assign_vertex_group", text="Assign Vertex Group" ,icon="GROUP_VERTEX")
+             row.operator("object.button_vertex_selection_create_vertices", text="Create Vertices", icon="NORMALS_VERTEX")
+             row.operator("object.button_vertex_selection_assign_vertex_group", text="Assign Vertex Group", icon="GROUP_VERTEX")
              row=layout.row(align=True)
-             row.operator("mesh.vertices_smooth", text="Smooth Vertices",icon="IPO_EASE_IN").factor = 0.5
+             row.operator("mesh.vertices_smooth", text="Smooth Vertices", icon="IPO_EASE_IN").factor = 0.5
              row.operator("mesh.select_axis", text="Side of Active", icon="UV_ISLANDSEL")
              row=layout.row(align=True)
-             row.operator("transform.vert_slide"  , text="Vertex Slide", icon="TRACKING")
+             row.operator("transform.vert_slide", text="Vertex Slide", icon="TRACKING")
              #row.operator("object.button_vertex_selection_make_circle", text="Make Circle", icon="MESH_CIRCLE")
              
              
@@ -4672,19 +4272,19 @@ class Modelling_Panel_Vertex_Selection (bpy.types.Panel):
         except AttributeError:
              pass
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------RIP VERTEX OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------RIP VERTEX OPERATOR-----------------------------------------------
+
 class vertex_selection_make_circle (bpy.types.Operator):
     """Selected Vertices to make a circle"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_vertex_selection_make_circle"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_vertex_selection_make_circle"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            mesh= bpy.context.object.data
            
@@ -4693,7 +4293,7 @@ class vertex_selection_make_circle (bpy.types.Operator):
            cord_verts=[]
            
            for i in selected_verts:
-            cord_verts.append([i.co[0],i.co[1],i.index])
+            cord_verts.append([i.co[0], i.co[1], i.index])
            
            length_list_cord= len(cord_verts)
            
@@ -4707,19 +4307,19 @@ class vertex_selection_make_circle (bpy.types.Operator):
                x = cord_verts[a][0]
                y = cord_verts[a][1]
                
-               g = math.sqrt(abs(x-l_x)) + math.sqrt(abs(y-l_y))
+               g = math.sqrt(abs(x-l_x))+ math.sqrt(abs(y-l_y))
                
                dimensions.append(g)
                
             
-           for b in range(0,len(dimensions)) :
+           for b in range(0,len(dimensions)):
                 d=1
                 k=[0,0]
                 l_x=k[0]
                 l_y=k[1]
                 x = 0
                 y = 0
-                math.sqrt(abs(x-l_x))+ math.sqrt(abs(y-l_y)) == 1
+                math.sqrt(abs(x-l_x))+ math.sqrt(abs(y-l_y))== 1
                 
                
            
@@ -4728,41 +4328,41 @@ class vertex_selection_make_circle (bpy.types.Operator):
            
            
              
-           return {"FINISHED"}       
+           return {"FINISHED"}
    
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------RIP VERTEX OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------RIP VERTEX OPERATOR-----------------------------------------------
+
 class vertex_selection_rip_vertex (bpy.types.Operator):
     """Rip polygons and move the result"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_vertex_selection_rip_vertex"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_vertex_selection_rip_vertex"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            if bpy.context.active_object.mode=="EDIT":
             bpy.ops.mesh.rip('INVOKE_DEFAULT')
            
            #bpy.ops.mesh.merge(type='LAST')
              
-           return {"FINISHED"}          
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------MERGE VERTEX OPERATOR-----------------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------MERGE VERTEX OPERATOR-----------------------------------------------
+
 class vertex_selection_merge_vertex_last (bpy.types.Operator):
     """Merge Selected Vertices"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_vertex_selection_merge_vertex_last"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_vertex_selection_merge_vertex_last"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            if bpy.context.active_object.mode=="EDIT":
              try:   
@@ -4770,41 +4370,41 @@ class vertex_selection_merge_vertex_last (bpy.types.Operator):
              except TypeError:
                  pass
              
-           return {"FINISHED"}  
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DISSOLVE VERTEX OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DISSOLVE VERTEX OPERATOR-----------------------------------------------
+
 class vertex_selection_dissolve_vertex (bpy.types.Operator):
     """Dissolve Vertices"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_vertex_selection_dissolve_vertex"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_vertex_selection_dissolve_vertex"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            if bpy.context.active_object.mode=="EDIT": 
                
               bpy.ops.mesh.dissolve_verts()
               
-           return {"FINISHED"}      
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------CONNECT VERTICES AS PATH OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------CONNECT VERTICES AS PATH OPERATOR-----------------------------------------------
+
 class vertex_selection_connect_vertex_path (bpy.types.Operator):
     """Connect vertices as path select minimum 2 vertices and try"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_vertex_selection_connect_vertex_path"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_vertex_selection_connect_vertex_path"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            if bpy.context.active_object.mode=="EDIT": 
               try :   
@@ -4815,39 +4415,39 @@ class vertex_selection_connect_vertex_path (bpy.types.Operator):
               
            return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------CREATE VERTICES OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------CREATE VERTICES OPERATOR-----------------------------------------------
+
 class vertex_selection_create_vertices (bpy.types.Operator):
     """Creates vertices on edges"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_vertex_selection_create_vertices"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_vertex_selection_create_vertices"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            if bpy.context.active_object.mode=="EDIT": 
                
-            bpy.ops.mesh.knife_tool('INVOKE_DEFAULT', use_occlude_geometry=True,  only_selected=False, wait_for_input=True) #
+            bpy.ops.mesh.knife_tool('INVOKE_DEFAULT', use_occlude_geometry=True,  only_selected=False, wait_for_input=True)#
   
               
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ASIGN VERTEX GROUP OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ASIGN VERTEX GROUP OPERATOR-----------------------------------------------
+
 class vertex_selection_assign_vertex_group (bpy.types.Operator):
     """Assign the selected vertices to a new vertex group"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_vertex_selection_assign_vertex_group"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_vertex_selection_assign_vertex_group"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            if bpy.context.active_object.mode=="EDIT": 
                
@@ -4857,29 +4457,30 @@ class vertex_selection_assign_vertex_group (bpy.types.Operator):
 
        
        
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------VERTEX GROUP PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------VERTEX GROUP PANEL------------------------------------------------
+
 class Modelling_Panel_Vertex_Group_Panel (bpy.types.Panel):
-    bl_label= ""                                                                           #Panel's Name
-    bl_idname= "Vertex_Groups"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "Vertex_Selection"    
+    bl_label = ""
+    bl_idname = "Vertex_Groups"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "Vertex_Selection"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     
     def draw_header(self, context):
         
        layout = self.layout
             
-       layout.label(text="Vertex Groups", icon="GROUP_VERTEX")   
+       layout.label(text="Vertex Groups", icon="GROUP_VERTEX")
         
       
     @classmethod
     def poll(cls, context):
         engine = context.engine
         obj = context.object
-        return (obj and obj.type in {'MESH', 'LATTICE'} and (engine in cls.COMPAT_ENGINES))
+        return (obj and obj.type in {'MESH', 'LATTICE'}and (engine in cls.COMPAT_ENGINES))
 
     def draw(self, context):
         layout = self.layout
@@ -4926,57 +4527,58 @@ class Modelling_Panel_Vertex_Group_Panel (bpy.types.Panel):
 
             layout.prop(context.tool_settings, "vertex_group_weight", text="Weight")
             
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------MODIFY SELECTION PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------MODIFY SELECTION PANEL------------------------------------------------
+
 class Modelling_Panel_Modify_Selection (bpy.types.Panel):
-    bl_label= ""                                                                           #Panel's Name
-    bl_idname= "Modify_Selection"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_Modelling_Panel"    
+    bl_label = ""
+    bl_idname = "Modify_Selection"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Modelling_Panel"
     
     
     def draw_header(self, context):
         
        layout = self.layout
             
-       layout.label(text="Edge Modify Selection", icon="EDGESEL")   
+       layout.label(text="Edge Modify Selection", icon="EDGESEL")
         
         
                                        
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        scene=context.scene
-        Arc_Blend=scene.Arc_Blend
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        scene = context.scene
+        Arc_Blend = scene.Arc_Blend
         
    
-        #row=layout.row()
+        #row = layout.row()
         
         
         try:
-          if bpy.context.tool_settings.mesh_select_mode[1] and bpy.context.active_object.mode=="EDIT":#bpy.context.active_object.mode=="EDIT" :
+          if bpy.context.tool_settings.mesh_select_mode[1] and bpy.context.active_object.mode=="EDIT":#bpy.context.active_object.mode=="EDIT":
              row=layout.row(align=True)
-             row.operator("object.button_loop_multiple_select", text="Edge Loop" ,icon="PAUSE")
-             row.operator("object.button_loop_multiple_select_ring" , text="Ring Loop", icon="SNAP_EDGE")
+             row.operator("object.button_loop_multiple_select", text="Edge Loop", icon="PAUSE")
+             row.operator("object.button_loop_multiple_select_ring", text="Ring Loop", icon="SNAP_EDGE")
              row=layout.row(align=True)
              row.operator("object.button_modelling_edit_rotate_edges", text="Rotate (CW)", icon="LOOP_FORWARDS")
              row.operator("mesh.edge_rotate", text="Rotate (CCW)", icon="LOOP_BACK").use_ccw = True
              row=layout.row(align=True)
-             row.operator("transform.edge_slide"  , text="Edge Slide",icon="SNAP_MIDPOINT")
-             props = row.operator("mesh.loopcut_slide" ,icon="PARTICLE_POINT")
+             row.operator("transform.edge_slide", text="Edge Slide", icon="SNAP_MIDPOINT")
+             props = row.operator("mesh.loopcut_slide", icon="PARTICLE_POINT")
              props.TRANSFORM_OT_edge_slide.release_confirm = False
-             row.operator("mesh.offset_edge_loops_slide" , text="Offset Edge Slide", icon="PARTICLE_TIP")
+             row.operator("mesh.offset_edge_loops_slide", text="Offset Edge Slide", icon="PARTICLE_TIP")
              row3=layout.row(align=True)
              row3.operator("object.button_loop_select", text="Loop to Region", icon="HAND")
              row3.operator("object.button_loop_select_boundry_faces", text="Outline", icon="PIVOT_BOUNDBOX")
              row=layout.row(align=True)
-             row.operator("mesh.screw" , text="Screw", icon="MOD_SCREW")
-             row.operator("object.button_modelling_edit_edges_extrude"  , text="Extrude",icon="FULLSCREEN_ENTER")
+             row.operator("mesh.screw", text="Screw", icon="MOD_SCREW")
+             row.operator("object.button_modelling_edit_edges_extrude", text="Extrude", icon="FULLSCREEN_ENTER")
              row=layout.row(align=True)
-             row.operator("object.button_modelling_edit_edges_collapse"  , text="Collapse Edges",icon="FULLSCREEN_EXIT")
+             row.operator("object.button_modelling_edit_edges_collapse", text="Collapse Edges", icon="FULLSCREEN_EXIT")
              row.operator("mesh.bridge_edge_loops", text="Bridge Edge Loops", icon="COLLAPSEMENU")
              
              
@@ -4990,85 +4592,86 @@ class Modelling_Panel_Modify_Selection (bpy.types.Panel):
              pass
         
  
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------GROW EDGE LOOP OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------GROW EDGE LOOP OPERATOR-----------------------------------------------
+
 class loop_grow_edge_select (bpy.types.Operator):
     """Expands the sub-object selection area outward in all available directions"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_loop_grow_edge_select"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_loop_grow_edge_select"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
    
            
            bpy.ops.mesh.select_more()
            
              
-           return {"FINISHED"}  
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SHRINK EDGE LOOP OPERATOR-----------------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SHRINK EDGE LOOP OPERATOR-----------------------------------------------
+
 class loop_shrink_edge_select (bpy.types.Operator):
     """Reduces the sub-object selection area by deselecting the outer-most sub-objects"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_loop_shrink_edge_select"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_loop_shrink_edge_select"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.select_less()
            
              
-           return {"FINISHED"}      
+           return {"FINISHED"}
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------AUTO EDGE LOOP OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------AUTO EDGE LOOP OPERATOR-----------------------------------------------
+
 class loop_auto_edge_loop (bpy.types.Operator):
     """Reduces the sub-object selection area by deselecting the outer-most sub-objects"""
-    bl_label= "Auto Edge Loop"                                                         #Operator's Name
-    bl_idname= "object.button_loop_auto_edge_loop"                                                  #Operator's Type
-    
+    bl_label = "Auto Edge Loop"
+    bl_idname = "object.button_loop_auto_edge_loop"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
  
              
-           return {"FINISHED"}  
-                    
+           return {"FINISHED"}
+    
                 
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------EDIT PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------EDIT PANEL------------------------------------------------
+
 class Modelling_Panel_Modify_Edit (bpy.types.Panel):
-    bl_label= ""                                                                           #Panel's Name
-    bl_idname= "PT_Modify_Edit"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_Modelling_Panel"     
+    bl_label = ""
+    bl_idname = "PT_Modify_Edit"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Modelling_Panel"
                                             
     def draw_header(self, context):
         
        layout = self.layout
             
-       layout.label(text="Edit Geometry", icon="MODIFIER")     
+       layout.label(text="Edit Geometry", icon="MODIFIER")
        
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        scene=context.scene
-        Arc_Blend=scene.Arc_Blend
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        scene = context.scene
+        Arc_Blend = scene.Arc_Blend
    
         
         
@@ -5078,16 +4681,16 @@ class Modelling_Panel_Modify_Edit (bpy.types.Panel):
             if bpy.context.active_object.mode=="EDIT":
              row=layout.row(align=True)
              row.operator("object.button_loop_grow_edge_select", text="Grow", icon="ADD")
-             row.operator("object.button_loop_shrink_edge_select" , text="Shrink", icon="REMOVE")   
+             row.operator("object.button_loop_shrink_edge_select", text="Shrink", icon="REMOVE")
              row=layout.row(align=True)
-             row.operator("object.button_modelling_edit_edges_connect"  , text="Subdivide",icon="SHADING_WIRE")
+             row.operator("object.button_modelling_edit_edges_connect", text="Subdivide", icon="SHADING_WIRE")
              row.operator("mesh.unsubdivide", text="Un-Subdivide", icon="MESH_CIRCLE")
              row1=layout.row(align=True)
              row1.operator("object.button_modelling_edit_loop_cut", text="Loop Cut", icon="MESH_UVSPHERE")
              row1.operator("object.button_modelling_edit_offset_edge_loop_cut", text="Offset Edge Loop Cut", icon="MOD_THICKNESS")
              row2=layout.row(align=True)
-             row2.operator("object.button_modelling_edit_knife_cut" , text="Knife", icon="MOD_LINEART")
-             row2.operator("object.button_modelling_edit_knife_bisect" , text="Bisect", icon="MOD_TRIANGULATE")
+             row2.operator("object.button_modelling_edit_knife_cut", text="Knife", icon="MOD_LINEART")
+             row2.operator("object.button_modelling_edit_knife_bisect", text="Bisect", icon="MOD_TRIANGULATE")
              row4=layout.row(align=True)
              row4.operator("object.button_loop_mesh_shortest_path_pick", text="Shortest Path Select", icon="DECORATE_DRIVER")
              row4.operator("mesh.fill_grid", text="Magic Fill", icon="SHADERFX")
@@ -5096,40 +4699,40 @@ class Modelling_Panel_Modify_Edit (bpy.types.Panel):
              
              
              row7=layout.row(align=True)
-             row7.operator("object.button_loop_mesh_seperate", text="Seperate Selected Geometry" , icon="OUTLINER_OB_MESH")
+             row7.operator("object.button_loop_mesh_seperate", text="Seperate Selected Geometry", icon="OUTLINER_OB_MESH")
              row7.operator("object.button_loop_mesh_split", text="Split Off Selected Geometry", icon="MOD_EXPLODE")
              row=layout.row(align=True)
              row.operator("mesh.intersect")
              row.operator("mesh.intersect_boolean")
              row=layout.row(align=True)
-             row.operator("transform.edge_crease",icon="BRUSH_CREASE")
-             row.operator("transform.edge_bevelweight",icon="MOD_VERTEX_WEIGHT")
+             row.operator("transform.edge_crease", icon="BRUSH_CREASE")
+             row.operator("transform.edge_bevelweight", icon="MOD_VERTEX_WEIGHT")
              
              
              
              
-             #col=layout.column()
+             #col = layout.column()
              #col.label(text="Marks and Clears : ")
              box= layout.box()
-             box.prop(Arc_Blend, "marks_edit_geometry" , icon="GREASEPENCIL", text="Marks and Clears")
+             box.prop(Arc_Blend, "marks_edit_geometry", icon="GREASEPENCIL", text="Marks and Clears")
              if bpy.context.scene.Arc_Blend.marks_edit_geometry == True:
                  col = box.column()
                  col.label(text="Marks and Clears :")
                  row= box.row(align=True)
                  row.operator("mesh.mark_seam", icon="OUTLINER_OB_CURVES").clear = False
-                 row.operator("mesh.mark_seam", text="Clear Seam" ,icon="OUTLINER_DATA_CURVES").clear = True
+                 row.operator("mesh.mark_seam", text="Clear Seam", icon="OUTLINER_DATA_CURVES").clear = True
                  
                  row= box.row(align=True)
                  row.operator("mesh.mark_sharp", icon="SNAP_PERPENDICULAR")
-                 row.operator("mesh.mark_sharp", text="Clear Sharp" ,icon="SNAP_MIDPOINT").clear = True
+                 row.operator("mesh.mark_sharp", text="Clear Sharp", icon="SNAP_MIDPOINT").clear = True
                  #row6.operator("object.button_modelling_edit_fill_sides", text="Align Edges")
                  
                  row = box.row(align=True)
-                 row.operator("mesh.mark_freestyle_edge" , icon="HANDLE_FREE").clear = False
-                 row.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge" , icon="HANDLE_VECTOR").clear = True
+                 row.operator("mesh.mark_freestyle_edge", icon="HANDLE_FREE").clear = False
+                 row.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge", icon="HANDLE_VECTOR").clear = True
 
              
-             col=layout.column()
+             col = layout.column()
              col.label(text="Mirror Selected Copy  :")
              row=layout.row(align=True)
              row.operator("object.button_modelling_edit_x_mirror", text="+X")
@@ -5140,19 +4743,19 @@ class Modelling_Panel_Modify_Edit (bpy.types.Panel):
              row.operator("object.button_modelling_edit_y_mirror_minus", text="-Y")
              row.operator("object.button_modelling_edit_z_mirror_minus", text="-Z")
              
-             col=layout.column()
+             col = layout.column()
              col.label(text="Hide/Rev Selected/Unselected: ")
              row5=layout.row(align=True)
-             row5.operator("object.button_modelling_edit_hide_unselected" , text="Hide Unselected", icon="PMARKER")
-             row5.operator("object.button_modelling_edit_hide_selected" , text="Hide Selected", icon="PMARKER_SEL")
-             row5.operator("object.button_modelling_edit_reveal" , text="Reveal", icon="PMARKER_ACT")
+             row5.operator("object.button_modelling_edit_hide_unselected", text="Hide Unselected", icon="PMARKER")
+             row5.operator("object.button_modelling_edit_hide_selected", text="Hide Selected", icon="PMARKER_SEL")
+             row5.operator("object.button_modelling_edit_reveal", text="Reveal", icon="PMARKER_ACT")
              
         
              
              
              
              
-             col=layout.column()
+             col = layout.column()
              col.label(text="Align Axis : ")
              row4=layout.row(align=True)
              row4.operator("object.button_modelling_edit_orient_x", text="X", )
@@ -5171,19 +4774,19 @@ class Modelling_Panel_Modify_Edit (bpy.types.Panel):
             pass
 
     
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BEVEL OFFSET OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BEVEL OFFSET OPERATOR-----------------------------------------------
+
 class modelling_edit_rotate_edges (bpy.types.Operator):
     """Rotating an edge clockwise (CW)"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_rotate_edges"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_rotate_edges"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            try:
              bpy.ops.mesh.edge_rotate(use_ccw=False)
@@ -5191,41 +4794,41 @@ class modelling_edit_rotate_edges (bpy.types.Operator):
                pass
  
            return {"FINISHED"}
-        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------LOOP CUT OPERATOR-----------------------------------------------
+
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------LOOP CUT OPERATOR-----------------------------------------------
+
 class modelling_edit_loop_cut (bpy.types.Operator):
     """Loop Cut"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_loop_cut"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_loop_cut"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.wm.tool_set_by_id(name="builtin.loop_cut")
            
                       
              
-           return {"FINISHED"} 
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------OFFSET EDGE LOOP CUT OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------OFFSET EDGE LOOP CUT OPERATOR-----------------------------------------------
+
 class modelling_edit_offset_edge_loop_cut (bpy.types.Operator):
     """Offset Edge Loop Cut"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_offset_edge_loop_cut"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_offset_edge_loop_cut"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            
@@ -5233,20 +4836,20 @@ class modelling_edit_offset_edge_loop_cut (bpy.types.Operator):
            
                       
              
-           return {"FINISHED"}  
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------KNIFE CUT OPERATOR-----------------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------KNIFE CUT OPERATOR-----------------------------------------------
+
 class modelling_edit_knife_cut (bpy.types.Operator):
     """Knife Tool"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_knife_cut"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_knife_cut"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            for area in bpy.context.screen.areas:
              if area.type == "VIEW_3D":
@@ -5259,21 +4862,21 @@ class modelling_edit_knife_cut (bpy.types.Operator):
            
                       
              
-           return {"FINISHED"}  
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BISECT OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BISECT OPERATOR-----------------------------------------------
+
 class modelling_edit_knife_bisect (bpy.types.Operator):
     """Bisect Tool"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_knife_bisect"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_knife_bisect"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            for area in bpy.context.screen.areas:
              if area.type == "VIEW_3D":
@@ -5285,23 +4888,23 @@ class modelling_edit_knife_bisect (bpy.types.Operator):
            
                       
              
-           return {"FINISHED"}  
+           return {"FINISHED"}
        
        
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------COPY +X MIRROR OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------COPY +X MIRROR OPERATOR-----------------------------------------------
+
 class modelling_edit_x_mirror (bpy.types.Operator):
     """Selected Verts/Edges or Faces Mirrors -X to +X Axis"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_x_mirror"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_x_mirror"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.symmetrize(direction='NEGATIVE_X')
@@ -5309,55 +4912,55 @@ class modelling_edit_x_mirror (bpy.types.Operator):
            
              
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------COPY -X MIRROR OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------COPY -X MIRROR OPERATOR-----------------------------------------------
+
 class modelling_edit_x_mirror_minus (bpy.types.Operator):
     """Selected Verts/Edges or Faces Mirrors +X to -X Axis"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_x_mirror_minus"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_x_mirror_minus"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.symmetrize(direction='POSITIVE_X')
 
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------COPY +Y MIRROR OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------COPY +Y MIRROR OPERATOR-----------------------------------------------
+
 class modelling_edit_y_mirror (bpy.types.Operator):
     """Selected Verts/Edges or Faces Mirrors -Y to +Y Axis"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_y_mirror"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_y_mirror"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            bpy.ops.mesh.symmetrize(direction='NEGATIVE_Y')
 
              
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------COPY -Y MIRROR OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------COPY -Y MIRROR OPERATOR-----------------------------------------------
+
 class modelling_edit_y_mirror_minus (bpy.types.Operator):
     """Selected Verts/Edges or Faces Mirrors +Y to -Y Axis"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_y_mirror_minus"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_y_mirror_minus"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.symmetrize(direction='POSITIVE_Y')
@@ -5365,19 +4968,19 @@ class modelling_edit_y_mirror_minus (bpy.types.Operator):
            
              
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------COPY +Z MIRROR OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------COPY +Z MIRROR OPERATOR-----------------------------------------------
+
 class modelling_edit_z_mirror (bpy.types.Operator):
     """Selected Verts/Edges or Faces Mirrors -Z to +Z Axis"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_z_mirror"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_z_mirror"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.symmetrize(direction='NEGATIVE_Z')
@@ -5385,19 +4988,19 @@ class modelling_edit_z_mirror (bpy.types.Operator):
            
              
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------COPY -Z MIRROR OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------COPY -Z MIRROR OPERATOR-----------------------------------------------
+
 class modelling_edit_z_mirror_minus (bpy.types.Operator):
     """Selected Verts/Edges or Faces Mirrors +Z to -Z Axis"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_z_mirror_minus"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_z_mirror_minus"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.symmetrize(direction='POSITIVE_Z')
@@ -5405,16 +5008,16 @@ class modelling_edit_z_mirror_minus (bpy.types.Operator):
            
              
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------FILL SIDES OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------FILL SIDES OPERATOR-----------------------------------------------
+
 class modelling_edit_fill_sides (bpy.types.Operator):
     """Align Edges (Select loop and select one edge for referance (WIP)"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_fill_sides"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_fill_sides"
 
-    def execute(self,context):
-           layout=self.layout
+    def execute(self, context):
+           layout = self.layout
                       
            ob = context.object
            me = ob.data
@@ -5453,19 +5056,19 @@ class modelling_edit_fill_sides (bpy.types.Operator):
            return {"FINISHED"}
        
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------HIDE UNSELECTED OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------HIDE UNSELECTED OPERATOR-----------------------------------------------
+
 class modelling_edit_hide_unselected (bpy.types.Operator):
     """Hide Unselected vert/edge or faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_hide_unselected"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_hide_unselected"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
               
@@ -5473,20 +5076,20 @@ class modelling_edit_hide_unselected (bpy.types.Operator):
            
                       
              
-           return {"FINISHED"}         
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------HIDE SELECTED OPERATOR-----------------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------HIDE SELECTED OPERATOR-----------------------------------------------
+
 class modelling_edit_hide_selected (bpy.types.Operator):
     """Hide Selected vert/edge or faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_hide_selected"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_hide_selected"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
               
@@ -5494,20 +5097,20 @@ class modelling_edit_hide_selected (bpy.types.Operator):
            
                       
              
-           return {"FINISHED"}      
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------REVEAL OPERATOR-----------------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------REVEAL OPERATOR-----------------------------------------------
+
 class modelling_edit_reveal (bpy.types.Operator):
     """Reveal hiding vert/edge or faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_reveal"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_reveal"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
               
@@ -5515,23 +5118,23 @@ class modelling_edit_reveal (bpy.types.Operator):
            
                       
              
-           return {"FINISHED"}             
+           return {"FINISHED"}
        
        
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ORIENT X AXIS OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ORIENT X AXIS OPERATOR-----------------------------------------------
+
 class modelling_edit_orient_x (bpy.types.Operator):
     """Align X Axis selected all vertices,edges or faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_orient_x"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_orient_x"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            
@@ -5555,20 +5158,20 @@ class modelling_edit_orient_x (bpy.types.Operator):
 
                       
              
-           return {"FINISHED"}  
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ORIENT Y AXIS OPERATOR-----------------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ORIENT Y AXIS OPERATOR-----------------------------------------------
+
 class modelling_edit_orient_y (bpy.types.Operator):
     """Align Y Axis selected all vertices,edges or faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_orient_y"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_orient_y"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            for area in bpy.context.screen.areas:
              if area.type == "VIEW_3D":
@@ -5589,23 +5192,23 @@ class modelling_edit_orient_y (bpy.types.Operator):
 
                       
              
-           return {"FINISHED"}  
+           return {"FINISHED"}
 
 
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ORIENT Z AXIS OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ORIENT Z AXIS OPERATOR-----------------------------------------------
+
 class modelling_edit_orient_z (bpy.types.Operator):
     """Align Z Axis selected all vertices,edges or faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_orient_z"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_orient_z"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            
@@ -5629,35 +5232,36 @@ class modelling_edit_orient_z (bpy.types.Operator):
 
                       
              
-           return {"FINISHED"}  
+           return {"FINISHED"}
 
 
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------EDIT EDGES PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------EDIT EDGES PANEL------------------------------------------------
+
 class Modelling_Panel_Modify_Edit_Faces (bpy.types.Panel):
-    bl_label= ""                                                                           #Panel's Name
-    bl_idname= "PT_Modify_Edit_Faces"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
-    bl_parent_id= "PT_Modelling_Panel"   
+    bl_label = ""
+    bl_idname = "PT_Modify_Edit_Faces"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Modelling_Panel"
                                               
     def draw_header(self, context):
         
        layout = self.layout
             
-       layout.label(text="Face Modify Selection", icon="FACESEL")     
+       layout.label(text="Face Modify Selection", icon="FACESEL")
             
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
    
         
        
         
         try:
             if bpy.context.tool_settings.mesh_select_mode[2] and bpy.context.active_object.mode=="EDIT":#bpy.context.active_object.mode=="EDIT":
-             row=layout.row(align=True)    
+             row=layout.row(align=True)
              row.operator("object.button_modelling_edit_faces_extrude", text="Face", icon="MESH_CUBE")
              row.operator("object.button_modelling_edit_faces_extrude_normals", text="Normal", icon="ORIENTATION_NORMAL")
              row.operator("object.button_modelling_edit_faces_extrude_individual", text="Individual", icon="IMGDISPLAY")
@@ -5684,212 +5288,211 @@ class Modelling_Panel_Modify_Edit_Faces (bpy.types.Panel):
         except AttributeError:
             pass
             
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------EXTRUDE FACES OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------EXTRUDE FACES OPERATOR-----------------------------------------------
+
 class modelling_edit_faces_extrude (bpy.types.Operator):
     """Face Extrude"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_faces_extrude"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_faces_extrude"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.view3d.edit_mesh_extrude_move_normal()
 
-           return {"FINISHED"}  
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------EXTRUDE NORMAL FACES OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------EXTRUDE NORMAL FACES OPERATOR-----------------------------------------------
+
 class modelling_edit_faces_extrude_normals (bpy.types.Operator):
     """Face Extrude Normal"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_faces_extrude_normals"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_faces_extrude_normals"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.view3d.edit_mesh_extrude_move_shrink_fatten()
 
-           return {"FINISHED"}  
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------EXTRUDE INDIVIDUAL FACES OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------EXTRUDE INDIVIDUAL FACES OPERATOR-----------------------------------------------
+
 class modelling_edit_faces_extrude_individual (bpy.types.Operator):
     """Face Extrude Individual"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_faces_extrude_individual"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_faces_extrude_individual"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.extrude_faces_move("INVOKE_DEFAULT",
            MESH_OT_extrude_faces_indiv={"mirror":False}, 
            TRANSFORM_OT_shrink_fatten={"value":0, "use_even_offset":False, "mirror":False, "use_proportional_edit":False, "proportional_edit_falloff":'SMOOTH', "proportional_size":1, "use_proportional_connected":False, "use_proportional_projected":False, "snap":False, "snap_target":'CLOSEST', "snap_point":(0, 0, 0), "snap_align":False, "snap_normal":(0, 0, 0), "release_confirm":False, "use_accurate":False})
 
-           return {"FINISHED"}  
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------INSET FACES OPERATOR-----------------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------INSET FACES OPERATOR-----------------------------------------------
+
 class modelling_edit_faces_inset (bpy.types.Operator):
     """Face Inset"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_faces_inset"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_faces_inset"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.inset("INVOKE_DEFAULT")
 
-           return {"FINISHED"}    
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------POKE FACES OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------POKE FACES OPERATOR-----------------------------------------------
+
 class modelling_edit_faces_poke (bpy.types.Operator):
     """Poke Faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_faces_poke"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_faces_poke"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.poke(offset=0, use_relative_offset=True, center_mode='MEDIAN')
 
            return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------TRIANGULATE FACES OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------TRIANGULATE FACES OPERATOR-----------------------------------------------
+
 class modelling_edit_faces_triangulate (bpy.types.Operator):
     """Triangulate Faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_faces_triangulate"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_faces_triangulate"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.quads_convert_to_tris(quad_method='BEAUTY', ngon_method='BEAUTY')
 
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------TRIS TO QUADS FACES OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------TRIS TO QUADS FACES OPERATOR-----------------------------------------------
+
 class modelling_edit_faces_tris_to_quads (bpy.types.Operator):
     """Triangulate Faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_faces_tris_to_quads"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_faces_tris_to_quads"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.tris_convert_to_quads()
 
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SOLIDIFY FACES OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SOLIDIFY FACES OPERATOR-----------------------------------------------
+
 class modelling_edit_faces_solidify (bpy.types.Operator):
     """Triangulate Faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_faces_solidify"                                                  #Operator's Type
-    
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_faces_solidify"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.solidify("INVOKE_DEFAULT")
 
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------WIREFRAME FACES OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------WIREFRAME FACES OPERATOR-----------------------------------------------
+
 class modelling_edit_faces_wireframe (bpy.types.Operator):
     """Triangulate Faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_faces_wireframe"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_faces_wireframe"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.wireframe("INVOKE_DEFAULT")
 
            return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------EDGE CONNECT OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------EDGE CONNECT OPERATOR-----------------------------------------------
+
 class modelling_edit_edges_connect (bpy.types.Operator):
     """Subdivide Edges/Faces"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_edges_connect"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_edges_connect"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
            bpy.ops.mesh.subdivide()
 
 
-           return {"FINISHED"}  
+           return {"FINISHED"}
        
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------EXTRUDE OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------EXTRUDE OPERATOR-----------------------------------------------
       
        
+
 class modelling_edit_edges_extrude (bpy.types.Operator):
     """Extrude"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_edges_extrude"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_edges_extrude"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
-           Arc_Blend=scene.Arc_Blend
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
+           Arc_Blend = scene.Arc_Blend
            
            
        
@@ -5904,68 +5507,69 @@ class modelling_edit_edges_extrude (bpy.types.Operator):
            
  
              
-           return {"FINISHED"}  
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------COLLAPSE EDGES OPERATOR-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------COLLAPSE EDGES OPERATOR-----------------------------------------------
       
        
+
 class modelling_edit_edges_collapse (bpy.types.Operator):
     """Collapse Edge or Edges"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_edges_collapse"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_edges_collapse"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
 
-           bpy.ops.mesh.delete_edgeloop(use_face_split=True) 
+           bpy.ops.mesh.delete_edgeloop(use_face_split=True)
            
  
-           return {"FINISHED"}         
+           return {"FINISHED"}
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------COLLAPSE EDGES OPERATOR--------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------COLLAPSE EDGES OPERATOR--------------------------------------
       
        
+
 class modelling_edit_edges_collapse (bpy.types.Operator):
     """Collapse Edge or Edges"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_modelling_edit_edges_collapse"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_edges_collapse"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
  
        
-           bpy.ops.mesh.delete_edgeloop(use_face_split=True) 
+           bpy.ops.mesh.delete_edgeloop(use_face_split=True)
            
 
            
-           return {"FINISHED"}   
+           return {"FINISHED"}
        
        
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------PROXY PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------PROXY PANEL------------------------------------------------
+
 class Proxy_Panel (bpy.types.Panel):
-    bl_label= "AB Proxy"                                                                           #Panel's Name
-    bl_idname= "PT_Proxy_Panel"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
+    bl_label = "AB Proxy"
+    bl_idname = "PT_Proxy_Panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
     
                                        
          
-    def draw(self,context):
-        layout=self.layout
-        obj=context.object
-        scene=context.scene
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        scene = context.scene
         mesh=true_mesh_data(obj)
-        Arc_Blend=scene.Arc_Blend
+        Arc_Blend = scene.Arc_Blend
         ui=bpy.ops.ui
         main = layout.column()
         
@@ -6034,15 +5638,15 @@ class Proxy_Panel (bpy.types.Panel):
         
         
         
-        col=layout.column()
+        col = layout.column()
         try:
-         col.prop(obj,  "proxy_item_obj" , icon="FILE_3D",text="Active Object : ")
+         col.prop(obj,  "proxy_item_obj", icon="FILE_3D",text="Active Object : ")
         except (AttributeError, TypeError):
             pass
         col.enabled= False
         
         
-        col=layout.column()
+        col = layout.column()
         col.operator("object.button_edit_mode_add_vertex", text="Add Empty Mesh")
         
         
@@ -6056,8 +5660,8 @@ class Proxy_Panel (bpy.types.Panel):
          row.prop(Arc_Blend,"layer", text="")
          layout.operator("object.button_proxy_panel_remeshx_result", text="Remesh")
          layout.operator("object.button_proxy_panel_convertto_point_cloud", text="Point Cloud")
-         layout.operator("object.button_proxy_panel_convertto_hull_geometry" , text="Convex Hull")
-         layout.operator("object.button_proxy_panel_convertto_bound_box" , text="Bounding Box")
+         layout.operator("object.button_proxy_panel_convertto_hull_geometry", text="Convex Hull")
+         layout.operator("object.button_proxy_panel_convertto_bound_box", text="Bounding Box")
          
          
          
@@ -6067,25 +5671,25 @@ class Proxy_Panel (bpy.types.Panel):
             pass
     
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------REMESH APPLY OPERATOR--------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------REMESH APPLY OPERATOR--------------------------------------
       
        
+
 class proxy_panel_remeshx_result (bpy.types.Operator):
     """Remesh it.All data layers keeps in program"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_proxy_panel_remeshx_result"                                                  #Operator's Type
-    
+    bl_label = ""
+    bl_idname = "object.button_proxy_panel_remeshx_result"
 
-    def execute(self,context):
-           layout=self.layout
-           obj=context.object
-           scene=context.scene
+    def execute(self, context):
+           layout = self.layout
+           obj = context.object
+           scene = context.scene
            
            bpy.ops.object.duplicate()
            x=f'{int(bpy.context.scene.Arc_Blend.layer)}'
-           bpy.context.active_object.data.name= "AB_Object_" + str(x)
-           bpy.context.active_object.name="AB_Object_Remesh" 
+           bpy.context.active_object.data.name= "AB_Object_"+ str(x)
+           bpy.context.active_object.name="AB_Object_Remesh"
            
 
            bpy.context.object.data.remesh_mode = 'QUAD'
@@ -6101,20 +5705,21 @@ class proxy_panel_remeshx_result (bpy.types.Operator):
            
   
            
-           return {"FINISHED"}     
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------CONVERT TO POINTS OPERATOR--------------------------------------
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------CONVERT TO POINTS OPERATOR--------------------------------------
       
        
+
 class proxy_panel_convertto_point_cloud (bpy.types.Operator):
     """Mesh to Points"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_proxy_panel_convertto_point_cloud"                                                  #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_proxy_panel_convertto_point_cloud"
     
     
     
-    def execute(self,context):
-           layout=self.layout
+    def execute(self, context):
+           layout = self.layout
            scene=bpy.context.scene
            mesh_list=context.object.data.mesh_list
            index = context.object.data.list_index
@@ -6128,7 +5733,7 @@ class proxy_panel_convertto_point_cloud (bpy.types.Operator):
             'area'  :areas3d[0],
             'region':region,
             'scene' :bpy.context.scene,
-            }       
+            }
             
           
            
@@ -6149,22 +5754,23 @@ class proxy_panel_convertto_point_cloud (bpy.types.Operator):
            
 
        
-           return {"FINISHED"} 
+           return {"FINISHED"}
        
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------CONVERT TO HULL GEOMETRY OPERATOR----------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------CONVERT TO HULL GEOMETRY OPERATOR----------------------------
       
        
+
 class proxy_panel_convertto_hull_geometry (bpy.types.Operator):
     """Mesh to Convex Hull Geometry"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_proxy_panel_convertto_hull_geometry"                                                  #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_proxy_panel_convertto_hull_geometry"
     
     
     
-    def execute(self,context):
-           layout=self.layout
+    def execute(self, context):
+           layout = self.layout
            scene=bpy.context.scene
            mesh_list=context.object.data.mesh_list
            index = context.object.data.list_index
@@ -6178,7 +5784,7 @@ class proxy_panel_convertto_hull_geometry (bpy.types.Operator):
             'area'  :areas3d[0],
             'region':region,
             'scene' :bpy.context.scene,
-            }      
+            }
 
            bpy.ops.object.duplicate()
            bpy.context.active_object.data.name="AB_Convex_Hull"
@@ -6203,12 +5809,12 @@ class proxy_panel_convertto_hull_geometry (bpy.types.Operator):
 
 
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BOUNDING BOX Def--------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BOUNDING BOX Def--------------------------------------------
 
 
 
-def bounding_box_display_upd(self,context): 
+def bounding_box_display_upd(self, context): 
     
         if self.bounding_box_display == True: return_one_time(self.id_data, self.proxy_ui_index, "bounding_box_display")
         
@@ -6221,19 +5827,20 @@ def bounding_box_display_upd(self,context):
 
        
        
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------BOUNDING BOX GEOMETRY OPERATOR-------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------BOUNDING BOX GEOMETRY OPERATOR-------------------------------
       
        
+
 class proxy_panel_convertto_bound_box (bpy.types.Operator):
     """Mesh to Bounding Box Geometry"""
-    bl_label= ""                                                         #Operator's Name
-    bl_idname= "object.button_proxy_panel_convertto_bound_box"                                                  #Operator's Type
+    bl_label = ""
+    bl_idname = "object.button_proxy_panel_convertto_bound_box"
     
     
     
-    def execute(self,context):
-           layout=self.layout
+    def execute(self, context):
+           layout = self.layout
            scene=bpy.context.scene
            mesh_list=context.object.data.mesh_list
            index = context.object.data.list_index
@@ -6247,7 +5854,7 @@ class proxy_panel_convertto_bound_box (bpy.types.Operator):
             'area'  :areas3d[0],
             'region':region,
             'scene' :bpy.context.scene,
-            }   
+            }
             
             
            
@@ -6257,8 +5864,8 @@ class proxy_panel_convertto_bound_box (bpy.types.Operator):
            
            ob.matrix_world.translation # or .to_translation()
            
-           bbox_corners = [ob.matrix_parent_inverse @ Vector(corner) for corner in ob.bound_box]
-           #bbox_corners = [ob.matrix_world * Vector(corner) for corner in ob.bound_box]  # Use this in V2.79 or older
+           bbox_corners = [ob.matrix_parent_inverse @ Vector(corner)for corner in ob.bound_box]
+           #bbox_corners = [ob.matrix_world * Vector(corner)for corner in ob.bound_box]  # Use this in V2.79 or older
            
            
            
@@ -6274,7 +5881,7 @@ class proxy_panel_convertto_bound_box (bpy.types.Operator):
              o.append(i.xyz)
            
            #sorting min to max
-           #o.sort()  
+           #o.sort()
            
            for b in o:
                verts.append(b[:])
@@ -6291,8 +5898,8 @@ class proxy_panel_convertto_bound_box (bpy.types.Operator):
            return {"FINISHED"}
        
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------PROXY OBJECT LIST--------------------------------------------  
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------PROXY OBJECT LIST--------------------------------------------  
        
 
 class proxy_panel_object_list(bpy.types.UIList):
@@ -6301,8 +5908,8 @@ class proxy_panel_object_list(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data,
                   active_propname, index):
                       
-        scene=context.scene   
-        row = layout.row(align=True) 
+        scene = context.scene   
+        row = layout.row(align=True)
         
         
         
@@ -6311,25 +5918,25 @@ class proxy_panel_object_list(bpy.types.UIList):
         sub=row.row(align=True)
         sub.scale_x = 2
         
-        sub.prop(item,"proxy_item",text='', icon="FILE_3D")          
+        sub.prop(item,"proxy_item",text='', icon="FILE_3D")
 
        
                 
         sub=row.row(align=True)
         sub.scale_x = 1.1
         sub.enabled = bool(item.proxy_item)
-        sub.prop(item,"proxy_display",text='',icon='RESTRICT_VIEW_OFF'  if item.proxy_display else'RESTRICT_VIEW_ON')
+        sub.prop(item,"proxy_display",text='', icon='RESTRICT_VIEW_OFF'  if item.proxy_display else'RESTRICT_VIEW_ON')
         
         sub=row.row(align=True)
         sub.scale_x = 0.3
-        sub.prop(item,"name", text="",icon="RADIOBUT_ON", emboss=False)
+        sub.prop(item,"name", text="", icon="RADIOBUT_ON", emboss=False)
         sub.enabled=False
         
-        #sub.prop(item,"proxy_render_frame",text='',icon='RESTRICT_RENDER_OFF'if item.proxy_render_frame else'RESTRICT_RENDER_ON')
+        #sub.prop(item,"proxy_render_frame",text='', icon='RESTRICT_RENDER_OFF'if item.proxy_render_frame else'RESTRICT_RENDER_ON')
         
      
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ADD OBJECT TO LIST--------------------------------------------  
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ADD OBJECT TO LIST--------------------------------------------  
        
 
 class proxy_panel_add_objects (bpy.types.Operator):
@@ -6371,8 +5978,8 @@ class proxy_panel_add_objects (bpy.types.Operator):
         
 
         return{'FINISHED'}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DELETE OBJECT FROM LIST-------------------------------------- 
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DELETE OBJECT FROM LIST-------------------------------------- 
        
 
 class proxy_panel_remove_objects (bpy.types.Operator):
@@ -6410,14 +6017,14 @@ class proxy_panel_remove_objects (bpy.types.Operator):
 
 
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DEFINES-------------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DEFINES-------------------------------------------------------
 def find_instances(mesh_data):
-    """ Finds the instances"""
+    """Finds the instances"""
     r=[]
     for o in bpy.data.objects:
         if (o.type=='MESH'):
-            if true_mesh_data(o) == mesh_data:
+            if true_mesh_data(o)== mesh_data:
                 r.append(o)
     return r
 
@@ -6425,27 +6032,27 @@ def find_instances(mesh_data):
 
 
 def fill_original_pointer(mesh_data):
-    """ Pointer filled first active object"""
+    """Pointer filled first active object"""
 
     for ob in find_instances(mesh_data):
         #if ui list not empty but pointer is -> fill pointer 
-        if (len(ob.data.mesh_list) > 0) and (not ob.proxy_item_obj): ob.proxy_item_obj = mesh_data
+        if (len(ob.data.mesh_list)> 0)and (not ob.proxy_item_obj): ob.proxy_item_obj = mesh_data
     return None 
 
 def clean_original_pointer():
-    """ Clean original pointer"""
+    """Clean original pointer"""
 
     for ob in bpy.data.objects:
         if ob.type =='MESH':
             #if ui list empty but pointer original full -> restore and clean
-            if (ob.proxy_item_obj) and (len(ob.proxy_item_obj.mesh_list) == 0):
+            if (ob.proxy_item_obj)and (len(ob.proxy_item_obj.mesh_list)== 0):
                 if ob.data != ob.proxy_item_obj: ob.data = ob.proxy_item_obj
                 ob.proxy_item_obj = None 
     return None
 
 
 def true_mesh_data(obj):
-    """ Original Mesh Data"""
+    """Original Mesh Data"""
     try:
         if obj.proxy_item_obj: 
          return obj.proxy_item_obj
@@ -6458,29 +6065,29 @@ def true_mesh_data(obj):
 
 
 def return_one_time(mesh,active_idx,prop_api): 
-    """ Returning once per elements"""
+    """Returning once per elements"""
     AB_list = mesh.mesh_list
     
 
     
     for i in AB_list:
         if i.proxy_ui_index != active_idx:
-            exec(f"i.{prop_api} = False")
+            exec(f"i.{prop_api}= False")
     return None 
 
 
-def proxy_item_upd(self,context):
+def proxy_item_upd(self, context):
         if not self.proxy_item: self.proxy_render_frame = self.proxy_display = False
         return None
     
    
-def proxy_display_upd(self,context): 
+def proxy_display_upd(self, context): 
     
         if self.proxy_display == True: return_one_time(self.id_data, self.proxy_ui_index, "proxy_display")
     
         selected_objects= bpy.context.selected_objects
         
-        if len(selected_objects) >1:
+        if len(selected_objects)>1:
           try:
             for i in range (0,len(selected_objects)):
                 o =[]
@@ -6508,7 +6115,7 @@ def proxy_display_upd(self,context):
                 
                 
                    
-        elif len(selected_objects) <= 1:
+        elif len(selected_objects)<= 1:
             
             
          try:
@@ -6519,7 +6126,7 @@ def proxy_display_upd(self,context):
                 
                
                
-                #All list item append to "o" list and count the "True" 
+                #All list item append to "o"list and count the "True"
                 for j in disp_list:
                     
                     o.append(j.proxy_display)
@@ -6546,7 +6153,7 @@ def proxy_display_upd(self,context):
         
         return None
    
-#def proxy_render_frame_upd(self,context):
+#def proxy_render_frame_upd(self, context):
      
   
 #        if self.proxy_render_frame == True:return_one_time(self.id_data, self.proxy_ui_index, "proxy_render_frame")
@@ -6559,8 +6166,8 @@ def proxy_display_upd(self,context):
     
 
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------PROXY PROPERTY GROUP-----------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------PROXY PROPERTY GROUP-----------------------------------------------
 
 class proxy_panel_list_item(bpy.types.PropertyGroup):
     
@@ -6590,10 +6197,11 @@ class proxy_panel_list_item(bpy.types.PropertyGroup):
         self.name = ob.name
         return self.object
     
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------MAKE PARENT-----------------------------------------------    
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------MAKE PARENT-----------------------------------------------    
     
     
+
 class proxy_panel_list_makes_parents(bpy.types.Operator):
        """Make Parent Active Object!"""
         
@@ -6608,10 +6216,11 @@ class proxy_panel_list_makes_parents(bpy.types.Operator):
              pass 
     
            return {"FINISHED"}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------CLEAR PARENT-----------------------------------------------    
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------CLEAR PARENT-----------------------------------------------    
     
     
+
 class proxy_panel_list_clear_parents(bpy.types.Operator):
        """Clear Parent Active Object!"""
         
@@ -6627,11 +6236,12 @@ class proxy_panel_list_clear_parents(bpy.types.Operator):
              pass  
 
     
-           return {"FINISHED"}    
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SELECT SAME COLLECTION-----------------------------------------------    
+           return {"FINISHED"}
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SELECT SAME COLLECTION-----------------------------------------------    
     
     
+
 class proxy_panel_list_select_same_collection(bpy.types.Operator):
        """Select Same Collection Objects!"""
         
@@ -6647,12 +6257,13 @@ class proxy_panel_list_select_same_collection(bpy.types.Operator):
              pass  
 
     
-           return {"FINISHED"}      
+           return {"FINISHED"}
      
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------APPLY MODIFIERS OBJECT-----------------------------------------------    
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------APPLY MODIFIERS OBJECT-----------------------------------------------    
     
     
+
 class proxy_panel_list_apply_all_modifiers(bpy.types.Operator):
        """Apply all modifiers!"""
         
@@ -6851,20 +6462,20 @@ class proxy_panel_list_apply_all_modifiers(bpy.types.Operator):
              pass  
 
     
-           return {"FINISHED"}      
+           return {"FINISHED"}
     
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER def PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCATTER def PANEL------------------------------------------------
 
 
 def particle_panel_enabled(context, psys):
     if psys is None:
         return True
     phystype = psys.settings.physics_type
-    if psys.settings.type in {'EMITTER', 'REACTOR'} and phystype in {'NO', 'KEYED'}:
+    if psys.settings.type in {'EMITTER', 'REACTOR'}and phystype in {'NO', 'KEYED'}:
         return True
     else:
-        return (psys.point_cache.is_baked is False) and (not psys.is_edited) and (not context.particle_system_editable)
+        return (psys.point_cache.is_baked is False)and (not psys.is_edited)and (not context.particle_system_editable)
 
 
 
@@ -6881,7 +6492,7 @@ def particle_panel_poll(cls, context):
     if not settings:
         return False
 
-    return (settings.is_fluid is False) and (engine in cls.COMPAT_ENGINES)
+    return (settings.is_fluid is False)and (engine in cls.COMPAT_ENGINES)
 
 
 def particle_get_settings(context):
@@ -6892,8 +6503,8 @@ def particle_get_settings(context):
     return None    
 
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER OBJECT LIST DEFINES--------------------------------------------  
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCATTER OBJECT LIST DEFINES--------------------------------------------  
        
 def find_modifier(ob, psys):
     for md in ob.modifiers:
@@ -6907,8 +6518,8 @@ def find_modifier(ob, psys):
        
     
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER OBJECT LIST--------------------------------------------  
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCATTER OBJECT LIST--------------------------------------------  
        
 
 class scatter_panel_object_list(bpy.types.UIList):
@@ -6945,49 +6556,50 @@ class scatter_panel_object_list(bpy.types.UIList):
     #def draw_item(self, context, layout, data, item, icon, active_data,
      #             active_propname, index):
                       
-        #scene=context.scene   
-        #row = layout.row(align=True) 
+        #scene = context.scene   
+        #row = layout.row(align=True)
         
        
         #sub=row.row(align=True)
         #sub.scale_x = 2
         
-        #sub.prop(item,"scatter_item",text='', icon="STICKY_UVS_LOC")          
+        #sub.prop(item,"scatter_item",text='', icon="STICKY_UVS_LOC")
 
        
                 
         #sub=row.row(align=True)
         #sub.scale_x = 1.1
         #sub.enabled = bool(item.scatter_item)
-        #sub.prop(item,"scatter_display",text='',icon='RESTRICT_VIEW_OFF'  if item.scatter_display else'RESTRICT_VIEW_ON')
+        #sub.prop(item,"scatter_display",text='', icon='RESTRICT_VIEW_OFF'  if item.scatter_display else'RESTRICT_VIEW_ON')
         
         #sub=row.row(align=True)
         #sub.scale_x = 0.3
-        #sub.prop(item,"name", text="",icon="RADIOBUT_ON", emboss=False)
+        #sub.prop(item,"name", text="", icon="RADIOBUT_ON", emboss=False)
         #sub.enabled=False
         
-        #sub.prop(item,"proxy_render_frame",text='',icon='RESTRICT_RENDER_OFF'if item.proxy_render_frame else'RESTRICT_RENDER_ON')
+        #sub.prop(item,"proxy_render_frame",text='', icon='RESTRICT_RENDER_OFF'if item.proxy_render_frame else'RESTRICT_RENDER_ON')
 
     
            
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCATTER PANEL------------------------------------------------
+
 class Scatter_Panel (bpy.types.Panel):
-    bl_label= "AB Scatter"                                                                           #Panel's Name
-    bl_idname= "PT_Scatter_Panel"                                                                 #Panel's Type
-    bl_space_type= "VIEW_3D"                                                                     #Where is your program located
-    bl_region_type= "UI"                                                                         #Region Type
-    bl_category= "Arc Blend"                                                                     #Add-on Name        
+    bl_label = "AB Scatter"
+    bl_idname = "PT_Scatter_Panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     
                     
          
-    def draw(self,context):
-        layout=self.layout
+    def draw(self, context):
+        layout = self.layout
         ob=context.object
-        scene=context.scene
+        scene = context.scene
         mesh=scatter_true_mesh_data(ob)
-        Arc_Blend=scene.Arc_Blend
+        Arc_Blend = scene.Arc_Blend
         ui=bpy.ops.ui
         main = layout.column()
         try:
@@ -7048,12 +6660,12 @@ class Scatter_Panel (bpy.types.Panel):
         
         
         
-        col=layout.column()
+        col = layout.column()
         
                 
         
-        col=layout.column()
-        col.prop(Arc_Blend,"object_scatter", text="Object Scatter",icon="STICKY_UVS_LOC")
+        col = layout.column()
+        col.prop(Arc_Blend,"object_scatter", text="Object Scatter", icon="STICKY_UVS_LOC")
         try:
             if bpy.context.scene.Arc_Blend.object_scatter == True:
 
@@ -7070,8 +6682,8 @@ class Scatter_Panel (bpy.types.Panel):
             pass  
             
                 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ADD OBJECT TO LIST SCATTER-------------------------------------------  
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ADD OBJECT TO LIST SCATTER-------------------------------------------  
        
 
 class scatter_panel_make_real_objects (bpy.types.Operator):
@@ -7083,21 +6695,20 @@ class scatter_panel_make_real_objects (bpy.types.Operator):
   
 
     def execute(self, context):
-        
-        
         bpy.ops.object.duplicates_make_real()
         
 
         return{'FINISHED'}
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER VIEW AS PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCATTER VIEW AS PANEL------------------------------------------------
+
 class Scatter_Panel_Scatter_As (bpy.types.Panel):
-    bl_label= ""                                                                          
-    bl_idname= "PT_Scatter_Panel_Scatter_As"
-    bl_space_type= "VIEW_3D"                                                                     
-    bl_region_type= "UI"                                                                         
-    bl_category= "Arc Blend"                                                                   
-    bl_parent_id= "PT_Scatter_Panel"                                             
+    bl_label = ""
+    bl_idname = "PT_Scatter_Panel_Scatter_As"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Scatter_Panel"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     
     @classmethod
@@ -7116,11 +6727,11 @@ class Scatter_Panel_Scatter_As (bpy.types.Panel):
         layout.label(text="Scatter As", icon="STICKY_UVS_LOC")
          
     def draw(self, context):
-        layout=self.layout
+        layout = self.layout
         ob=context.object
-        scene=context.scene
+        scene = context.scene
         mesh=scatter_true_mesh_data(ob)
-        Arc_Blend=scene.Arc_Blend
+        Arc_Blend = scene.Arc_Blend
         ui=bpy.ops.ui
         main = layout.column()
         layout.use_property_split = False
@@ -7134,7 +6745,7 @@ class Scatter_Panel_Scatter_As (bpy.types.Panel):
          if bpy.context.scene.Arc_Blend.object_scatter == True:
                 
             #Render
-            col.prop(Arc_Blend, "scatter_view_as" ,text="Render Type")
+            col.prop(Arc_Blend, "scatter_view_as",text="Render Type")
 
             if bpy.context.scene.Arc_Blend.scatter_view_as == 'arc_blend_scatter_as_object' or bpy.context.scene.Arc_Blend.scatter_view_as == 'arc_blend_scatter_as_collection' :
                 
@@ -7149,15 +6760,16 @@ class Scatter_Panel_Scatter_As (bpy.types.Panel):
          
         except (TypeError,AttributeError,UnboundLocalError,KeyError):
             pass
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER PAINT PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCATTER PAINT PANEL------------------------------------------------
+
 class Scatter_Panel_Paint_Panel (bpy.types.Panel):
-    bl_label= ""                                                                          
-    bl_idname= "PT_Scatter_Panel_Paint_Panel"
-    bl_space_type= "VIEW_3D"                                                                     
-    bl_region_type= "UI"                                                                         
-    bl_category= "Arc Blend"                                                                   
-    bl_parent_id= "PT_Scatter_Panel"                                             
+    bl_label = ""
+    bl_idname = "PT_Scatter_Panel_Paint_Panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Scatter_Panel"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     
     @classmethod
@@ -7176,11 +6788,11 @@ class Scatter_Panel_Paint_Panel (bpy.types.Panel):
         layout.label(text="Paint Panel", icon="BRUSHES_ALL")
          
     def draw(self, context):
-        layout=self.layout
+        layout = self.layout
         ob=context.object
-        scene=context.scene
+        scene = context.scene
         mesh=scatter_true_mesh_data(ob)
-        Arc_Blend=scene.Arc_Blend
+        Arc_Blend = scene.Arc_Blend
         ui=bpy.ops.ui
         #main = layout.column()
         layout.use_property_split = False
@@ -7190,7 +6802,7 @@ class Scatter_Panel_Paint_Panel (bpy.types.Panel):
          part = bpy.context.object.particle_systems.data.particle_systems.active.settings
          psys = bpy.context.object.particle_systems.active #bpy.context.object.modifiers[bpy.context.object.particle_systems.data.particle_systems.active.name].particle_system
         
-         layout.prop(Arc_Blend, "object_scatter_paint_panel",text="PAINT",icon="BRUSHES_ALL")
+         layout.prop(Arc_Blend, "object_scatter_paint_panel",text="PAINT", icon="BRUSHES_ALL")
          col = layout.column()
          row = col.row(align=True)
          sub = row.row(align=True)
@@ -7200,15 +6812,16 @@ class Scatter_Panel_Paint_Panel (bpy.types.Panel):
         
         except (TypeError,AttributeError,UnboundLocalError,KeyError):
             pass 
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER ROTATION PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCATTER ROTATION PANEL------------------------------------------------
+
 class Scatter_Panel_Rotation_Panel (bpy.types.Panel):
-    bl_label= ""                                                                          
-    bl_idname= "PT_Scatter_Panel_Rotation_Panel"
-    bl_space_type= "VIEW_3D"                                                                     
-    bl_region_type= "UI"                                                                         
-    bl_category= "Arc Blend"                                                                   
-    bl_parent_id= "PT_Scatter_Panel"                                             
+    bl_label = ""
+    bl_idname = "PT_Scatter_Panel_Rotation_Panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Scatter_Panel"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     
     @classmethod
@@ -7237,11 +6850,11 @@ class Scatter_Panel_Rotation_Panel (bpy.types.Panel):
         
          
     def draw(self, context):
-        layout=self.layout
+        layout = self.layout
         ob=context.object
-        scene=context.scene
+        scene = context.scene
         mesh=scatter_true_mesh_data(ob)
-        Arc_Blend=scene.Arc_Blend
+        Arc_Blend = scene.Arc_Blend
         ui=bpy.ops.ui
         #main = layout.column()
         layout.use_property_split = False
@@ -7285,15 +6898,16 @@ class Scatter_Panel_Rotation_Panel (bpy.types.Panel):
 
 
 
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER OBJECT PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCATTER OBJECT PANEL------------------------------------------------
+
 class Scatter_Panel_Object (bpy.types.Panel):
-    bl_label= ""                                                                          
-    bl_idname= "PT_Scatter_Panel_Object"
-    bl_space_type= "VIEW_3D"                                                                     
-    bl_region_type= "UI"                                                                         
-    bl_category= "Arc Blend"                                                                   
-    bl_parent_id= "PT_Scatter_Panel_Scatter_As"                                             
+    bl_label = ""
+    bl_idname = "PT_Scatter_Panel_Object"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Scatter_Panel_Scatter_As"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     
     @classmethod
@@ -7314,11 +6928,11 @@ class Scatter_Panel_Object (bpy.types.Panel):
     
          
     def draw(self, context):
-        layout=self.layout
+        layout = self.layout
         ob=context.object
-        scene=context.scene
+        scene = context.scene
         mesh=scatter_true_mesh_data(ob)
-        Arc_Blend=scene.Arc_Blend
+        Arc_Blend = scene.Arc_Blend
         ui=bpy.ops.ui
         main = layout.column()
         layout.use_property_split = False
@@ -7332,7 +6946,7 @@ class Scatter_Panel_Object (bpy.types.Panel):
 
             col = layout.column()
 
-            col.prop(part, "instance_object", text="Instance",icon="STICKY_UVS_LOC")
+            col.prop(part, "instance_object", text="Instance", icon="STICKY_UVS_LOC")
             sub = col.column()
             sub.prop(part, "use_global_instance", text="Global Coordinates")
             sub.prop(part, "use_rotation_instance", text="Object Rotation")
@@ -7340,15 +6954,16 @@ class Scatter_Panel_Object (bpy.types.Panel):
             
         except (TypeError,AttributeError,UnboundLocalError,KeyError):
             pass
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER COLLECTION PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCATTER COLLECTION PANEL------------------------------------------------
+
 class Scatter_Panel_Collection (bpy.types.Panel):
-    bl_label= ""                                                                          
-    bl_idname= "PT_Scatter_Panel_Collection"
-    bl_space_type= "VIEW_3D"                                                                     
-    bl_region_type= "UI"                                                                         
-    bl_category= "Arc Blend"                                                                   
-    bl_parent_id= "PT_Scatter_Panel_Scatter_As"                                             
+    bl_label = ""
+    bl_idname = "PT_Scatter_Panel_Collection"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Scatter_Panel_Scatter_As"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     
     @classmethod
@@ -7370,11 +6985,11 @@ class Scatter_Panel_Collection (bpy.types.Panel):
     
          
     def draw(self, context):
-        layout=self.layout
+        layout = self.layout
         ob=context.object
-        scene=context.scene
+        scene = context.scene
         mesh=scatter_true_mesh_data(ob)
-        Arc_Blend=scene.Arc_Blend
+        Arc_Blend = scene.Arc_Blend
         ui=bpy.ops.ui
         main = layout.column()
         layout.use_property_split = False
@@ -7401,15 +7016,16 @@ class Scatter_Panel_Collection (bpy.types.Panel):
         
        
                     
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER COLLECTION USE COUNT PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCATTER COLLECTION USE COUNT PANEL------------------------------------------------
+
 class Scatter_Panel_Collection_Use_Count (bpy.types.Panel):
-    bl_label= ""                                                                          
-    bl_idname= "PT_Scatter_Panel_Collection_Use_Count"
-    bl_space_type= "VIEW_3D"                                                                     
-    bl_region_type= "UI"                                                                         
-    bl_category= "Arc Blend"                                                                   
-    bl_parent_id= "PT_Scatter_Panel_Collection"                                             
+    bl_label = ""
+    bl_idname = "PT_Scatter_Panel_Collection_Use_Count"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Scatter_Panel_Collection"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     bl_options = {'DEFAULT_CLOSED'}
     
@@ -7434,17 +7050,17 @@ class Scatter_Panel_Collection_Use_Count (bpy.types.Panel):
 
          layout.active = not part.use_whole_collection
 
-         layout.prop(part, "use_collection_count", text="Proportion (Elements)", icon="OUTLINER_COLLECTION") 
+         layout.prop(part, "use_collection_count", text="Proportion (Elements)", icon="OUTLINER_COLLECTION")
         except (TypeError,AttributeError,UnboundLocalError,KeyError):
             pass
             
         
     def draw(self, context):
-        layout=self.layout
+        layout = self.layout
         ob=context.object
-        scene=context.scene
+        scene = context.scene
         mesh=scatter_true_mesh_data(ob)
-        Arc_Blend=scene.Arc_Blend
+        Arc_Blend = scene.Arc_Blend
         ui=bpy.ops.ui
         main = layout.column()
         layout.use_property_split = False
@@ -7484,15 +7100,16 @@ class Scatter_Panel_Collection_Use_Count (bpy.types.Panel):
         
 
 
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER EXTRA PANEL------------------------------------------------
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------SCATTER EXTRA PANEL------------------------------------------------
+
 class Scatter_Panel_Extra (bpy.types.Panel):
-    bl_label= ""                                                                          
-    bl_idname= "PT_Scatter_Panel_Extra"
-    bl_space_type= "VIEW_3D"                                                                     
-    bl_region_type= "UI"                                                                         
-    bl_category= "Arc Blend"                                                                   
-    bl_parent_id= "PT_Scatter_Panel_Scatter_As"                                             
+    bl_label = ""
+    bl_idname = "PT_Scatter_Panel_Extra"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Scatter_Panel_Scatter_As"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     
     @classmethod
@@ -7530,8 +7147,8 @@ class Scatter_Panel_Extra (bpy.types.Panel):
         except (TypeError,AttributeError,UnboundLocalError,KeyError):
             pass  
 
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------ADD OBJECT TO LIST SCATTER-------------------------------------------  
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------ADD OBJECT TO LIST SCATTER-------------------------------------------  
        
 
 class scatter_panel_add_objects (bpy.types.Operator):
@@ -7570,8 +7187,8 @@ class scatter_panel_add_objects (bpy.types.Operator):
         
 
         return{'FINISHED'}
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DELETE OBJECT FROM LIST-------------------------------------- 
+# ------------------------------------------------------------------------------
+# ----------------------------------------------------DELETE OBJECT FROM LIST-------------------------------------- 
        
 
 class scatter_panel_remove_objects (bpy.types.Operator):
@@ -7590,59 +7207,48 @@ class scatter_panel_remove_objects (bpy.types.Operator):
         try:
             mesh= bpy.data.meshes[self.scatter_mesh_name]
             index = mesh.scatter_list_index
-            
             if self.remove == 'REMOVE':
-            
-                
                 mesh.scatter_list_index -=1
                 mesh.scatter_mesh_list.remove(index)
                 scatter_clean_original_pointer()
                 # maybe user deleted active boolean
-            
         except (AttributeError, KeyError):
             pass     
-            
-        
-   
+
         return{'FINISHED'}
 
-
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------DEFINES-------------------------------------------------------
+# ------------------------------------------------------------------------------
+# DEFINES
 def scatter_find_instances(scatter_mesh_data):
-    """ Finds the instances"""
+    """Finds the instances"""
     r=[]
     for o in bpy.data.objects:
         if (o.type=='MESH'):
-            if scatter_true_mesh_data(o) == scatter_mesh_data:
+            if scatter_true_mesh_data(o)== scatter_mesh_data:
                 r.append(o)
     return r
 
-
-
-
 def scatter_fill_original_pointer(scatter_mesh_data):
-    """ Pointer filled first active object"""
+    """Pointer filled first active object"""
 
     for ob in scatter_find_instances(scatter_mesh_data):
         #if ui list not empty but pointer is -> fill pointer 
-        if (len(ob.data.scatter_mesh_list) > 0) and (not ob.scatter_item_obj): ob.scatter_item_obj = scatter_mesh_data
+        if (len(ob.data.scatter_mesh_list)> 0)and (not ob.scatter_item_obj): ob.scatter_item_obj = scatter_mesh_data
     return None 
 
 def scatter_clean_original_pointer():
-    """ Clean original pointer"""
+    """Clean original pointer"""
 
     for ob in bpy.data.objects:
         if ob.type =='MESH':
             #if ui list empty but pointer original full -> restore and clean
-            if (ob.scatter_item_obj) and (len(ob.scatter_item_obj.scatter_mesh_list) == 0):
+            if (ob.scatter_item_obj)and (len(ob.scatter_item_obj.scatter_mesh_list)== 0):
                 if ob.data != ob.scatter_item_obj: ob.data = ob.scatter_item_obj
                 ob.scatter_item_obj = None 
     return None
 
-
 def scatter_true_mesh_data(obj):
-    """ Original Mesh Data"""
+    """Original Mesh Data"""
     try:
         if obj.scatter_item_obj: 
          return obj.scatter_item_obj
@@ -7651,60 +7257,43 @@ def scatter_true_mesh_data(obj):
     except AttributeError:
         pass            
 
-
-
-
 def scatter_return_one_time(mesh,active_idx,prop_api): 
-    """ Returning once per elements"""
+    """Returning once per elements"""
     AB_list = mesh.scatter_mesh_list
-    
-
-    
     for i in AB_list:
         if i.scatter_ui_index != active_idx:
-            exec(f"i.{prop_api} = False")
+            exec(f"i.{prop_api}= False")
     return None 
 
-
-def scatter_item_upd(self,context):
+def scatter_item_upd(self, context):
         if not self.scatter_item: self.scatter_render_frame = self.scatter_display = False
         return None
-    
-   
-def scatter_display_upd(self,context): 
-    
+
+def scatter_display_upd(self, context): 
         if self.scatter_display == True: scatter_return_one_time(self.id_data, self.scatter_ui_index, "scatter_display")
-    
-       
         bpy.data.particles["AB_Scatter"].type = 'HAIR'
         bpy.data.particles["AB_Scatter"].render_type = 'OBJECT'
         bpy.data.particles["AB_Scatter"].instance_object = bpy.data.objects["Cube"]
- 
 
-        
         return None
-    
-#-----------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------SCATTER PROPERTY GROUP-----------------------------------------------
+
+# ------------------------------------------------------------------------------
+# SCATTER PROPERTY GROUP
+
 
 class scatter_panel_list_item(bpy.types.PropertyGroup):
-    
       id: bpy.props.IntProperty()
       object: bpy.props.PointerProperty(
         name="Object",
         type=bpy.types.Object,)
-   
-    
-      #Name of the items in the list
+
+      # Name of the items in the list
       name: bpy.props.StringProperty(description="Object Name")
-      #Random props in the lists
+      # Random props in the lists
       scatter_ui_index: bpy.props.IntProperty(description='UI List Index',)
       scatter_item : bpy.props.PointerProperty(type=bpy.types.Mesh,description='Mesh Name',update=scatter_item_upd)
       scatter_display : bpy.props.BoolProperty(default=False,description="Display in Viewport",update=scatter_display_upd)
-      
-      
-      
-      
+
       def copy(self):
         self.object = self.id_data.copy()
         self.name = self.object.name
@@ -7713,36 +7302,31 @@ class scatter_panel_list_item(bpy.types.PropertyGroup):
       def add(self, ob):
         self.object = ob
         self.name = ob.name
-        return self.object            
+        return self.object
+
+# ------------------------------------------------------------------------------
+# REGISTERATION AREA
 
 
-
-
-#------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------REGISTERATION AREA--------------------------------------------
-
-                             
 def register():
-    bpy.utils.register_class(arcblend)                                                          #Unregister Arc Blend for Blender
-    bpy.utils.register_class(Add_Mesh)                                                          #Unregister Add Mesh for Blender
-    bpy.utils.register_class(Add_Curve)                                                         #Unregister Add Curve for Blender
-    bpy.utils.register_class(Add_Surface)                                                       #Unregister Add Surface for Blender
-    bpy.utils.register_class(Add_Metaball)                                                      #Unregister Add MetaBall for Blender
-    bpy.utils.register_class(Add_Text)                                                          #Unregister Add Text for Blender
-    bpy.utils.register_class(Add_Volume)                                                        #Unregister Add Volume for Blender
-    bpy.utils.register_class(Add_Grease_Pencil)                                                 #Unregister Add Grease Pencil for Blender
-    bpy.utils.register_class(Add_Armature)                                                      #Unregister Add Armature for Blender
-    bpy.utils.register_class(Add_Lattice)                                                       #Unregister Add Lattice for Blender
-    bpy.utils.register_class(Add_Empty)                                                         #Unregister Add Empty for Blender
-    bpy.utils.register_class(Add_Image)                                                         #Unregister Add Image for Blender
+    bpy.utils.register_class(arcblend)
+    bpy.utils.register_class(Add_Mesh)
+    bpy.utils.register_class(Add_Curve)
+    bpy.utils.register_class(Add_Surface)
+    bpy.utils.register_class(Add_Metaball)
+    bpy.utils.register_class(Add_Text)
+    bpy.utils.register_class(Add_Volume)
+    bpy.utils.register_class(Add_Grease_Pencil)
+    bpy.utils.register_class(Add_Armature)
+    bpy.utils.register_class(Add_Lattice)
+    bpy.utils.register_class(Add_Empty)
+    bpy.utils.register_class(Add_Image)
     bpy.utils.register_class(Add_Light)
     bpy.utils.register_class(Add_Light_Probe)
     bpy.utils.register_class(Add_Camera)
     bpy.utils.register_class(Add_Speaker)
     bpy.utils.register_class(Add_Force_Field)
     bpy.utils.register_class(Add_Collection_instance)
-    
-    
     bpy.utils.register_class(ArcBlendModifiers)
     bpy.utils.register_class(modifier)
     bpy.utils.register_class(transform_edit_object_panel)
@@ -7750,31 +7334,17 @@ def register():
     bpy.utils.register_class(transform_edit_object_align_y)
     bpy.utils.register_class(transform_edit_object_align_z)
     bpy.utils.register_class(transform_edit_object_align_bound)
-    
-    
-    
-    
-    
     bpy.utils.register_class(transform_edit_object_purge)
     bpy.utils.register_class(transform)
-    
-    
     bpy.utils.register_class(modifier_panel)
     bpy.utils.register_class(modify_panel)
     bpy.utils.register_class(array_panel)
-    
     bpy.utils.register_class(modifier_array)
     bpy.utils.register_class(modifier_array_detail)
     bpy.utils.register_class(modifier_array_detail_executer)
     bpy.utils.register_class(modifier_array_apply)
     bpy.utils.register_class(Relative_Offset)
-   
-     
-    bpy.types.Scene.Arc_Blend=bpy.props.PointerProperty(type=modifier_array_detail)
-    
-    
-    
-    
+    bpy.types.Scene.Arc_Blend = bpy.props.PointerProperty(type=modifier_array_detail)
     bpy.utils.register_class(bevel_panel)
     bpy.utils.register_class(modifier_bevel_button)
     bpy.utils.register_class(modifier_bevel_v_button)
@@ -7782,26 +7352,14 @@ def register():
     bpy.utils.register_class(modifier_bevel_detail)
     bpy.utils.register_class(modifier_bevel_detail_executer)
     bpy.utils.register_class(modifier_bevel_apply)
-    
-    
-    
-    
-    
-    bpy.types.Scene.AB_Bevel=bpy.props.PointerProperty(type=modifier_bevel_detail)
-    
-    
-
-    
-    
+    bpy.types.Scene.AB_Bevel = bpy.props.PointerProperty(type=modifier_bevel_detail)
     bpy.utils.register_class(generate_panel)
     bpy.utils.register_class(deform_panel)
     bpy.utils.register_class(physics_panel)
-    bpy.utils.register_class(display_panel)  
-                                                              
+    bpy.utils.register_class(display_panel)
     bpy.utils.register_class(Loop_Menu)
     bpy.utils.register_class(loop_multiple_select)
     bpy.utils.register_class(loop_multiple_select_ring)
-    
     bpy.utils.register_class(loop_select)
     bpy.utils.register_class(loop_select_boundry_faces)
     bpy.utils.register_class(loop_mesh_seperate)
@@ -7813,27 +7371,18 @@ def register():
     bpy.utils.register_class(loop_mesh_find_quads)
     bpy.utils.register_class(loop_sde)
     bpy.utils.register_class(loop_idtm)
-    
-    
-    
-    
-
-    
     bpy.utils.register_class(mball_ball)
     bpy.utils.register_class(mball_capsule)
     bpy.utils.register_class(mball_plane)
     bpy.utils.register_class(mball_ellipsoid)
     bpy.utils.register_class(mball_cube)
-    
     bpy.utils.register_class(grease_pencil_blank)
     bpy.utils.register_class(grease_pencil_stroke)
     bpy.utils.register_class(grease_pencil_monkey)
     bpy.utils.register_class(grease_pencil_sla)
     bpy.utils.register_class(grease_pencil_cla)
     bpy.utils.register_class(grease_pencil_ola)
-    
     bpy.utils.register_class(lattice_button)
-    
     bpy.utils.register_class(empty_plain_axes)
     bpy.utils.register_class(empty_arrows)
     bpy.utils.register_class(empty_single_arrow)
@@ -7842,20 +7391,15 @@ def register():
     bpy.utils.register_class(empty_sphere)
     bpy.utils.register_class(empty_cone)
     bpy.utils.register_class(empty_image)
-    
     bpy.utils.register_class(light_point)
     bpy.utils.register_class(light_sun)
     bpy.utils.register_class(light_spot)
     bpy.utils.register_class(light_area)
-    
     bpy.utils.register_class(light_probe_cubemap)
     bpy.utils.register_class(light_probe_reflectionplane)
     bpy.utils.register_class(light_probe_irradiencevolume)
-    
     bpy.utils.register_class(camera_normal)
-    
     bpy.utils.register_class(speaker_button)
-    
     bpy.utils.register_class(forcefield_force)
     bpy.utils.register_class(forcefield_wind)
     bpy.utils.register_class(forcefield_vortex)
@@ -7869,9 +7413,7 @@ def register():
     bpy.utils.register_class(forcefield_turbulance)
     bpy.utils.register_class(forcefield_drag)
     bpy.utils.register_class(forcefield_fluidflow)
-    
     bpy.utils.register_class(collection_instance_collection)
-    
     bpy.utils.register_class(edit_mode_vertex)
     bpy.utils.register_class(edit_mode_add_vertex)
     bpy.utils.register_class(edit_mode_bridge_vertices)
@@ -7879,83 +7421,31 @@ def register():
     bpy.utils.register_class(edit_mode_just_vertices)
     bpy.utils.register_class(edit_mode_just_edges)
     bpy.utils.register_class(edit_mode_create_faces)
-    
-    
-    
-    
     bpy.utils.register_class(transform_edit_object_randomize_colors)
     bpy.utils.register_class(transform_edit_object_reset_colors)
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-  
-    
-    
-    
-    
-    
-    
     bpy.utils.register_class(display_panel_show_xray)
     bpy.utils.register_class(display_panel_show_wireframe)
     bpy.utils.register_class(display_panel_show_solid)
     bpy.utils.register_class(display_panel_show_material)
     bpy.utils.register_class(display_panel_show_rendered)
-    
-    
-    
     bpy.utils.register_class(Themes_Panel)
     bpy.utils.register_class(themes_panel_mak)
     bpy.utils.register_class(themes_panel_white_chalk)
     bpy.utils.register_class(themes_panel_reset)
-    
-    
-   
-    
-    
     bpy.utils.register_class(Modelling_Panel)
     bpy.utils.register_class(Modelling_Panel_Vertex_Selection)
     bpy.utils.register_class(vertex_selection_make_circle)
-    
-    
     bpy.utils.register_class(vertex_selection_rip_vertex)
     bpy.utils.register_class(vertex_selection_merge_vertex_last)
     bpy.utils.register_class(vertex_selection_dissolve_vertex)
     bpy.utils.register_class(vertex_selection_connect_vertex_path)
     bpy.utils.register_class(vertex_selection_create_vertices)
     bpy.utils.register_class(vertex_selection_assign_vertex_group)
-    
-    
-    
     bpy.utils.register_class(Modelling_Panel_Vertex_Group_Panel)
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     bpy.utils.register_class(Modelling_Panel_Modify_Selection)
     bpy.utils.register_class(loop_grow_edge_select)
     bpy.utils.register_class(loop_shrink_edge_select)
     bpy.utils.register_class(loop_auto_edge_loop)
-    
-    
     bpy.utils.register_class(Modelling_Panel_Modify_Edit_Faces)
     bpy.utils.register_class(modelling_edit_faces_extrude)
     bpy.utils.register_class(modelling_edit_faces_inset)
@@ -7966,31 +7456,12 @@ def register():
     bpy.utils.register_class(modelling_edit_faces_tris_to_quads)
     bpy.utils.register_class(modelling_edit_faces_solidify)
     bpy.utils.register_class(modelling_edit_faces_wireframe)
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     bpy.utils.register_class(modelling_edit_edges_connect)
     bpy.utils.register_class(modelling_edit_edges_extrude)
     bpy.utils.register_class(modelling_edit_edges_collapse)
-    
-    
     bpy.utils.register_class(Modelling_Panel_Modify_Edit)
     bpy.utils.register_class(modelling_edit_loop_cut)
     bpy.utils.register_class(modelling_edit_rotate_edges)
-    
-    
     bpy.utils.register_class(modelling_edit_offset_edge_loop_cut)
     bpy.utils.register_class(modelling_edit_knife_cut)
     bpy.utils.register_class(modelling_edit_knife_bisect)
@@ -8000,32 +7471,16 @@ def register():
     bpy.utils.register_class(modelling_edit_y_mirror_minus)
     bpy.utils.register_class(modelling_edit_z_mirror)
     bpy.utils.register_class(modelling_edit_z_mirror_minus)
-    
     bpy.utils.register_class(modelling_edit_fill_sides)
-    
-    
     bpy.utils.register_class(modelling_edit_hide_unselected)
     bpy.utils.register_class(modelling_edit_hide_selected)
     bpy.utils.register_class(modelling_edit_reveal)
-    
-    
-    
     bpy.utils.register_class(modelling_edit_orient_x)
     bpy.utils.register_class(modelling_edit_orient_y)
     bpy.utils.register_class(modelling_edit_orient_z)
-    
-    
-    
-    
-    
-    
-    
-    
-    
     bpy.utils.register_class(Proxy_Panel)
     bpy.utils.register_class(proxy_panel_remeshx_result)
     bpy.utils.register_class(proxy_panel_convertto_point_cloud)
-    
     bpy.utils.register_class(proxy_panel_object_list)
     bpy.utils.register_class(proxy_panel_add_objects)
     bpy.utils.register_class(proxy_panel_remove_objects)
@@ -8036,96 +7491,54 @@ def register():
     bpy.utils.register_class(proxy_panel_list_apply_all_modifiers)
     bpy.utils.register_class(proxy_panel_convertto_hull_geometry)
     bpy.utils.register_class(proxy_panel_convertto_bound_box)
-    
-    
-    
-    
-    
-    #Scene
-    #bpy.types.Scene.proxy_item = bpy.props.PointerProperty(type=bpy.types.Mesh,description='Original Mesh-Data name')
-
-   
-    #Object
-    bpy.types.Object.proxy_item_obj = bpy.props.PointerProperty(type=bpy.types.Mesh,description='Original Mesh-Data name' )
-   
-    #Mesh
+    # Scene
+    # bpy.types.Scene.proxy_item = bpy.props.PointerProperty(type=bpy.types.Mesh,description='Original Mesh-Data name')
+    # Object
+    bpy.types.Object.proxy_item_obj = bpy.props.PointerProperty(type=bpy.types.Mesh, description='Original Mesh-Data name')
+    # Mesh
     bpy.types.Mesh.mesh_list = bpy.props.CollectionProperty(type=proxy_panel_list_item)
-    bpy.types.Mesh.list_index=bpy.props.IntProperty(name= "Index for mesh_list" , default=0)
-    #bpy.types.Mesh.proxy_item = bpy.props.PointerProperty(type=bpy.types.Mesh,description='Original Mesh-Data name')
-   
-    
-    
-
+    bpy.types.Mesh.list_index = bpy.props.IntProperty(name="Index for mesh_list", default=0)
+    # bpy.types.Mesh.proxy_item = bpy.props.PointerProperty(type=bpy.types.Mesh,description='Original Mesh-Data name')
     bpy.utils.register_class(Scatter_Panel)
     bpy.utils.register_class(scatter_panel_make_real_objects)
     bpy.utils.register_class(scatter_panel_object_list)
-    
     bpy.utils.register_class(scatter_panel_add_objects)
     bpy.utils.register_class(scatter_panel_remove_objects)
     bpy.utils.register_class(scatter_panel_list_item)
     bpy.utils.register_class(Scatter_Panel_Scatter_As)
     bpy.utils.register_class(Scatter_Panel_Paint_Panel)
     bpy.utils.register_class(Scatter_Panel_Rotation_Panel)
-    
-    
-    
-    
-    
-    
     bpy.utils.register_class(Scatter_Panel_Object)
     bpy.utils.register_class(Scatter_Panel_Collection)
     bpy.utils.register_class(Scatter_Panel_Collection_Use_Count)
-    
-    
-    
-    
-    
     bpy.utils.register_class(Scatter_Panel_Extra)
-    
-    
-    
-    
-    
-    
-    
-     #Object
-    bpy.types.Object.scatter_item_obj = bpy.props.PointerProperty(type=bpy.types.Mesh,description='Original Mesh-Data name' )
-    
-    
-    
-    #Mesh
+    # Object
+    bpy.types.Object.scatter_item_obj = bpy.props.PointerProperty(type=bpy.types.Mesh, description='Original Mesh-Data name')
+    # Mesh
     bpy.types.Mesh.scatter_mesh_list = bpy.props.CollectionProperty(type=scatter_panel_list_item)
-    bpy.types.Mesh.scatter_list_index = bpy.props.IntProperty(name= "Index for scatter_mesh_list" , default=0)
-    
-   
-    
-    
-    
-    
-    
-    
-def unregister():    
-                                                                                 #Unregister for Blender
-    bpy.utils.unregister_class(arcblend)                                                          #Unregister Arc Blend for Blender
-    bpy.utils.unregister_class(Add_Mesh)                                                          #Unregister Add Mesh for Blender
-    bpy.utils.unregister_class(Add_Curve)                                                         #Unregister Add Curve for Blender
-    bpy.utils.unregister_class(Add_Surface)                                                       #Unregister Add Surface for Blender
-    bpy.utils.unregister_class(Add_Metaball)                                                      #Unregister Add MetaBall for Blender
-    bpy.utils.unregister_class(Add_Text)                                                          #Unregister Add Text for Blender
-    bpy.utils.unregister_class(Add_Volume)                                                        #Unregister Add Volume for Blender
-    bpy.utils.unregister_class(Add_Grease_Pencil)                                                 #Unregister Add Grease Pencil for Blender
-    bpy.utils.unregister_class(Add_Armature)                                                      #Unregister Add Armature for Blender
-    bpy.utils.unregister_class(Add_Lattice)                                                       #Unregister Add Lattice for Blender
-    bpy.utils.unregister_class(Add_Empty)                                                         #Unregister Add Empty for Blender
-    bpy.utils.unregister_class(Add_Image)                                                         #Unregister Add Image for Blender
+    bpy.types.Mesh.scatter_list_index = bpy.props.IntProperty(name="Index for scatter_mesh_list", default=0)
+
+
+def unregister():
+    # Unregister for Blender
+    bpy.utils.unregister_class(arcblend)
+    bpy.utils.unregister_class(Add_Mesh)
+    bpy.utils.unregister_class(Add_Curve)
+    bpy.utils.unregister_class(Add_Surface)
+    bpy.utils.unregister_class(Add_Metaball)
+    bpy.utils.unregister_class(Add_Text)
+    bpy.utils.unregister_class(Add_Volume)
+    bpy.utils.unregister_class(Add_Grease_Pencil)
+    bpy.utils.unregister_class(Add_Armature)
+    bpy.utils.unregister_class(Add_Lattice)
+    bpy.utils.unregister_class(Add_Empty)
+    bpy.utils.unregister_class(Add_Image)
     bpy.utils.unregister_class(Add_Light)
     bpy.utils.unregister_class(Add_Light_Probe)
     bpy.utils.unregister_class(Add_Camera)
     bpy.utils.unregister_class(Add_Speaker)
     bpy.utils.unregister_class(Add_Force_Field)
     bpy.utils.unregister_class(Add_Collection_instance)
-    
-    
     bpy.utils.unregister_class(ArcBlendModifiers)
     bpy.utils.unregister_class(modifier)
     bpy.utils.unregister_class(transform_edit_object_panel)
@@ -8135,7 +7548,6 @@ def unregister():
     bpy.utils.unregister_class(transform_edit_object_align_bound)
     bpy.utils.unregister_class(transform_edit_object_purge)
     bpy.utils.unregister_class(transform)
-     
     bpy.utils.unregister_class(modifier_panel)
     bpy.utils.unregister_class(modify_panel)
     bpy.utils.unregister_class(array_panel)
@@ -8143,11 +7555,8 @@ def unregister():
     bpy.utils.unregister_class(modifier_array_detail)
     bpy.utils.unregister_class(modifier_array_detail_executer)
     bpy.utils.unregister_class(modifier_array_apply)
-    bpy.utils.unregister_class(Relative_Offset) 
-    
+    bpy.utils.unregister_class(Relative_Offset)
     del bpy.types.Scene.Arc_Blend
-    
-    
     bpy.utils.unregister_class(bevel_panel)
     bpy.utils.unregister_class(modifier_bevel_button)
     bpy.utils.unregister_class(modifier_bevel_v_button)
@@ -8156,17 +7565,10 @@ def unregister():
     bpy.utils.unregister_class(modifier_bevel_detail_executer)
     bpy.utils.unregister_class(modifier_bevel_apply)
     del bpy.types.Scene.AB_Bevel
-  
-    
-    
-    
-    
-    
     bpy.utils.unregister_class(generate_panel)
     bpy.utils.unregister_class(deform_panel)
     bpy.utils.unregister_class(physics_panel)
-    bpy.utils.unregister_class(display_panel) 
-                                                             
+    bpy.utils.unregister_class(display_panel)
     bpy.utils.unregister_class(Loop_Menu)
     bpy.utils.unregister_class(loop_multiple_select)
     bpy.utils.unregister_class(loop_multiple_select_ring)
@@ -8181,25 +7583,18 @@ def unregister():
     bpy.utils.unregister_class(loop_mesh_find_quads)
     bpy.utils.unregister_class(loop_sde)
     bpy.utils.unregister_class(loop_idtm)
-    
-    
-    
-    
     bpy.utils.unregister_class(mball_ball)
     bpy.utils.unregister_class(mball_capsule)
     bpy.utils.unregister_class(mball_plane)
     bpy.utils.unregister_class(mball_ellipsoid)
     bpy.utils.unregister_class(mball_cube)
-    
     bpy.utils.unregister_class(grease_pencil_blank)
     bpy.utils.unregister_class(grease_pencil_stroke)
     bpy.utils.unregister_class(grease_pencil_monkey)
     bpy.utils.unregister_class(grease_pencil_sla)
     bpy.utils.unregister_class(grease_pencil_cla)
     bpy.utils.unregister_class(grease_pencil_ola)
-    
     bpy.utils.unregister_class(lattice_button)
-    
     bpy.utils.unregister_class(empty_plain_axes)
     bpy.utils.unregister_class(empty_arrows)
     bpy.utils.unregister_class(empty_single_arrow)
@@ -8208,20 +7603,15 @@ def unregister():
     bpy.utils.unregister_class(empty_sphere)
     bpy.utils.unregister_class(empty_cone)
     bpy.utils.unregister_class(empty_image)
-    
     bpy.utils.unregister_class(light_point)
     bpy.utils.unregister_class(light_sun)
     bpy.utils.unregister_class(light_spot)
     bpy.utils.unregister_class(light_area)
-    
     bpy.utils.unregister_class(light_probe_cubemap)
     bpy.utils.unregister_class(light_probe_reflectionplane)
     bpy.utils.unregister_class(light_probe_irradiencevolume)
-    
     bpy.utils.unregister_class(camera_normal)
-    
     bpy.utils.unregister_class(speaker_button)
-    
     bpy.utils.unregister_class(forcefield_force)
     bpy.utils.unregister_class(forcefield_wind)
     bpy.utils.unregister_class(forcefield_vortex)
@@ -8235,9 +7625,7 @@ def unregister():
     bpy.utils.unregister_class(forcefield_turbulance)
     bpy.utils.unregister_class(forcefield_drag)
     bpy.utils.unregister_class(forcefield_fluidflow)
-    
     bpy.utils.unregister_class(collection_instance_collection)
-    
     bpy.utils.unregister_class(edit_mode_vertex)
     bpy.utils.unregister_class(edit_mode_add_vertex)
     bpy.utils.unregister_class(edit_mode_bridge_vertices)
@@ -8245,35 +7633,17 @@ def unregister():
     bpy.utils.unregister_class(edit_mode_just_vertices)
     bpy.utils.unregister_class(edit_mode_just_edges)
     bpy.utils.unregister_class(edit_mode_create_faces)
-    
-    
     bpy.utils.unregister_class(transform_edit_object_randomize_colors)
     bpy.utils.unregister_class(transform_edit_object_reset_colors)
-   
-    
-
-    
-  
-    
-    
-    
     bpy.utils.unregister_class(display_panel_show_xray)
     bpy.utils.unregister_class(display_panel_show_wireframe)
     bpy.utils.unregister_class(display_panel_show_solid)
     bpy.utils.unregister_class(display_panel_show_material)
     bpy.utils.unregister_class(display_panel_show_rendered)
-    
-    
     bpy.utils.unregister_class(Themes_Panel)
     bpy.utils.unregister_class(themes_panel_mak)
     bpy.utils.unregister_class(themes_panel_white_chalk)
     bpy.utils.unregister_class(themes_panel_reset)
-    
-    
-  
-    
-    
-    
     bpy.utils.unregister_class(Modelling_Panel)
     bpy.utils.unregister_class(Modelling_Panel_Vertex_Selection)
     bpy.utils.unregister_class(vertex_selection_make_circle)
@@ -8283,18 +7653,11 @@ def unregister():
     bpy.utils.unregister_class(vertex_selection_connect_vertex_path)
     bpy.utils.unregister_class(vertex_selection_create_vertices)
     bpy.utils.unregister_class(vertex_selection_assign_vertex_group)
-    
     bpy.utils.unregister_class(Modelling_Panel_Vertex_Group_Panel)
-    
-    
-    
-    
     bpy.utils.unregister_class(Modelling_Panel_Modify_Selection)
     bpy.utils.unregister_class(loop_grow_edge_select)
     bpy.utils.unregister_class(loop_shrink_edge_select)
     bpy.utils.unregister_class(loop_auto_edge_loop)
-    
-    
     bpy.utils.unregister_class(Modelling_Panel_Modify_Edit_Faces)
     bpy.utils.unregister_class(modelling_edit_faces_extrude)
     bpy.utils.unregister_class(modelling_edit_faces_inset)
@@ -8305,16 +7668,9 @@ def unregister():
     bpy.utils.unregister_class(modelling_edit_faces_tris_to_quads)
     bpy.utils.unregister_class(modelling_edit_faces_solidify)
     bpy.utils.unregister_class(modelling_edit_faces_wireframe)
-    
-    
-  
-    
-    
     bpy.utils.unregister_class(modelling_edit_edges_connect)
     bpy.utils.unregister_class(modelling_edit_edges_extrude)
     bpy.utils.unregister_class(modelling_edit_edges_collapse)
-    
-    
     bpy.utils.unregister_class(Modelling_Panel_Modify_Edit)
     bpy.utils.unregister_class(modelling_edit_loop_cut)
     bpy.utils.unregister_class(modelling_edit_rotate_edges)
@@ -8334,13 +7690,6 @@ def unregister():
     bpy.utils.unregister_class(modelling_edit_orient_x)
     bpy.utils.unregister_class(modelling_edit_orient_y)
     bpy.utils.unregister_class(modelling_edit_orient_z)
-    
-    
-    
-    
-    
-    
-    
     bpy.utils.unregister_class(Proxy_Panel)
     bpy.utils.unregister_class(proxy_panel_remeshx_result)
     bpy.utils.unregister_class(proxy_panel_convertto_point_cloud)
@@ -8354,10 +7703,6 @@ def unregister():
     bpy.utils.unregister_class(proxy_panel_list_apply_all_modifiers)
     bpy.utils.unregister_class(proxy_panel_convertto_hull_geometry)
     bpy.utils.unregister_class(proxy_panel_convertto_bound_box)
-    
-    
-    
-    
     bpy.utils.unregister_class(Scatter_Panel_Scatter_As)
     bpy.utils.unregister_class(scatter_panel_make_real_objects)
     bpy.utils.unregister_class(Scatter_Panel_Paint_Panel)
@@ -8366,57 +7711,25 @@ def unregister():
     bpy.utils.unregister_class(Scatter_Panel_Collection)
     bpy.utils.unregister_class(Scatter_Panel_Collection_Use_Count)
     bpy.utils.unregister_class(Scatter_Panel_Extra)
-    
-    
-    
-    
-    
-    
-    #del bpy.types.Scene.mesh_list
-    #del bpy.types.Scene.list_index
-    #del bpy.types.Scene.proxy_item
-
-   
-    
-    #del bpy.types.Object.mesh_list
-    #del bpy.types.Object.list_index
+    # del bpy.types.Scene.mesh_list
+    # del bpy.types.Scene.list_index
+    # del bpy.types.Scene.proxy_item
+    # del bpy.types.Object.mesh_list
+    # del bpy.types.Object.list_index
     del bpy.types.Object.proxy_item_obj
-    
     del bpy.types.Mesh.mesh_list
     del bpy.types.Mesh.list_index
-    #del bpy.types.Mesh.proxy_item
-    
-    
-    
+    # del bpy.types.Mesh.proxy_item
     bpy.utils.unregister_class(Scatter_Panel)
     bpy.utils.unregister_class(scatter_panel_object_list)
     bpy.utils.unregister_class(scatter_panel_add_objects)
     bpy.utils.unregister_class(scatter_panel_remove_objects)
     bpy.utils.unregister_class(scatter_panel_list_item)
-    
     del bpy.types.Mesh.scatter_mesh_list
     del bpy.types.Mesh.scatter_list_index
     del bpy.types.Object.scatter_item_obj
-    
-    
-    
-    
-    
-   
-   
-    
-    
-    
-  
-   
-    
-    
-   
- 
-    
-    
-#--------------------------------------------------------------------------------------------------------------
-    
-    
+
+# ------------------------------------------------------------------------------
+
 if __name__ == "__main__":
     register()
