@@ -1,3 +1,11 @@
+# Goal
+Main goal of this addon helps you to an easy modelling.
+
+# Changes
+• Added View3D Views to AB Modelling Panel
+• Working on pep8 code standarts.
+• ...
+
 # Installation
 
 1.) Go to main area :  https://github.com/stunmuffin/Arc_Blend
@@ -62,7 +70,7 @@ Collection
 Added Set Origins Lowest and Highest Level:
 ![1](https://user-images.githubusercontent.com/48792613/185749492-4e2baaa5-1d93-4e19-97d4-7f15733246fd.png)
 
-Also you can change manuel axis with % levels:
+Also you can change manuel axis with % levels(But you need to apply scale objects):
 ![2](https://user-images.githubusercontent.com/48792613/185749750-9656f139-e673-40cb-96de-edf5b3fe0d2a.png)
 ![3](https://user-images.githubusercontent.com/48792613/185749752-6c4cab37-b813-44ab-bb7f-74844f5bb956.png)
 
