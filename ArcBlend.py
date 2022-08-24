@@ -36,7 +36,7 @@ bl_info = {
 #
 # ##### END GPL LICENSE BLOCK #####
 # ------------------------------------------------------------------------------
-# INSTALL GUIDE----------------------------------------------------------------
+# INSTALL GUIDE
 # Installation info
 #
 # Download file to your computer.
@@ -45,7 +45,7 @@ bl_info = {
 # Location "N"Panel
 
 # ------------------------------------------------------------------------------
-# ARC BLEND IMPORTS-----------------------------------------------------------
+# ARC BLEND IMPORTS
 
 # ------------------------------------------------------------------------------
 # ARC BLEND PANEL
@@ -1865,7 +1865,7 @@ def origin_set_manuel_matrix(ob, matrix=Matrix()):
 
 
 def origin_set_manuel_upd(self, context):
-    if bpy.context.scene.Arc_Blend.arc_blend_manuel_origin >= 0:
+    if bpy.context.scene.Arc_Blend.arc_blend_manuel_origin >= 0 or bpy.context.scene.Arc_Blend.arc_blend_manuel_origin <0:
         for i in bpy.context.selected_objects:
             if i.type == 'MESH':
                 ob = i
@@ -1898,7 +1898,7 @@ def origin_set_manuel_matrix_y(ob, matrix=Matrix()):
 
 def origin_set_manuel_upd_y(self, context):
 
-    if bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_y >= 0:
+    if bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_y >= 0 or bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_y <0:
         for i in bpy.context.selected_objects:
             if i.type == 'MESH':
                 ob = i
@@ -1930,7 +1930,7 @@ def origin_set_manuel_matrix_x(ob, matrix=Matrix()):
 
 
 def origin_set_manuel_upd_x(self, context):
-    if bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_x >= 0:
+    if bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_x >= 0 or bpy.context.scene.Arc_Blend.arc_blend_manuel_origin_x <0:
         for i in bpy.context.selected_objects:
             if i.type == 'MESH':
                 ob = i
@@ -2482,11 +2482,11 @@ class modifier_array_detail (bpy.types.PropertyGroup):
     )
     # Manuel Origin Change
     arc_blend_manuel_origin: bpy.props.IntProperty(
-        name="Z level", min=0, max=100, update=origin_set_manuel_upd, subtype="PERCENTAGE")
+        name="Z level", soft_min=-100, soft_max=100, update=origin_set_manuel_upd, subtype="PERCENTAGE")
     arc_blend_manuel_origin_y: bpy.props.IntProperty(
-        name="Y level", min=0, max=100, update=origin_set_manuel_upd_y, subtype="PERCENTAGE")
+        name="Y level", soft_min=-100, soft_max=100, update=origin_set_manuel_upd_y, subtype="PERCENTAGE")
     arc_blend_manuel_origin_x: bpy.props.IntProperty(
-        name="Y level", min=0, max=100, update=origin_set_manuel_upd_x, subtype="PERCENTAGE")
+        name="X level", soft_min=-100, soft_max=100, update=origin_set_manuel_upd_x, subtype="PERCENTAGE")
     # ----------SET Origin Manuel Axis ON/OFF----------------------------------
     arc_blend_manuel_axis: bpy.props.BoolProperty(
         name="Set Origin of the Objects", default=False, description="Opens to manuel axis settings")
@@ -2576,7 +2576,7 @@ class modifier_array_detail (bpy.types.PropertyGroup):
         
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------RELATIVE OFFSET----------------------------------------------
+# RELATIVE OFFSET
 
 
 class Relative_Offset (bpy.types.Panel):
@@ -4073,7 +4073,7 @@ class vertex_selection_merge_vertex_last (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------DISSOLVE VERTEX OPERATOR-----------------------------------------------
+# DISSOLVE VERTEX OPERATOR
 
 
 class vertex_selection_dissolve_vertex (bpy.types.Operator):
@@ -4094,7 +4094,7 @@ class vertex_selection_dissolve_vertex (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------CONNECT VERTICES AS PATH OPERATOR-----------------------------------------------
+# CONNECT VERTICES AS PATH OPERATOR
 
 
 class vertex_selection_connect_vertex_path (bpy.types.Operator):
@@ -4117,7 +4117,7 @@ class vertex_selection_connect_vertex_path (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------CREATE VERTICES OPERATOR-----------------------------------------------
+# CREATE VERTICES OPERATOR
 
 
 class vertex_selection_create_vertices (bpy.types.Operator):
@@ -4138,7 +4138,7 @@ class vertex_selection_create_vertices (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------ASIGN VERTEX GROUP OPERATOR-----------------------------------------------
+# ASIGN VERTEX GROUP OPERATOR
 
 
 class vertex_selection_assign_vertex_group (bpy.types.Operator):
@@ -4160,7 +4160,7 @@ class vertex_selection_assign_vertex_group (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------VERTEX GROUP PANEL------------------------------------------------
+# VERTEX GROUP PANEL
 
 class Modelling_Panel_Vertex_Group_Panel (bpy.types.Panel):
     bl_label = ""
@@ -4235,7 +4235,7 @@ class Modelling_Panel_Vertex_Group_Panel (bpy.types.Panel):
                         "vertex_group_weight", text="Weight")
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------MODIFY SELECTION PANEL------------------------------------------------
+# MODIFY SELECTION PANEL
 
 
 class Modelling_Panel_Modify_Selection (bpy.types.Panel):
@@ -4305,7 +4305,7 @@ class Modelling_Panel_Modify_Selection (bpy.types.Panel):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------GROW EDGE LOOP OPERATOR-----------------------------------------------
+# GROW EDGE LOOP OPERATOR
 
 class loop_grow_edge_select (bpy.types.Operator):
     """Expands the sub-object selection area outward in all available directions"""
@@ -4322,7 +4322,7 @@ class loop_grow_edge_select (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SHRINK EDGE LOOP OPERATOR-----------------------------------------------
+# SHRINK EDGE LOOP OPERATOR
 
 
 class loop_shrink_edge_select (bpy.types.Operator):
@@ -4341,7 +4341,7 @@ class loop_shrink_edge_select (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------AUTO EDGE LOOP OPERATOR-----------------------------------------------
+# AUTO EDGE LOOP OPERATOR
 
 
 class loop_auto_edge_loop (bpy.types.Operator):
@@ -4359,7 +4359,7 @@ class loop_auto_edge_loop (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------EDIT PANEL------------------------------------------------
+# EDIT PANEL
 
 class Modelling_Panel_Modify_Edit (bpy.types.Panel):
     bl_label = ""
@@ -4411,6 +4411,7 @@ class Modelling_Panel_Modify_Edit (bpy.types.Panel):
                 row6 = layout.row(align=True)
                 row6.operator("mesh.bevel", text="Bevel",
                               icon="MOD_BEVEL").affect = 'EDGES'
+                row6.operator("mesh.knife_project", text="Knife Project", icon="VIEW_ORTHO")
 
                 row7 = layout.row(align=True)
                 row7.operator("object.button_loop_mesh_seperate",
@@ -4420,6 +4421,9 @@ class Modelling_Panel_Modify_Edit (bpy.types.Panel):
                 row = layout.row(align=True)
                 row.operator("mesh.intersect")
                 row.operator("mesh.intersect_boolean")
+                row = layout.row(align=True)
+                row.operator("object.button_modelling_edit_clean_mesh", text="Clean Mesh")
+
                 row = layout.row(align=True)
                 row.operator("transform.edge_crease", icon="BRUSH_CREASE")
                 row.operator("transform.edge_bevelweight",
@@ -4494,9 +4498,23 @@ class Modelling_Panel_Modify_Edit (bpy.types.Panel):
         except AttributeError:
             pass
 
+# ------------------------------------------------------------------------------
+# CLEAN MESH OPERATOR
+
+class modelling_edit_clean_mesh (bpy.types.Operator):
+    """Select and clean mesh"""
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_clean_mesh"
+
+    def execute(self, context):
+        bpy.ops.mesh.select_all(action='SELECT')
+        bpy.ops.mesh.remove_doubles()
+        bpy.ops.mesh.tris_convert_to_quads()
+        bpy.ops.mesh.normals_make_consistent()
+        return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------BEVEL OFFSET OPERATOR-----------------------------------------------
+# BEVEL OFFSET OPERATOR
 
 class modelling_edit_rotate_edges (bpy.types.Operator):
     """Rotating an edge clockwise (CW)"""
@@ -4517,7 +4535,7 @@ class modelling_edit_rotate_edges (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------LOOP CUT OPERATOR-----------------------------------------------
+# LOOP CUT OPERATOR
 
 
 class modelling_edit_loop_cut (bpy.types.Operator):
@@ -4536,7 +4554,7 @@ class modelling_edit_loop_cut (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------OFFSET EDGE LOOP CUT OPERATOR-----------------------------------------------
+# OFFSET EDGE LOOP CUT OPERATOR
 
 
 class modelling_edit_offset_edge_loop_cut (bpy.types.Operator):
@@ -4554,7 +4572,7 @@ class modelling_edit_offset_edge_loop_cut (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------KNIFE CUT OPERATOR-----------------------------------------------
+# KNIFE CUT OPERATOR
 
 
 class modelling_edit_knife_cut (bpy.types.Operator):
@@ -4580,7 +4598,7 @@ class modelling_edit_knife_cut (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------BISECT OPERATOR-----------------------------------------------
+# BISECT OPERATOR
 
 
 class modelling_edit_knife_bisect (bpy.types.Operator):
@@ -4606,7 +4624,7 @@ class modelling_edit_knife_bisect (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------COPY +X MIRROR OPERATOR-----------------------------------------------
+# COPY +X MIRROR OPERATOR
 
 class modelling_edit_x_mirror (bpy.types.Operator):
     """Selected Verts/Edges or Faces Mirrors -X to +X Axis"""
@@ -4623,7 +4641,7 @@ class modelling_edit_x_mirror (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------COPY -X MIRROR OPERATOR-----------------------------------------------
+# COPY -X MIRROR OPERATOR
 
 
 class modelling_edit_x_mirror_minus (bpy.types.Operator):
@@ -4641,7 +4659,7 @@ class modelling_edit_x_mirror_minus (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------COPY +Y MIRROR OPERATOR-----------------------------------------------
+# COPY +Y MIRROR OPERATOR
 
 
 class modelling_edit_y_mirror (bpy.types.Operator):
@@ -4659,7 +4677,7 @@ class modelling_edit_y_mirror (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------COPY -Y MIRROR OPERATOR-----------------------------------------------
+# COPY -Y MIRROR OPERATOR
 
 
 class modelling_edit_y_mirror_minus (bpy.types.Operator):
@@ -4677,7 +4695,7 @@ class modelling_edit_y_mirror_minus (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------COPY +Z MIRROR OPERATOR-----------------------------------------------
+# COPY +Z MIRROR OPERATOR
 
 
 class modelling_edit_z_mirror (bpy.types.Operator):
@@ -4695,7 +4713,7 @@ class modelling_edit_z_mirror (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------COPY -Z MIRROR OPERATOR-----------------------------------------------
+# COPY -Z MIRROR OPERATOR
 
 
 class modelling_edit_z_mirror_minus (bpy.types.Operator):
@@ -4713,7 +4731,7 @@ class modelling_edit_z_mirror_minus (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------FILL SIDES OPERATOR-----------------------------------------------
+# FILL SIDES OPERATOR
 
 
 class modelling_edit_fill_sides (bpy.types.Operator):
@@ -4750,7 +4768,7 @@ class modelling_edit_fill_sides (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------HIDE UNSELECTED OPERATOR-----------------------------------------------
+# HIDE UNSELECTED OPERATOR
 
 class modelling_edit_hide_unselected (bpy.types.Operator):
     """Hide Unselected vert/edge or faces"""
@@ -4767,7 +4785,7 @@ class modelling_edit_hide_unselected (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------HIDE SELECTED OPERATOR-----------------------------------------------
+# HIDE SELECTED OPERATOR
 
 
 class modelling_edit_hide_selected (bpy.types.Operator):
@@ -4785,7 +4803,7 @@ class modelling_edit_hide_selected (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------REVEAL OPERATOR-----------------------------------------------
+# REVEAL OPERATOR
 
 
 class modelling_edit_reveal (bpy.types.Operator):
@@ -4805,7 +4823,7 @@ class modelling_edit_reveal (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------ORIENT X AXIS OPERATOR-----------------------------------------------
+# ORIENT X AXIS OPERATOR
 
 class modelling_edit_orient_x (bpy.types.Operator):
     """Align X Axis selected all vertices,edges or faces"""
@@ -4838,7 +4856,7 @@ class modelling_edit_orient_x (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------ORIENT Y AXIS OPERATOR-----------------------------------------------
+# ORIENT Y AXIS OPERATOR
 
 
 class modelling_edit_orient_y (bpy.types.Operator):
@@ -4874,7 +4892,7 @@ class modelling_edit_orient_y (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------ORIENT Z AXIS OPERATOR-----------------------------------------------
+# ORIENT Z AXIS OPERATOR
 
 class modelling_edit_orient_z (bpy.types.Operator):
     """Align Z Axis selected all vertices,edges or faces"""
@@ -4909,7 +4927,7 @@ class modelling_edit_orient_z (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------EDIT EDGES PANEL------------------------------------------------
+# EDIT EDGES PANEL
 
 class Modelling_Panel_Modify_Edit_Faces (bpy.types.Panel):
     bl_label = ""
@@ -4964,7 +4982,7 @@ class Modelling_Panel_Modify_Edit_Faces (bpy.types.Panel):
             pass
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------EXTRUDE FACES OPERATOR-----------------------------------------------
+# EXTRUDE FACES OPERATOR
 
 
 class modelling_edit_faces_extrude (bpy.types.Operator):
@@ -4983,7 +5001,7 @@ class modelling_edit_faces_extrude (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------EXTRUDE NORMAL FACES OPERATOR-----------------------------------------------
+# EXTRUDE NORMAL FACES OPERATOR
 
 
 class modelling_edit_faces_extrude_normals (bpy.types.Operator):
@@ -5002,7 +5020,7 @@ class modelling_edit_faces_extrude_normals (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------EXTRUDE INDIVIDUAL FACES OPERATOR-----------------------------------------------
+# EXTRUDE INDIVIDUAL FACES OPERATOR
 
 
 class modelling_edit_faces_extrude_individual (bpy.types.Operator):
@@ -5023,7 +5041,7 @@ class modelling_edit_faces_extrude_individual (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------INSET FACES OPERATOR-----------------------------------------------
+# INSET FACES OPERATOR
 
 
 class modelling_edit_faces_inset (bpy.types.Operator):
@@ -5042,7 +5060,7 @@ class modelling_edit_faces_inset (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------POKE FACES OPERATOR-----------------------------------------------
+# POKE FACES OPERATOR
 
 
 class modelling_edit_faces_poke (bpy.types.Operator):
@@ -5062,7 +5080,7 @@ class modelling_edit_faces_poke (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------TRIANGULATE FACES OPERATOR-----------------------------------------------
+# TRIANGULATE FACES OPERATOR
 
 
 class modelling_edit_faces_triangulate (bpy.types.Operator):
@@ -5081,7 +5099,7 @@ class modelling_edit_faces_triangulate (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------TRIS TO QUADS FACES OPERATOR-----------------------------------------------
+# TRIS TO QUADS FACES OPERATOR
 
 
 class modelling_edit_faces_tris_to_quads (bpy.types.Operator):
@@ -5099,7 +5117,7 @@ class modelling_edit_faces_tris_to_quads (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SOLIDIFY FACES OPERATOR-----------------------------------------------
+# SOLIDIFY FACES OPERATOR
 
 
 class modelling_edit_faces_solidify (bpy.types.Operator):
@@ -5117,7 +5135,7 @@ class modelling_edit_faces_solidify (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------WIREFRAME FACES OPERATOR-----------------------------------------------
+# WIREFRAME FACES OPERATOR
 
 
 class modelling_edit_faces_wireframe (bpy.types.Operator):
@@ -5136,7 +5154,7 @@ class modelling_edit_faces_wireframe (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------EDGE CONNECT OPERATOR-----------------------------------------------
+# EDGE CONNECT OPERATOR
 
 
 class modelling_edit_edges_connect (bpy.types.Operator):
@@ -5156,7 +5174,7 @@ class modelling_edit_edges_connect (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------EXTRUDE OPERATOR-----------------------------------------------
+# EXTRUDE OPERATOR
 
 
 class modelling_edit_edges_extrude (bpy.types.Operator):
@@ -5182,7 +5200,7 @@ class modelling_edit_edges_extrude (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------COLLAPSE EDGES OPERATOR-----------------------------------------------
+# COLLAPSE EDGES OPERATOR
 
 
 class modelling_edit_edges_collapse (bpy.types.Operator):
@@ -5200,7 +5218,7 @@ class modelling_edit_edges_collapse (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------COLLAPSE EDGES OPERATOR--------------------------------------
+# COLLAPSE EDGES OPERATOR
 
 
 class modelling_edit_edges_collapse (bpy.types.Operator):
@@ -5219,7 +5237,7 @@ class modelling_edit_edges_collapse (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------PROXY PANEL------------------------------------------------
+# PROXY PANEL
 
 class Proxy_Panel (bpy.types.Panel):
     bl_label = "AB Proxy"
@@ -5329,7 +5347,7 @@ class Proxy_Panel (bpy.types.Panel):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------REMESH APPLY OPERATOR--------------------------------------
+# REMESH APPLY OPERATOR
 
 
 class proxy_panel_remeshx_result (bpy.types.Operator):
@@ -5358,7 +5376,7 @@ class proxy_panel_remeshx_result (bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------CONVERT TO POINTS OPERATOR--------------------------------------
+# CONVERT TO POINTS OPERATOR
 
 
 class proxy_panel_convertto_point_cloud (bpy.types.Operator):
@@ -5401,7 +5419,7 @@ class proxy_panel_convertto_point_cloud (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------CONVERT TO HULL GEOMETRY OPERATOR----------------------------
+# CONVERT TO HULL GEOMETRY OPERATOR
 
 
 class proxy_panel_convertto_hull_geometry (bpy.types.Operator):
@@ -5445,7 +5463,7 @@ class proxy_panel_convertto_hull_geometry (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------BOUNDING BOX Def--------------------------------------------
+# BOUNDING BOX Def
 
 
 def bounding_box_display_upd(self, context):
@@ -5460,7 +5478,7 @@ def bounding_box_display_upd(self, context):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------BOUNDING BOX GEOMETRY OPERATOR-------------------------------
+# BOUNDING BOX GEOMETRY OPERATOR
 
 
 class proxy_panel_convertto_bound_box (bpy.types.Operator):
@@ -5519,7 +5537,7 @@ class proxy_panel_convertto_bound_box (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------PROXY OBJECT LIST--------------------------------------------
+# PROXY OBJECT LIST
 
 
 class proxy_panel_object_list(bpy.types.UIList):
@@ -5551,7 +5569,7 @@ class proxy_panel_object_list(bpy.types.UIList):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------ADD OBJECT TO LIST--------------------------------------------
+# ADD OBJECT TO LIST
 
 
 class proxy_panel_add_objects (bpy.types.Operator):
@@ -5590,7 +5608,7 @@ class proxy_panel_add_objects (bpy.types.Operator):
 
         return {'FINISHED'}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------DELETE OBJECT FROM LIST--------------------------------------
+# DELETE OBJECT FROM LIST
 
 
 class proxy_panel_remove_objects (bpy.types.Operator):
@@ -5621,7 +5639,7 @@ class proxy_panel_remove_objects (bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------DEFINES-------------------------------------------------------
+# DEFINES
 def find_instances(mesh_data):
     """Finds the instances"""
     r = []
@@ -5757,7 +5775,7 @@ def proxy_display_upd(self, context):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------PROXY PROPERTY GROUP-----------------------------------------------
+# PROXY PROPERTY GROUP
 
 class proxy_panel_list_item(bpy.types.PropertyGroup):
 
@@ -5789,7 +5807,7 @@ class proxy_panel_list_item(bpy.types.PropertyGroup):
         return self.object
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------MAKE PARENT-----------------------------------------------
+# MAKE PARENT
 
 
 class proxy_panel_list_makes_parents(bpy.types.Operator):
@@ -5807,7 +5825,7 @@ class proxy_panel_list_makes_parents(bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------CLEAR PARENT-----------------------------------------------
+# CLEAR PARENT
 
 
 class proxy_panel_list_clear_parents(bpy.types.Operator):
@@ -5826,7 +5844,7 @@ class proxy_panel_list_clear_parents(bpy.types.Operator):
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SELECT SAME COLLECTION-----------------------------------------------
+# SELECT SAME COLLECTION
 
 
 class proxy_panel_list_select_same_collection(bpy.types.Operator):
@@ -5846,7 +5864,7 @@ class proxy_panel_list_select_same_collection(bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------APPLY MODIFIERS OBJECT-----------------------------------------------
+# APPLY MODIFIERS OBJECT
 
 
 class proxy_panel_list_apply_all_modifiers(bpy.types.Operator):
@@ -6069,7 +6087,7 @@ class proxy_panel_list_apply_all_modifiers(bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SCATTER def PANEL------------------------------------------------
+# SCATTER def PANEL
 
 
 def particle_panel_enabled(context, psys):
@@ -6107,7 +6125,7 @@ def particle_get_settings(context):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SCATTER OBJECT LIST DEFINES--------------------------------------------
+# SCATTER OBJECT LIST DEFINES
 
 def find_modifier(ob, psys):
     for md in ob.modifiers:
@@ -6118,7 +6136,7 @@ def find_modifier(ob, psys):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SCATTER OBJECT LIST--------------------------------------------
+# SCATTER OBJECT LIST
 
 
 class scatter_panel_object_list(bpy.types.UIList):
@@ -6177,7 +6195,7 @@ class scatter_panel_object_list(bpy.types.UIList):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SCATTER PANEL------------------------------------------------
+# SCATTER PANEL
 
 class Scatter_Panel (bpy.types.Panel):
     bl_label = "AB Scatter"
@@ -6277,7 +6295,7 @@ class Scatter_Panel (bpy.types.Panel):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------ADD OBJECT TO LIST SCATTER-------------------------------------------
+# ADD OBJECT TO LIST SCATTER
 
 
 class scatter_panel_make_real_objects (bpy.types.Operator):
@@ -6291,7 +6309,7 @@ class scatter_panel_make_real_objects (bpy.types.Operator):
 
         return {'FINISHED'}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SCATTER VIEW AS PANEL------------------------------------------------
+# SCATTER VIEW AS PANEL
 
 
 class Scatter_Panel_Scatter_As (bpy.types.Panel):
@@ -6355,7 +6373,7 @@ class Scatter_Panel_Scatter_As (bpy.types.Panel):
         except (TypeError, AttributeError, UnboundLocalError, KeyError):
             pass
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SCATTER PAINT PANEL------------------------------------------------
+# SCATTER PAINT PANEL
 
 
 class Scatter_Panel_Paint_Panel (bpy.types.Panel):
@@ -6413,7 +6431,7 @@ class Scatter_Panel_Paint_Panel (bpy.types.Panel):
         except (TypeError, AttributeError, UnboundLocalError, KeyError):
             pass
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SCATTER ROTATION PANEL------------------------------------------------
+# SCATTER ROTATION PANEL
 
 
 class Scatter_Panel_Rotation_Panel (bpy.types.Panel):
@@ -6494,7 +6512,7 @@ class Scatter_Panel_Rotation_Panel (bpy.types.Panel):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SCATTER OBJECT PANEL------------------------------------------------
+# SCATTER OBJECT PANEL
 
 class Scatter_Panel_Object (bpy.types.Panel):
     bl_label = ""
@@ -6551,7 +6569,7 @@ class Scatter_Panel_Object (bpy.types.Panel):
         except (TypeError, AttributeError, UnboundLocalError, KeyError):
             pass
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SCATTER COLLECTION PANEL------------------------------------------------
+# SCATTER COLLECTION PANEL
 
 
 class Scatter_Panel_Collection (bpy.types.Panel):
@@ -6612,7 +6630,7 @@ class Scatter_Panel_Collection (bpy.types.Panel):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SCATTER COLLECTION USE COUNT PANEL------------------------------------------------
+# SCATTER COLLECTION USE COUNT PANEL
 
 class Scatter_Panel_Collection_Use_Count (bpy.types.Panel):
     bl_label = ""
@@ -6700,7 +6718,7 @@ class Scatter_Panel_Collection_Use_Count (bpy.types.Panel):
 
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------SCATTER EXTRA PANEL------------------------------------------------
+# SCATTER EXTRA PANEL
 
 class Scatter_Panel_Extra (bpy.types.Panel):
     bl_label = ""
@@ -6747,7 +6765,7 @@ class Scatter_Panel_Extra (bpy.types.Panel):
             pass
 
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------ADD OBJECT TO LIST SCATTER-------------------------------------------
+# ADD OBJECT TO LIST SCATTER
 
 
 class scatter_panel_add_objects (bpy.types.Operator):
@@ -6781,7 +6799,7 @@ class scatter_panel_add_objects (bpy.types.Operator):
 
         return {'FINISHED'}
 # ------------------------------------------------------------------------------
-# ----------------------------------------------------DELETE OBJECT FROM LIST--------------------------------------
+# DELETE OBJECT FROM LIST
 
 
 class scatter_panel_remove_objects (bpy.types.Operator):
@@ -6972,6 +6990,7 @@ def register():
     bpy.utils.register_class(loop_mesh_seperate)
     bpy.utils.register_class(loop_mesh_shortest_path_pick)
     bpy.utils.register_class(loop_mesh_split)
+    bpy.utils.register_class(modelling_edit_clean_mesh)
     bpy.utils.register_class(loop_mesh_tris_convert_to_quads)
     bpy.utils.register_class(loop_mesh_quads_convert_to_tris)
     bpy.utils.register_class(loop_mesh_find_trios)
@@ -7198,6 +7217,7 @@ def unregister():
     bpy.utils.unregister_class(loop_mesh_seperate)
     bpy.utils.unregister_class(loop_mesh_shortest_path_pick)
     bpy.utils.unregister_class(loop_mesh_split)
+    bpy.utils.unregister_class(modelling_edit_clean_mesh)
     bpy.utils.unregister_class(loop_mesh_tris_convert_to_quads)
     bpy.utils.unregister_class(loop_mesh_quads_convert_to_tris)
     bpy.utils.unregister_class(loop_mesh_find_trios)
