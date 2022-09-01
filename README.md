@@ -1,6 +1,7 @@
 # Arc Blend
 
-•Blender minimum version required : v3.2
+•Blender version required : v2.80.75 and v3.20.00
+•Select your addon changes with blender version v2.80.75 or v3.20.00
 
 •Main goal of this addon helps you to an easy modelling.
 
