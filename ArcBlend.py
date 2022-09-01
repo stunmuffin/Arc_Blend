@@ -1412,12 +1412,15 @@ class transform_edit_object_panel (bpy.types.Panel):
         Arc_Blend = scene.Arc_Blend
         col = layout.column()
         if bpy.context.selected_objects != []:
-            col.prop(obj, "name")
-            col.prop(obj, "type")
-            col.prop(obj, "active_material")
-            col.prop(obj, "data")
-            col.prop(obj, "parent")
-            col.prop(obj, "parent_type")
+            try:
+                col.prop(obj, "name")
+                col.prop(obj, "type")
+                col.prop(obj, "active_material")
+                col.prop(obj, "data")
+                col.prop(obj, "parent")
+                col.prop(obj, "parent_type")
+            except (TypeError,KeyError):
+                pass
             col.prop(Arc_Blend, "arc_blend_set_origin")
             col = layout.column()
             col.prop(Arc_Blend, "arc_blend_manuel_axis",
@@ -1685,11 +1688,14 @@ class transform (bpy.types.Panel):
         row = layout.row()
         col = layout.column()
         if bpy.context.selected_objects != []:
-            col.prop(obj, "location")
-            col.prop(obj, "rotation_euler")
-            col.prop(obj, "scale")
-            col.prop(obj, "dimensions")
-            row = layout.row()
+            try:
+                col.prop(obj, "location")
+                col.prop(obj, "rotation_euler")
+                col.prop(obj, "scale")
+                col.prop(obj, "dimensions")
+                row = layout.row()
+            except (TypeError,KeyError):
+                pass
         else:
             pass
 
@@ -2195,14 +2201,14 @@ def distribute_distance_object_y_upd(self, context):
     x_copy = distance_x
     y_copy = distance_y
     try:
-        for i in range(number_x, number_x+number_y):
-            selected[i].location[0] = selected[i-number_x].location[0]
-            selected[i].location[1] = selected[i-number_x].location[1]+y_copy
-            selected[i].location[2] = selected[i-number_x].location[2]
-        for b in range(number_x+number_y+number_x-1, quantity):
-            selected[b].location[0] = active.location[0]
-            selected[b].location[1] = active.location[1]
-            selected[b].location[2] = active.location[2]
+        if number_x != 0:
+            for i in range(number_x, number_x+number_y):
+                selected[i].location[1] = selected[i-number_x].location[1]+ distance_y
+        
+        elif number_x == 0:
+            for i in range(1, number_y):
+                selected[i].location[1] = selected[i-1].location[1] + distance_y
+
     except IndexError:
         pass
 
@@ -2252,14 +2258,13 @@ def distribute_x_upd(self, context):
     distance_x = bpy.context.scene.Arc_Blend.distribute_distance_object_x
     distance_y = bpy.context.scene.Arc_Blend.distribute_distance_object_y
     # distance_z = bpy.context.scene.Arc_Blend.distribute_distance_object_z
-    x_copy = distance_x
-    y_copy = distance_y
+
     try:
         for i in range(1, number_x):
             selected[i].location[2] = active.location[2]
             selected[i].location[1] = active.location[1]
-            selected[i].location[0] = active.location[0]+x_copy
-            x_copy += distance_x
+            selected[i].location[0] = active.location[0] + i*distance_x
+            
         for b in range(number_x, quantity):
             selected[b].location[0] = active.location[0]
             selected[b].location[1] = active.location[1]
@@ -2305,9 +2310,9 @@ def distribute_y_upd(self, context):
         elif number_x == 0:
             for i in range(1, number_y):
                 selected[i].location[2] = active.location[2]
-                selected[i].location[1] = active.location[1]+y_copy
+                selected[i].location[1] = active.location[1]+ i*distance_y
                 selected[i].location[0] = active.location[0]
-                y_copy += distance_y
+                
             for b in range(number_y, quantity):
                 selected[b].location[0] = active.location[0]
                 selected[b].location[1] = active.location[1]
@@ -2366,6 +2371,59 @@ def distribute_z_upd(self, context):
 
 def toggle_xray_mode_upd(self, context):
     bpy.ops.view3d.toggle_xray()
+
+# ------------------------------------------------------------------------------
+# DEF CUTTER DISPLAY
+
+
+def cutter_collection_viewport_upd(self, context):
+    try:
+        if bpy.context.scene.Arc_Blend.cutter_collection_viewport:
+         bpy.data.collections["AB_Cutters_Collection"].hide_viewport=True
+        else:
+         bpy.data.collections["AB_Cutters_Collection"].hide_viewport=False
+    except (TypeError,KeyError):
+        pass
+
+# ------------------------------------------------------------------------------
+# DEF CUTTER RENDER
+
+
+def cutter_collection_render_upd(self, context):
+    try:
+        if bpy.context.scene.Arc_Blend.cutter_collection_render:
+            bpy.data.collections["AB_Cutters_Collection"].hide_render=True
+        else:
+            bpy.data.collections["AB_Cutters_Collection"].hide_render=False
+    except (TypeError,KeyError):
+        pass
+
+
+# ------------------------------------------------------------------------------
+# DEF CUTTER OBJECT COLLECTION VIEWPORT
+
+
+def cutter_object_collection_viewport_upd(self, context):
+    try:
+        if bpy.context.scene.Arc_Blend.cutter_object_collection_viewport:
+         bpy.data.collections["AB_Cutters_Object"].hide_viewport=True
+        else:
+         bpy.data.collections["AB_Cutters_Object"].hide_viewport=False
+    except (TypeError,KeyError):
+        pass
+
+# ------------------------------------------------------------------------------
+# DEF CUTTER OBJECT COLLECTION RENDER
+
+
+def cutter_object_collection_render_upd(self, context):
+    try:
+        if bpy.context.scene.Arc_Blend.cutter_object_collection_render:
+            bpy.data.collections["AB_Cutters_Object"].hide_render=True
+        else:
+            bpy.data.collections["AB_Cutters_Object"].hide_render=False
+    except (TypeError,KeyError):
+        pass
 
 # ------------------------------------------------------------------------------
 # ARRAY CLASS PROPERTYGROUP
@@ -2570,11 +2628,23 @@ class modifier_array_detail (bpy.types.PropertyGroup):
     # ----------MARKS-------------------------------
     marks_edit_geometry: bpy.props.BoolProperty(
         name="Marks and Clears ", default=False,)
-    # ----------MARKS-------------------------------
+    # ----------VIEW3D-------------------------------
     display_mode_view: bpy.props.BoolProperty(
         name="View3D", default=False)
-        
-
+    # ----------CUTTER-------------------------------    
+    modelling_cutter: bpy.props.BoolProperty(
+        name="Cutter", default=False)
+    # ----------CUTTER COLLECTION--------------------   
+    cutter_collection_viewport: bpy.props.BoolProperty(
+        name="Viewport Display", default=False, update = cutter_collection_viewport_upd)
+    cutter_collection_render: bpy.props.BoolProperty(
+        name="Render Display", default=False, update = cutter_collection_render_upd)
+    
+    cutter_object_collection_viewport: bpy.props.BoolProperty(
+        name="Viewport Display", default=False, update = cutter_object_collection_viewport_upd)
+    cutter_object_collection_render: bpy.props.BoolProperty(
+        name="Render Display", default=False, update = cutter_object_collection_render_upd)
+    
 # ------------------------------------------------------------------------------
 # RELATIVE OFFSET
 
@@ -2992,12 +3062,15 @@ class display_panel (bpy.types.Panel):
         row = layout.row()
         col = layout.column()
         if bpy.context.selected_objects != []:
-            col.prop(obj, "display_type")
-            col.prop(obj, "hide_viewport")
-            col.prop(obj, "show_all_edges")
-            col.prop(obj, "show_axis")
-            col.prop(obj, "show_bounds")
-            col.prop(obj, "display_bounds_type")
+            try:
+                col.prop(obj, "display_type")
+                col.prop(obj, "hide_viewport")
+                col.prop(obj, "show_all_edges")
+                col.prop(obj, "show_axis")
+                col.prop(obj, "show_bounds")
+                col.prop(obj, "display_bounds_type")
+            except (TypeError,KeyError):
+                pass
         else:
             pass
         col.prop(sdo, "show_wireframes")
@@ -3783,7 +3856,8 @@ class Modelling_Panel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-
+    
+        
     def draw(self, context):
         layout = self.layout
         obj = context.object
@@ -3794,9 +3868,17 @@ class Modelling_Panel(bpy.types.Panel):
         
         col = layout.column()
         col.prop(Arc_Blend, "display_mode_view" , icon="VIEW3D")
+        
+        
+        
         if bpy.context.scene.Arc_Blend.display_mode_view:
             box = layout.box()
             col = box.column()
+            try:
+                mesh= bpy.context.object.data
+            except AttributeError:
+                pass
+            
             col.label(text="Perspective/Ortho Mode :")
             col.operator("view3d.view_persportho", text="Perspective/Orthographic")
             
@@ -3810,17 +3892,83 @@ class Modelling_Panel(bpy.types.Panel):
             row= box.row(align=True)
             row.operator("object.button_view_3d_right", text="Right (+X)")
             row.operator("object.button_view_3d_left", text="Left (-X)")
+       
+        col = layout.column()
+        col.prop(Arc_Blend, "modelling_cutter" , icon="UGLYPACKAGE")
+        if bpy.context.scene.Arc_Blend.modelling_cutter:
+            box = layout.box()
+            try:
+                mesh= bpy.context.object.data
+            except AttributeError:
+                pass
+            
+            col = box.column()
+            col.label(text="Cutter Panel :")
+            row = box.row(align=True)
+            if bpy.context.active_object!= None:
+             row.operator("object.button_cutter_box", text="Cutter Collection" )
+             row.operator("object.button_cutter_box_object", text="Cutter Object" )
+             row.operator("object.button_cutter_apply_modifier", text="", icon="CHECKMARK" )
+            elif bpy.context.active_object == None:
+              row.label(text="<<< Select/Create any Object >>>")  
+            row = box.row(align=True)
+            row.label(text="Auto Smooth")
+            try:
+                row.prop(mesh, "use_auto_smooth", text="")
+                row.prop(mesh, "auto_smooth_angle", text="")
+                row.prop_decorator(mesh, "auto_smooth_angle")
+            except UnboundLocalError:
+                pass
+            col = box.column()
+            col.label(text="Cutter Collection:")
+            row = box.row(align=True)
+            row.label(text="Collection :")
+            row.prop(Arc_Blend, "cutter_collection_viewport" , icon="RESTRICT_VIEW_OFF")
+            row.prop(Arc_Blend, "cutter_collection_render" , icon="RESTRICT_RENDER_OFF")
+            row = box.row(align=True)
+            row.label(text="Object :")
+            row.prop(Arc_Blend, "cutter_object_collection_viewport" , icon="RESTRICT_VIEW_OFF")
+            row.prop(Arc_Blend, "cutter_object_collection_render" , icon="RESTRICT_RENDER_OFF")
+            
+            
+            
+            col = box.column()
+            col.label(text="Turn ON/OFF Display Color : ")
+            
+            col.prop(Arc_Blend, "color_mode_display", text="", icon="FILE_REFRESH")
+            col.label(text="Purge unused data objects : ")
+            col.operator("object.button_transform_edit_object_purge", text="Purge")
+            row = box.row()
+            try:
+                sub = row.row(align=True)
+                sub.scale_x = 1.5
+                sub.label(text="Color : ")
+                sub.scale_x = 4.6
+                sub.prop(obj, "color", text="")
+                row = box.row(align=True)
+                row.operator(
+                    "object.button_transform_edit_object_reset_colors", text="Reset Colors")
+            except (TypeError,KeyError):
+                pass
+            #row.template_modifiers()
+            
+            
+          
         col = layout.column()
         col.prop(Arc_Blend, "modelling_edit_mode",
                  text="Edit Mode", icon="EDITMODE_HLT")
+                 
         col = layout.column(align=False)
         col.label(text="Object Selection Mode : ")
+
+        
         if bpy.context.scene.Arc_Blend.modelling_edit_mode == False:
             box = layout.box()
             box.label(text="<<<<<Edit Mode is not Active!>>>>>")
-        row1 = layout.row(align=True)
-        row1.template_header_3D_mode()
+        
         if bpy.context.scene.Arc_Blend.modelling_edit_mode == True:
+            row1 = layout.row(align=True)
+            row1.template_header_3D_mode()
 
             row1.prop(Arc_Blend, "toggle_xray_mode", text="", icon='XRAY')
             row1.prop(context.tool_settings, "use_mesh_automerge", text="")
@@ -3828,6 +3976,154 @@ class Modelling_Panel(bpy.types.Panel):
             row1.scale_x = 2
             row1.scale_y = 2
 
+# ------------------------------------------------------------------------------
+# ENSURE COLECTION DEF
+
+def ensure_collection(scene,collection_name) -> bpy.types.Collection:
+            scene=bpy.context.scene
+            try:
+                new_collection = scene.collection.children[collection_name]
+                bpy.data.collections['AB_Cutters_Collection'].color_tag="COLOR_01"
+                #new_collection.objects.link(new_object)
+            except KeyError:
+                new_collection = bpy.data.collections.new(collection_name)
+                scene.collection.children.link(new_collection)
+                bpy.data.collections['AB_Cutters_Collection'].color_tag="COLOR_01"
+                #new_collection.objects.link(new_object)
+            try:
+             return new_collection
+            except KeyError:
+                pass
+# ------------------------------------------------------------------------------
+# ENSURE COLECTION DEF
+
+def ensure_collection_object(scene,collection_name) -> bpy.types.Collection:
+            scene=bpy.context.scene
+            try:
+                new_collection = scene.collection.children[collection_name]
+                bpy.data.collections['AB_Cutters_Object'].color_tag="COLOR_05"
+                #new_collection.objects.link(new_object)
+            except KeyError:
+                new_collection = bpy.data.collections.new(collection_name)
+                scene.collection.children.link(new_collection)
+                bpy.data.collections['AB_Cutters_Object'].color_tag="COLOR_05"
+                #new_collection.objects.link(new_object)
+            try:
+             return new_collection
+            except KeyError:
+                pass
+# ------------------------------------------------------------------------------
+# BOX CUTTER COLLECTION
+
+
+class cutter_box(bpy.types.Operator):
+    """Cutter: Makes boolean modifier > named "Cutter" > Collection Type operand > Collection > Solver Fast"""
+    bl_label = ""
+    bl_idname = "object.button_cutter_box"
+    
+        
+    def execute(self, context):
+        
+        
+        active = bpy.context.active_object    
+        active.select_set(True)
+        bpy.ops.object.modifier_add(type='BOOLEAN')
+        active_mod = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+        bpy.ops.object.modifier_set_active(modifier=active_mod)
+        bpy.context.object.modifiers[active_mod].name = "AB_Cutter_Collection"
+        active_cutter = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+        bpy.ops.object.modifier_set_active(modifier=active_cutter)
+        bpy.context.object.modifiers[active_cutter].operation = 'DIFFERENCE'
+        bpy.context.object.modifiers[active_cutter].operand_type = 'COLLECTION'
+        bpy.context.object.modifiers[active_cutter].solver = 'FAST'
+        
+
+        #bpy.ops.wm.tool_set_by_id(name="builtin.primitive_cube_add")
+        active.select_set(True)
+        
+        #Creates Empty mesh data and exchange data's for cutter
+        
+        new_collection = ensure_collection(context.scene, "AB_Cutters_Collection")
+        
+        bpy.context.object.modifiers[active_cutter].collection = bpy.data.collections["AB_Cutters_Collection"]
+        
+        for i in bpy.data.collections['AB_Cutters_Collection'].objects:
+            i.color = (1, 0.0252077, 0.021955, 0.342857)
+
+
+
+        #bpy.context.object.modifiers[active_cutter].object = bpy.data.objects[active_cutter]
+
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# BOX CUTTER OBJECT
+
+
+class cutter_box_object(bpy.types.Operator):
+    """Cutter: Makes boolean modifier > named "AB_Cutter_Object" > Object Type operand > Object > Solver Fast"""
+    bl_label = ""
+    bl_idname = "object.button_cutter_box_object"
+    
+        
+    def execute(self, context):
+        new_collection = ensure_collection_object(context.scene, "AB_Cutters_Object")
+        leng= len(bpy.data.collections['AB_Cutters_Object'].objects)
+        
+        for k in range(0,leng):
+            active = bpy.context.active_object    
+            active.select_set(True)
+            bpy.ops.object.modifier_add(type='BOOLEAN')
+            active_mod = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+            bpy.ops.object.modifier_set_active(modifier=active_mod)
+            
+            bpy.context.object.modifiers[active_mod].name = "AB_Cutter_Object"+ str(k)
+            active_cutter = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+            bpy.ops.object.modifier_set_active(modifier=active_cutter)
+            bpy.context.object.modifiers[active_cutter].operation = 'DIFFERENCE'
+            bpy.context.object.modifiers[active_cutter].operand_type = 'OBJECT'
+            bpy.context.object.modifiers[active_cutter].solver = 'FAST'
+            
+
+            #bpy.ops.wm.tool_set_by_id(name="builtin.primitive_cube_add")
+            active.select_set(True)
+            
+            #Creates Empty mesh data and exchange data's for cutter
+            
+            
+            
+            bpy.context.object.modifiers[active_cutter].collection = bpy.data.collections["AB_Cutters_Object"]
+            
+        for i in range(0,leng) :
+            bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object = bpy.data.collections['AB_Cutters_Object'].objects[i]
+            bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object.color = (0.0517386, 0.70876, 1, 0.342857)
+
+             
+         
+
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
+# BOX CUTTER APPLY MODIFIER
+
+
+class cutter_apply_modifier(bpy.types.Operator):
+    """Apply all AB_Cutter (Boolean) modifier to Object"""
+    bl_label = ""
+    bl_idname = "object.button_cutter_apply_modifier"
+    
+        
+    def execute(self, context):
+        for obj in bpy.context.selected_objects:
+                bpy.context.view_layer.objects.active = obj
+                for modifier in obj.modifiers:
+                    if modifier.type == 'BOOLEAN':
+                            try:
+                                bpy.ops.object.modifier_apply(modifier=modifier.name)
+                            except (AttributeError, KeyError, RuntimeError):
+                                bpy.ops.object.modifier_remove(modifier="Boolean")
+        return {"FINISHED"}
+      
 # ------------------------------------------------------------------------------
 # TOP VIEW OPERATOR
 
@@ -4972,6 +5268,11 @@ class Modelling_Panel_Modify_Edit_Faces (bpy.types.Panel):
                              icon="MOD_SOLIDIFY")
                 row.operator("mesh.wireframe", text="Wireframe",
                              icon="MOD_WIREFRAME")
+                row = layout.row(align=True)
+                row.operator("object.button_modelling_edit_faces_flip_normals", text="Flip(N)",
+                             icon="NORMALS_FACE")
+                row.operator("object.button_modelling_edit_faces_recalculate_outside", text="Recalculate Outside(N)",
+                             icon="ORIENTATION_NORMAL")
 
                 # col=layout.column(align=True)
 
@@ -4982,10 +5283,36 @@ class Modelling_Panel_Modify_Edit_Faces (bpy.types.Panel):
             pass
 
 # ------------------------------------------------------------------------------
+# FLIP NORMALS OPERATOR
+
+
+class modelling_edit_faces_flip_normals(bpy.types.Operator):
+    """Flip Normals"""
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_faces_flip_normals"
+
+    def execute(self, context):
+        bpy.ops.mesh.flip_normals()
+        return {"FINISHED"}
+    
+# ------------------------------------------------------------------------------
+# RECALCULATE OUTSIDE OPERATOR
+
+
+class modelling_edit_faces_recalculate_outside(bpy.types.Operator):
+    """Reaclculate Outside (Normals)"""
+    bl_label = ""
+    bl_idname = "object.button_modelling_edit_faces_recalculate_outside"
+
+    def execute(self, context):
+        bpy.ops.mesh.normals_make_consistent(inside=False)
+        return {"FINISHED"}
+
+# ------------------------------------------------------------------------------
 # EXTRUDE FACES OPERATOR
 
 
-class modelling_edit_faces_extrude (bpy.types.Operator):
+class modelling_edit_faces_extrude(bpy.types.Operator):
     """Face Extrude"""
     bl_label = ""
     bl_idname = "object.button_modelling_edit_faces_extrude"
@@ -7059,6 +7386,15 @@ def register():
     bpy.utils.register_class(themes_panel_white_chalk)
     bpy.utils.register_class(themes_panel_reset)
     bpy.utils.register_class(Modelling_Panel)
+    bpy.utils.register_class(cutter_box)
+    bpy.utils.register_class(cutter_box_object)
+    
+    bpy.utils.register_class(cutter_apply_modifier)
+    
+    
+    
+    
+    
     bpy.utils.register_class(view_3d_top)
     bpy.utils.register_class(view_3d_bottom)
     bpy.utils.register_class(view_3d_front)
@@ -7081,6 +7417,8 @@ def register():
     bpy.utils.register_class(loop_shrink_edge_select)
     bpy.utils.register_class(loop_auto_edge_loop)
     bpy.utils.register_class(Modelling_Panel_Modify_Edit_Faces)
+    bpy.utils.register_class(modelling_edit_faces_flip_normals)
+    bpy.utils.register_class(modelling_edit_faces_recalculate_outside)
     bpy.utils.register_class(modelling_edit_faces_extrude)
     bpy.utils.register_class(modelling_edit_faces_inset)
     bpy.utils.register_class(modelling_edit_faces_extrude_normals)
@@ -7286,6 +7624,10 @@ def unregister():
     bpy.utils.unregister_class(themes_panel_white_chalk)
     bpy.utils.unregister_class(themes_panel_reset)
     bpy.utils.unregister_class(Modelling_Panel)
+    bpy.utils.unregister_class(cutter_box)
+    bpy.utils.unregister_class(cutter_box_object)
+    bpy.utils.unregister_class(cutter_apply_modifier)
+    
     bpy.utils.unregister_class(view_3d_top)
     bpy.utils.unregister_class(view_3d_bottom)
     bpy.utils.unregister_class(view_3d_front)
@@ -7306,6 +7648,8 @@ def unregister():
     bpy.utils.unregister_class(loop_shrink_edge_select)
     bpy.utils.unregister_class(loop_auto_edge_loop)
     bpy.utils.unregister_class(Modelling_Panel_Modify_Edit_Faces)
+    bpy.utils.unregister_class(modelling_edit_faces_flip_normals)
+    bpy.utils.unregister_class(modelling_edit_faces_recalculate_outside)
     bpy.utils.unregister_class(modelling_edit_faces_extrude)
     bpy.utils.unregister_class(modelling_edit_faces_inset)
     bpy.utils.unregister_class(modelling_edit_faces_extrude_normals)
