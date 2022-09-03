@@ -13,6 +13,8 @@
 •Added negative values and soft values(changable values) to Manuel Axis ...
 (This change allow you to simple deform in any axis. No need to add empty objects)
 
+•Added AB Camera Panels
+
 • Working on pep8 code standarts.
 
 • ...
