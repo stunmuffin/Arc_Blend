@@ -3919,7 +3919,7 @@ class Modelling_Panel(bpy.types.Panel):
                 row.prop(mesh, "use_auto_smooth", text="")
                 row.prop(mesh, "auto_smooth_angle", text="")
                 row.prop_decorator(mesh, "auto_smooth_angle")
-            except UnboundLocalError:
+            except (AttributeError,UnboundLocalError,TypeError,KeyError):
                 pass
             col = box.column()
             col.label(text="Cutter Collection:")
@@ -7298,24 +7298,13 @@ class Camera_Panel (bpy.types.Panel):
         col.separator(factor=0)
         #
         add = col2.column(align=True)
-        AB_ADD = add.operator(
-            "object.button_camera_panel_add_camera", icon='ADD', text="")
-        AB_ADD.add = "ADD"
-        try:
-            AB_ADD.camera_name = cam.name
-        except AttributeError:
-            pass
+        AB_ADD = add.operator("object.button_camera_panel_add_camera", icon='ADD', text="")
 
 
         #
         rem = col2.column(align=True)
-        AB_REMOVE = rem.operator(
-            "object.button_camera_panel_remove_camera", icon='REMOVE', text="")
-        AB_REMOVE.rem = "REMOVE"
-        try:
-            AB_REMOVE.camera_name = cam.name
-        except AttributeError:
-            pass
+        AB_REMOVE = rem.operator("object.button_camera_panel_remove_camera", icon='REMOVE', text="")
+
 
         col.column_flow(columns=3, align=True)
 
@@ -7394,23 +7383,24 @@ class camera_panel_add_camera (bpy.types.Operator):
     bl_label = ""
     bl_idname = "object.button_camera_panel_add_camera"
     
-    add: bpy.props.StringProperty()
-    camera_name: bpy.props.StringProperty()
+    #add: bpy.props.StringProperty()
+    #camera_name: bpy.props.StringProperty()
 
     def execute(self, context):
-        scene = bpy.context.scene
- 
-        camera =  bpy.data.objects[self.camera_name]
-        index = scene.camera_list_index
-        
-        item = scene.camera_list.add()
-
-        item.name = camera.name
-
-        item.camera_ui_index = len(scene.camera_list)
-
-        scene.camera_list_index = len(scene.camera_list) - 1
-
+        try:
+            scene = bpy.context.scene
+            #camera =  bpy.data.objects[self.camera_name]
+            len_cam_scn = len(bpy.data.scenes[:])
+            for i in range(0,len_cam_scn):
+                camera = bpy.data.scenes[i].camera
+                #camera= bpy.data.objects['Camera']
+                index = scene.camera_list_index
+                item = scene.camera_list.add()
+                item.name = camera.name
+                item.camera_ui_index = len(scene.camera_list)
+                scene.camera_list_index = len(scene.camera_list) - 1
+        except (AttributeError,KeyError,UnboundLocalError) :
+            pass
 
         return {'FINISHED'}
 # ------------------------------------------------------------------------------
@@ -7423,18 +7413,22 @@ class camera_panel_remove_camera (bpy.types.Operator):
     bl_label = ""
     bl_idname = "object.button_camera_panel_remove_camera"
 
-    rem: bpy.props.StringProperty()
-    camera_name: bpy.props.StringProperty()
+    #rem: bpy.props.StringProperty()
+    #camera_name: bpy.props.StringProperty()
 
     def execute(self, context):
-        scene = bpy.context.scene
-
-        camera = bpy.data.objects[self.camera_name]
-        index = scene.camera_list_index
-
-        scene.camera_list_index -= 1
-        scene.camera_list.remove(index)
- 
+        
+        try:
+            scene = bpy.context.scene
+            len_cam_scn = len(bpy.data.scenes[:])
+            for i in range(0,len_cam_scn):
+                camera = bpy.data.scenes[i].camera
+                #camera = bpy.data.objects[self.camera_name]
+                index = scene.camera_list_index
+                scene.camera_list_index -= 1
+                scene.camera_list.remove(index)
+        except (AttributeError,KeyError,UnboundLocalError) :
+            pass
         return {'FINISHED'}
 # ------------------------------------------------------------------------------
 # DEF CAMERA
@@ -7461,7 +7455,6 @@ def camera_display_upd(self, context):
                 bpy.context.scene.camera = bpy.data.objects[a]
                 bpy.context.view_layer.objects.active = bpy.data.objects[a]
                 bpy.context.object.select_set(True)
-
                 try:
                     if bpy.context.active_object.type== 'CAMERA':
                         for area in bpy.context.screen.areas:
@@ -7470,14 +7463,9 @@ def camera_display_upd(self, context):
                                 break
                 except AttributeError:
                     pass
-                    #try:
-                        #bpy.ops.view3d.camera_to_view()
-                    #except RuntimeError:
-                    #    pass
-                else:
+    else:
                     pass
-                #bpy.ops.view3d.object_as_camera()
-            #if i.['camera_display'] == 1:
+
 
 # ------------------------------------------------------------------------------
 # Lock camera
@@ -7671,23 +7659,28 @@ class data_context_camera_dof(bpy.types.Panel):
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw_header(self, context):
-        cam = context.scene.camera.data
-        dof = cam.dof
-        self.layout.prop(dof, "use_dof", text="")
-
+        try:
+            cam = context.scene.camera.data
+            dof = cam.dof
+            self.layout.prop(dof, "use_dof", text="")
+        except AttributeError :
+            pass
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
+        
+        try:
+            cam = context.scene.camera.data
+            dof = cam.dof
+            layout.active = dof.use_dof
 
-        cam = context.scene.camera.data
-        dof = cam.dof
-        layout.active = dof.use_dof
-
-        col = layout.column()
-        col.prop(dof, "focus_object", text="Focus on Object")
-        sub = col.column()
-        sub.active = (dof.focus_object is None)
-        sub.prop(dof, "focus_distance", text="Focus Distance")
+            col = layout.column()
+            col.prop(dof, "focus_object", text="Focus on Object")
+            sub = col.column()
+            sub.active = (dof.focus_object is None)
+            sub.prop(dof, "focus_distance", text="Focus Distance")
+        except AttributeError :
+            pass
 # ------------------------------------------------------------------------------
 # CAMERA DOF APERTURE
 
@@ -7705,22 +7698,22 @@ class data_context_camera_dof_aperture(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
+        try:
+            cam = context.scene.camera.data
+            dof = cam.dof
+            layout.active = dof.use_dof
 
-        cam = context.scene.camera.data
-        dof = cam.dof
-        layout.active = dof.use_dof
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
+            col = flow.column()
+            col.prop(dof, "aperture_fstop")
 
-        col = flow.column()
-        col.prop(dof, "aperture_fstop")
-
-        col = flow.column()
-        col.prop(dof, "aperture_blades")
-        col.prop(dof, "aperture_rotation")
-        col.prop(dof, "aperture_ratio")
-        
-
+            col = flow.column()
+            col.prop(dof, "aperture_blades")
+            col.prop(dof, "aperture_rotation")
+            col.prop(dof, "aperture_ratio")
+        except AttributeError :
+            pass
 
 # ------------------------------------------------------------------------------
 # CAMERA 
@@ -7748,24 +7741,26 @@ class data_context_camera_camera(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        try:
+            cam = context.scene.camera.data
 
-        cam = context.scene.camera.data
+            layout.use_property_split = True
 
-        layout.use_property_split = True
+            col = layout.column()
+            col.prop(cam, "sensor_fit")
 
-        col = layout.column()
-        col.prop(cam, "sensor_fit")
+            if cam.sensor_fit == 'AUTO':
+                col.prop(cam, "sensor_width", text="Size")
+            else:
+                sub = col.column(align=True)
+                sub.active = cam.sensor_fit == 'HORIZONTAL'
+                sub.prop(cam, "sensor_width", text="Width")
 
-        if cam.sensor_fit == 'AUTO':
-            col.prop(cam, "sensor_width", text="Size")
-        else:
-            sub = col.column(align=True)
-            sub.active = cam.sensor_fit == 'HORIZONTAL'
-            sub.prop(cam, "sensor_width", text="Width")
-
-            sub = col.column(align=True)
-            sub.active = cam.sensor_fit == 'VERTICAL'
-            sub.prop(cam, "sensor_height", text="Height")       
+                sub = col.column(align=True)
+                sub.active = cam.sensor_fit == 'VERTICAL'
+                sub.prop(cam, "sensor_height", text="Height")
+        except AttributeError :
+            pass
  
 # ------------------------------------------------------------------------------
 # SAFE AREAS
@@ -7786,28 +7781,31 @@ class data_context_camera_safe_areas(bpy.types.Panel):
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw_header(self, context):
-        cam = context.scene.camera.data
-
-        self.layout.prop(cam, "show_safe_areas", text="")
-
+        try:
+            cam = context.scene.camera.data
+            self.layout.prop(cam, "show_safe_areas", text="")
+        except AttributeError :
+            pass
     def draw_header_preset(self, _context):
         SAFE_AREAS_PT_presets.draw_panel_header(self.layout)
 
     def draw(self, context):
         layout = self.layout
-        safe_data = context.scene.safe_areas
-        camera = context.scene.camera.data
+        try:
+            safe_data = context.scene.safe_areas
+            camera = context.scene.camera.data
 
-        layout.use_property_split = True
+            layout.use_property_split = True
 
-        layout.active = camera.show_safe_areas
+            layout.active = camera.show_safe_areas
 
-        col = layout.column()
+            col = layout.column()
 
-        sub = col.column()
-        sub.prop(safe_data, "title", slider=True)
-        sub.prop(safe_data, "action", slider=True)
-
+            sub = col.column()
+            sub.prop(safe_data, "title", slider=True)
+            sub.prop(safe_data, "action", slider=True)
+        except AttributeError :
+            pass
 
 class data_context_camera_safe_areas_center_cut(bpy.types.Panel):
     bl_label = "Center-Cut Safe Areas"
@@ -7819,25 +7817,30 @@ class data_context_camera_safe_areas_center_cut(bpy.types.Panel):
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw_header(self, context):
-        cam = context.scene.camera.data
+        try:
+            cam = context.scene.camera.data
 
-        layout = self.layout
-        layout.active = cam.show_safe_areas
-        layout.prop(cam, "show_safe_center", text="")
+            layout = self.layout
+            layout.active = cam.show_safe_areas
+            layout.prop(cam, "show_safe_center", text="")
+        except AttributeError :
+            pass
 
     def draw(self, context):
         layout = self.layout
-        safe_data = context.scene.safe_areas
-        camera = context.scene.camera.data
+        try:
+            safe_data = context.scene.safe_areas
+            camera = context.scene.camera.data
 
-        layout.use_property_split = True
+            layout.use_property_split = True
 
-        layout.active = camera.show_safe_areas and camera.show_safe_center
+            layout.active = camera.show_safe_areas and camera.show_safe_center
 
-        col = layout.column()
-        col.prop(safe_data, "title_center", slider=True)
-        col.prop(safe_data, "action_center", slider=True)
-        
+            col = layout.column()
+            col.prop(safe_data, "title_center", slider=True)
+            col.prop(safe_data, "action_center", slider=True)
+        except AttributeError :
+            pass
 # ------------------------------------------------------------------------------
 # SAFE AREAS        
         
@@ -7851,106 +7854,108 @@ class data_context_camera_background_image(bpy.types.Panel):
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw_header(self, context):
-        cam = context.scene.camera.data
-
-        self.layout.prop(cam, "show_background_images", text="")
-
+        try:
+            cam = context.scene.camera.data
+            self.layout.prop(cam, "show_background_images", text="")
+        except AttributeError :
+            pass
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
+        try:
+            cam = context.scene.camera.data
+            use_multiview = context.scene.render.use_multiview
 
-        cam = context.scene.camera.data
-        use_multiview = context.scene.render.use_multiview
+            col = layout.column()
+            col.operator("view3d.background_image_add", text="Add Image")
 
-        col = layout.column()
-        col.operator("view3d.background_image_add", text="Add Image")
+            for i, bg in enumerate(cam.background_images):
+                layout.active = cam.show_background_images
+                box = layout.box()
+                row = box.row(align=True)
+                row.prop(bg, "show_expanded", text="", emboss=False)
+                if bg.source == 'IMAGE' and bg.image:
+                    row.prop(bg.image, "name", text="", emboss=False)
+                elif bg.source == 'MOVIE_CLIP' and bg.clip:
+                    row.prop(bg.clip, "name", text="", emboss=False)
+                elif bg.source and bg.use_camera_clip:
+                    row.label(text="Active Clip")
+                else:
+                    row.label(text="Not Set")
 
-        for i, bg in enumerate(cam.background_images):
-            layout.active = cam.show_background_images
-            box = layout.box()
-            row = box.row(align=True)
-            row.prop(bg, "show_expanded", text="", emboss=False)
-            if bg.source == 'IMAGE' and bg.image:
-                row.prop(bg.image, "name", text="", emboss=False)
-            elif bg.source == 'MOVIE_CLIP' and bg.clip:
-                row.prop(bg.clip, "name", text="", emboss=False)
-            elif bg.source and bg.use_camera_clip:
-                row.label(text="Active Clip")
-            else:
-                row.label(text="Not Set")
+                row.prop(
+                    bg,
+                    "show_background_image",
+                    text="",
+                    emboss=False,
+                    icon='RESTRICT_VIEW_OFF' if bg.show_background_image else 'RESTRICT_VIEW_ON',
+                )
 
-            row.prop(
-                bg,
-                "show_background_image",
-                text="",
-                emboss=False,
-                icon='RESTRICT_VIEW_OFF' if bg.show_background_image else 'RESTRICT_VIEW_ON',
-            )
+                row.operator("view3d.background_image_remove", text="", emboss=False, icon='X').index = i
 
-            row.operator("view3d.background_image_remove", text="", emboss=False, icon='X').index = i
-
-            if bg.show_expanded:
-                row = box.row()
-                row.prop(bg, "source", expand=True)
-
-                has_bg = False
-                if bg.source == 'IMAGE':
+                if bg.show_expanded:
                     row = box.row()
-                    row.template_ID(bg, "image", open="image.open")
-                    if bg.image is not None:
-                        box.template_image(bg, "image", bg.image_user, compact=True)
-                        has_bg = True
+                    row.prop(bg, "source", expand=True)
 
-                        if use_multiview:
-                            box.prop(bg.image, "use_multiview")
+                    has_bg = False
+                    if bg.source == 'IMAGE':
+                        row = box.row()
+                        row.template_ID(bg, "image", open="image.open")
+                        if bg.image is not None:
+                            box.template_image(bg, "image", bg.image_user, compact=True)
+                            has_bg = True
 
-                            column = box.column()
-                            column.active = bg.image.use_multiview
+                            if use_multiview:
+                                box.prop(bg.image, "use_multiview")
 
-                            column.label(text="Views Format:")
-                            column.row().prop(bg.image, "views_format", expand=True)
+                                column = box.column()
+                                column.active = bg.image.use_multiview
 
-                            sub = column.box()
-                            sub.active = bg.image.views_format == 'STEREO_3D'
-                            sub.template_image_stereo_3d(bg.image.stereo_3d_format)
+                                column.label(text="Views Format:")
+                                column.row().prop(bg.image, "views_format", expand=True)
 
-                elif bg.source == 'MOVIE_CLIP':
-                    box.prop(bg, "use_camera_clip", text="Active Clip")
+                                sub = column.box()
+                                sub.active = bg.image.views_format == 'STEREO_3D'
+                                sub.template_image_stereo_3d(bg.image.stereo_3d_format)
 
-                    column = box.column()
-                    column.active = not bg.use_camera_clip
-                    column.template_ID(bg, "clip", open="clip.open")
+                    elif bg.source == 'MOVIE_CLIP':
+                        box.prop(bg, "use_camera_clip", text="Active Clip")
 
-                    if bg.clip:
-                        column.template_movieclip(bg, "clip", compact=True)
+                        column = box.column()
+                        column.active = not bg.use_camera_clip
+                        column.template_ID(bg, "clip", open="clip.open")
 
-                    if bg.use_camera_clip or bg.clip:
-                        has_bg = True
+                        if bg.clip:
+                            column.template_movieclip(bg, "clip", compact=True)
 
-                    column = box.column()
-                    column.active = has_bg
-                    column.prop(bg.clip_user, "use_render_undistorted")
-                    column.prop(bg.clip_user, "proxy_render_size")
+                        if bg.use_camera_clip or bg.clip:
+                            has_bg = True
 
-                if has_bg:
-                    col = box.column()
-                    col.prop(bg, "alpha", slider=True)
-                    col.row().prop(bg, "display_depth", expand=True)
+                        column = box.column()
+                        column.active = has_bg
+                        column.prop(bg.clip_user, "use_render_undistorted")
+                        column.prop(bg.clip_user, "proxy_render_size")
 
-                    col.row().prop(bg, "frame_method", expand=True)
+                    if has_bg:
+                        col = box.column()
+                        col.prop(bg, "alpha", slider=True)
+                        col.row().prop(bg, "display_depth", expand=True)
 
-                    row = box.row()
-                    row.prop(bg, "offset")
+                        col.row().prop(bg, "frame_method", expand=True)
 
-                    col = box.column()
-                    col.prop(bg, "rotation")
-                    col.prop(bg, "scale")
+                        row = box.row()
+                        row.prop(bg, "offset")
 
-                    col = box.column(heading="Flip")
-                    col.prop(bg, "use_flip_x", text="X")
-                    col.prop(bg, "use_flip_y", text="Y")
+                        col = box.column()
+                        col.prop(bg, "rotation")
+                        col.prop(bg, "scale")
 
+                        col = box.column(heading="Flip")
+                        col.prop(bg, "use_flip_x", text="X")
+                        col.prop(bg, "use_flip_y", text="Y")
+        except AttributeError :
+            pass
 
 # ------------------------------------------------------------------------------
 # VIEWPORT DISPLAY
@@ -7968,29 +7973,32 @@ class data_context_camera_display(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        try:
+            layout.use_property_split = True
 
-        cam = context.scene.camera.data
+            cam = context.scene.camera.data
 
-        col = layout.column(align=True)
+            col = layout.column(align=True)
 
-        col.prop(cam, "display_size", text="Size")
+            col.prop(cam, "display_size", text="Size")
 
-        col = layout.column(heading="Show")
-        col.prop(cam, "show_limits", text="Limits")
-        col.prop(cam, "show_mist", text="Mist")
-        col.prop(cam, "show_sensor", text="Sensor")
-        col.prop(cam, "show_name", text="Name")
+            col = layout.column(heading="Show")
+            col.prop(cam, "show_limits", text="Limits")
+            col.prop(cam, "show_mist", text="Mist")
+            col.prop(cam, "show_sensor", text="Sensor")
+            col.prop(cam, "show_name", text="Name")
 
-        col = layout.column(align=False, heading="Passepartout")
-        col.use_property_decorate = False
-        row = col.row(align=True)
-        sub = row.row(align=True)
-        sub.prop(cam, "show_passepartout", text="")
-        sub = sub.row(align=True)
-        sub.active = cam.show_passepartout
-        sub.prop(cam, "passepartout_alpha", text="")
-        row.prop_decorator(cam, "passepartout_alpha")
+            col = layout.column(align=False, heading="Passepartout")
+            col.use_property_decorate = False
+            row = col.row(align=True)
+            sub = row.row(align=True)
+            sub.prop(cam, "show_passepartout", text="")
+            sub = sub.row(align=True)
+            sub.active = cam.show_passepartout
+            sub.prop(cam, "passepartout_alpha", text="")
+            row.prop_decorator(cam, "passepartout_alpha")
+        except AttributeError :
+            pass
 
 
 class data_context_camera_display_composition_guides(bpy.types.Panel):
@@ -8005,23 +8013,25 @@ class data_context_camera_display_composition_guides(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
+        try:
+            cam = context.scene.camera.data
 
-        cam = context.scene.camera.data
+            layout.prop(cam, "show_composition_thirds")
 
-        layout.prop(cam, "show_composition_thirds")
+            col = layout.column(heading="Center", align=True)
+            col.prop(cam, "show_composition_center")
+            col.prop(cam, "show_composition_center_diagonal", text="Diagonal")
 
-        col = layout.column(heading="Center", align=True)
-        col.prop(cam, "show_composition_center")
-        col.prop(cam, "show_composition_center_diagonal", text="Diagonal")
+            col = layout.column(heading="Golden", align=True)
+            col.prop(cam, "show_composition_golden", text="Ratio")
+            col.prop(cam, "show_composition_golden_tria_a", text="Triangle A")
+            col.prop(cam, "show_composition_golden_tria_b", text="Triangle B")
 
-        col = layout.column(heading="Golden", align=True)
-        col.prop(cam, "show_composition_golden", text="Ratio")
-        col.prop(cam, "show_composition_golden_tria_a", text="Triangle A")
-        col.prop(cam, "show_composition_golden_tria_b", text="Triangle B")
-
-        col = layout.column(heading="Harmony", align=True)
-        col.prop(cam, "show_composition_harmony_tri_a", text="Triangle A")
-        col.prop(cam, "show_composition_harmony_tri_b", text="Triangle B")
+            col = layout.column(heading="Harmony", align=True)
+            col.prop(cam, "show_composition_harmony_tri_a", text="Triangle A")
+            col.prop(cam, "show_composition_harmony_tri_b", text="Triangle B")
+        except AttributeError :
+            pass
 
 # ------------------------------------------------------------------------------
 # REGISTERATION AREA
