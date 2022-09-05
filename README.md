@@ -15,6 +15,8 @@
 
 •Added AB Camera Panels
 
+•Bug fixed Camera data's changed to Scene Cameras
+
 • Working on pep8 code standarts.
 
 • ...
