@@ -17,6 +17,10 @@
 
 •Bug fixed Camera data's changed to Scene Cameras
 
+•Bug fixed AB Camera Panel and AB Modelling Panel > Cutter , object and collections now works properly.
+
+•Added AB Light and AB Material Panel to addon.
+
 • Working on pep8 code standarts.
 
 • ...
