@@ -185,7 +185,34 @@ Collection
 
 ![24](https://user-images.githubusercontent.com/48792613/185752795-6a8cf42b-1dd0-40be-b45c-7239ecb8f6ec.png)
 
+# 8.) (Arc Blend) AB Camera:
+•Create and set your cameras:
+
+•Add camera to current view:
+![Screenshot_1](https://user-images.githubusercontent.com/48792613/189355182-3a35084c-8e7b-45e9-b93b-4f5b2c09f14c.png)
 
 
+![Screenshot_2](https://user-images.githubusercontent.com/48792613/189355287-769181e9-6595-4eb6-bd13-1862ce7a5568.png)
+
+
+![Screenshot_3](https://user-images.githubusercontent.com/48792613/189355322-65783983-4598-4287-8df9-6b073d746fb2.png)
+
+
+![Screenshot_4](https://user-images.githubusercontent.com/48792613/189355357-c37a3a41-68b9-4cbf-9d4e-b3d674a4f17f.png)
+
+
+![Screenshot_5](https://user-images.githubusercontent.com/48792613/189355374-3399d073-e580-4153-aef2-77ae5cfdbf9b.png)
+
+# 9.) (Arc Blend) AB Light
+•Create and set your lights:
+
+![Screenshot_6](https://user-images.githubusercontent.com/48792613/189355389-e11b8b36-98ce-4251-8378-1083a818d28a.png)
+
+![Screenshot_7](https://user-images.githubusercontent.com/48792613/189355400-9d952482-87fd-43ba-b1f8-4e7ab3cc8db1.png)
+
+# 10.) (Arc Blend) AB Material
+•Create and set your materials:
+
+![Screenshot_8](https://user-images.githubusercontent.com/48792613/189355415-06838ed3-e8bb-4873-83c1-6ea229f69b02.png)
 
 
