@@ -9,6 +9,8 @@ import bmesh
 import bpy
 from bl_ui.utils import PresetPanel
 from bpy.types import Panel
+from rna_prop_ui import PropertyPanel
+from bpy_extras.node_utils import find_node_input
 bl_info = {
     "name": "Arc_Blend_Tools",
     "author": "Stun Muffin (KB)",
@@ -2994,57 +2996,6 @@ class modifier_bevel_detail_executer (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# GENERATE PANEL
-
-
-class generate_panel (bpy.types.Panel):
-    bl_label = "Generate"
-    bl_idname = "PT_generate_panel"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Arc Blend"
-    bl_parent_id = "PT_modifier_panel"
-
-    def draw(self, context):
-        layout = self.layout
-        obj = context.object
-        row = layout.row()
-
-# ------------------------------------------------------------------------------
-# DEFORM PANEL
-
-
-class deform_panel (bpy.types.Panel):
-    bl_label = "Deform"
-    bl_idname = "PT_deform_panel"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Arc Blend"
-    bl_parent_id = "PT_modifier_panel"  # Parent ID
-
-    def draw(self, context):
-        layout = self.layout
-        obj = context.object
-        row = layout.row()
-
-# ------------------------------------------------------------------------------
-# PHYSICS PANEL
-
-
-class physics_panel (bpy.types.Panel):
-    bl_label = "Physics"
-    bl_idname = "PT_dphysics_panel"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Arc Blend"
-    bl_parent_id = "PT_modifier_panel"  # Parent ID
-
-    def draw(self, context):
-        layout = self.layout
-        obj = context.object
-        row = layout.row()
-
-# ------------------------------------------------------------------------------
 # DISPLAY PANEL
 
 
@@ -4025,37 +3976,71 @@ class cutter_box(bpy.types.Operator):
     
         
     def execute(self, context):
+        len_mod = len(bpy.context.object.modifiers[:])
+        if bpy.context.object.modifiers[:]==[]:
+                active = bpy.context.active_object    
+                active.select_set(True)
+                bpy.ops.object.modifier_add(type='BOOLEAN')
+                active_mod = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                bpy.ops.object.modifier_set_active(modifier=active_mod)
+                bpy.context.object.modifiers[active_mod].name = "AB_Cutter_Collection"
+                active_cutter = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                bpy.ops.object.modifier_set_active(modifier=active_cutter)
+                bpy.context.object.modifiers[active_cutter].operation = 'DIFFERENCE'
+                bpy.context.object.modifiers[active_cutter].operand_type = 'COLLECTION'
+                bpy.context.object.modifiers[active_cutter].solver = 'FAST'
+                active.select_set(True)
+                new_collection = ensure_collection(context.scene, "AB_Cutters_Collection")
+                bpy.context.object.modifiers[active_cutter].collection = bpy.data.collections["AB_Cutters_Collection"]
+                for i in bpy.data.collections['AB_Cutters_Collection'].objects:
+                    i.color = (1, 0.0252077, 0.021955, 0.342857)
+                    i.display_type = 'WIRE'
         
-        
-        active = bpy.context.active_object    
-        active.select_set(True)
-        bpy.ops.object.modifier_add(type='BOOLEAN')
-        active_mod = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
-        bpy.ops.object.modifier_set_active(modifier=active_mod)
-        bpy.context.object.modifiers[active_mod].name = "AB_Cutter_Collection"
-        active_cutter = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
-        bpy.ops.object.modifier_set_active(modifier=active_cutter)
-        bpy.context.object.modifiers[active_cutter].operation = 'DIFFERENCE'
-        bpy.context.object.modifiers[active_cutter].operand_type = 'COLLECTION'
-        bpy.context.object.modifiers[active_cutter].solver = 'FAST'
-        
-
-        #bpy.ops.wm.tool_set_by_id(name="builtin.primitive_cube_add")
-        active.select_set(True)
-        
-        #Creates Empty mesh data and exchange data's for cutter
-        
-        new_collection = ensure_collection(context.scene, "AB_Cutters_Collection")
-        
-        bpy.context.object.modifiers[active_cutter].collection = bpy.data.collections["AB_Cutters_Collection"]
-        
-        for i in bpy.data.collections['AB_Cutters_Collection'].objects:
-            i.color = (1, 0.0252077, 0.021955, 0.342857)
-
-
-
-        #bpy.context.object.modifiers[active_cutter].object = bpy.data.objects[active_cutter]
-
+        elif bpy.context.object.modifiers[:]!=[]:
+                all_boolean_coll =[] 
+                for mod in bpy.context.object.modifiers[:]:
+                    if mod.type == "BOOLEAN" and mod.operand_type=="COLLECTION" and mod.collection == None:
+                        bpy.ops.object.modifier_remove(modifier=mod.name)
+                    collection_same=[]
+                    if mod.type == "BOOLEAN" and mod.operand_type=="COLLECTION" and mod.collection != None:
+                        collection_same.append(mod.name)
+                    len_collection_same = len(collection_same)
+                    count_collection=[]
+                    for i in range(0,len_collection_same):
+                       count_collection.append([collection_same.count("AB_Cutter_Collection"),collection_same[i]])
+                    Cutter_collection_list = []
+                    for i in count_collection:
+                        if not i.count(1):
+                            Cutter_collection_list.append(i)
+                    for g in Cutter_collection_list:
+                        bpy.ops.object.modifier_remove(modifier=g[1])
+                        
+                    
+                    if mod.type == "BOOLEAN" and mod.operand_type == "COLLECTION":
+                        all_boolean_coll.append(mod.name)
+                if all_boolean_coll == []:
+                    active = bpy.context.active_object    
+                    active.select_set(True)
+                    bpy.ops.object.modifier_add(type='BOOLEAN')
+                    active_mod = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                    bpy.ops.object.modifier_set_active(modifier=active_mod)
+                    bpy.context.object.modifiers[active_mod].name = "AB_Cutter_Collection"
+                    active_cutter = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                    bpy.ops.object.modifier_set_active(modifier=active_cutter)
+                    bpy.context.object.modifiers[active_cutter].operation = 'DIFFERENCE'
+                    bpy.context.object.modifiers[active_cutter].operand_type = 'COLLECTION'
+                    bpy.context.object.modifiers[active_cutter].solver = 'FAST'
+                    active.select_set(True)
+                    new_collection = ensure_collection(context.scene, "AB_Cutters_Collection")
+                    bpy.context.object.modifiers[active_cutter].collection = bpy.data.collections["AB_Cutters_Collection"]
+                    for i in bpy.data.collections['AB_Cutters_Collection'].objects:
+                        i.color = (1, 0.0252077, 0.021955, 0.342857)
+                        i.display_type = 'WIRE'
+                if all_boolean_coll != None:
+                    bpy.context.object.modifiers["AB_Cutter_Collection"].collection = bpy.data.collections["AB_Cutters_Collection"]
+                    for i in bpy.data.collections['AB_Cutters_Collection'].objects:
+                        i.color = (1, 0.0252077, 0.021955, 0.342857)
+                        i.display_type = 'WIRE'
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
@@ -4069,40 +4054,112 @@ class cutter_box_object(bpy.types.Operator):
     
         
     def execute(self, context):
-        new_collection = ensure_collection_object(context.scene, "AB_Cutters_Object")
-        leng= len(bpy.data.collections['AB_Cutters_Object'].objects)
-        
-        for k in range(0,leng):
-            active = bpy.context.active_object    
-            active.select_set(True)
-            bpy.ops.object.modifier_add(type='BOOLEAN')
-            active_mod = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
-            bpy.ops.object.modifier_set_active(modifier=active_mod)
-            
-            bpy.context.object.modifiers[active_mod].name = "AB_Cutter_Object"+ str(k)
-            active_cutter = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
-            bpy.ops.object.modifier_set_active(modifier=active_cutter)
-            bpy.context.object.modifiers[active_cutter].operation = 'DIFFERENCE'
-            bpy.context.object.modifiers[active_cutter].operand_type = 'OBJECT'
-            bpy.context.object.modifiers[active_cutter].solver = 'FAST'
-            
-
-            #bpy.ops.wm.tool_set_by_id(name="builtin.primitive_cube_add")
-            active.select_set(True)
-            
-            #Creates Empty mesh data and exchange data's for cutter
-            
-            
-            
-            bpy.context.object.modifiers[active_cutter].collection = bpy.data.collections["AB_Cutters_Object"]
-            
-        for i in range(0,leng) :
-            bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object = bpy.data.collections['AB_Cutters_Object'].objects[i]
-            bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object.color = (0.0517386, 0.70876, 1, 0.342857)
-
-             
-         
-
+        if bpy.context.object.modifiers[:]==[]:
+            new_collection = ensure_collection_object(context.scene, "AB_Cutters_Object")
+            leng= len(bpy.data.collections['AB_Cutters_Object'].objects)
+            for k in range(0,leng):
+                active = bpy.context.active_object    
+                active.select_set(True)
+                bpy.ops.object.modifier_add(type='BOOLEAN')
+                active_mod = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                bpy.ops.object.modifier_set_active(modifier=active_mod)
+                bpy.context.object.modifiers[active_mod].name = "AB_Cutter_Object"+ str(k)
+                active_cutter = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                bpy.ops.object.modifier_set_active(modifier=active_cutter)
+                bpy.context.object.modifiers[active_cutter].operation = 'DIFFERENCE'
+                bpy.context.object.modifiers[active_cutter].operand_type = 'OBJECT'
+                bpy.context.object.modifiers[active_cutter].solver = 'FAST'
+                active.select_set(True)
+                bpy.context.object.modifiers[active_cutter].collection = bpy.data.collections["AB_Cutters_Object"]
+            for i in range(0,leng) :
+                bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object = bpy.data.collections['AB_Cutters_Object'].objects[i]
+                bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object.color = (0.0517386, 0.70876, 1, 0.342857)
+                bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object.display_type = 'WIRE'
+        elif bpy.context.object.modifiers[:]!=[]:
+                leng = len(bpy.data.collections['AB_Cutters_Object'].objects)
+                mod_list_object=[]
+                for mod in bpy.context.object.modifiers[:]:
+                    if mod.type == "BOOLEAN" and mod.operand_type=="OBJECT" and mod.object == None:
+                        mod_list_object.append(mod.name)
+                len_mod_list_object= len(mod_list_object)
+                count_object=[]
+                for i in range(0,len_mod_list_object):
+                   count_object.append([mod_list_object.count("AB_Cutter_Object"+str(i)),mod_list_object[i]])
+                Cutter_object_list = []
+                for i in count_object:
+                    if not i.count(1):
+                        Cutter_object_list.append(i)
+                for j in Cutter_object_list:
+                    bpy.ops.object.modifier_remove(modifier=j[1])
+                len_mod_object_count = []
+                for mod in bpy.context.object.modifiers[:]:
+                    if mod.type == "BOOLEAN" and mod.operand_type=="OBJECT" and mod.object != None:
+                        len_mod_object_count.append(mod.name)
+                len_len_mod_object_count = len(len_mod_object_count)
+                if leng < len_len_mod_object_count:
+                    for mod in len_mod_object_count:
+                        bpy.ops.object.modifier_remove(modifier=mod)
+                    for k in range(0,leng):
+                        active = bpy.context.active_object    
+                        active.select_set(True)
+                        bpy.ops.object.modifier_add(type='BOOLEAN')
+                        active_mod = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                        bpy.ops.object.modifier_set_active(modifier=active_mod)
+                        bpy.context.object.modifiers[active_mod].name = "AB_Cutter_Object"+ str(k)
+                        active_cutter = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                        bpy.ops.object.modifier_set_active(modifier=active_cutter)
+                        bpy.context.object.modifiers[active_cutter].operation = 'DIFFERENCE'
+                        bpy.context.object.modifiers[active_cutter].operand_type = 'OBJECT'
+                        bpy.context.object.modifiers[active_cutter].solver = 'FAST'
+                        active.select_set(True)
+                        bpy.context.object.modifiers[active_cutter].collection = bpy.data.collections["AB_Cutters_Object"]
+                    for i in range(0,leng) :
+                        bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object = bpy.data.collections['AB_Cutters_Object'].objects[i]
+                        bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object.color = (0.0517386, 0.70876, 1, 0.342857)
+                        bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object.display_type = 'WIRE'
+                elif leng == len_len_mod_object_count:
+                    for mod in len_mod_object_count:
+                        bpy.ops.object.modifier_remove(modifier= mod)
+                    for k in range(0,leng):
+                        active = bpy.context.active_object    
+                        active.select_set(True)
+                        bpy.ops.object.modifier_add(type='BOOLEAN')
+                        active_mod = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                        bpy.ops.object.modifier_set_active(modifier=active_mod)
+                        
+                        bpy.context.object.modifiers[active_mod].name = "AB_Cutter_Object"+ str(k)
+                        active_cutter = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                        bpy.ops.object.modifier_set_active(modifier=active_cutter)
+                        bpy.context.object.modifiers[active_cutter].operation = 'DIFFERENCE'
+                        bpy.context.object.modifiers[active_cutter].operand_type = 'OBJECT'
+                        bpy.context.object.modifiers[active_cutter].solver = 'FAST'
+                        active.select_set(True)
+                        bpy.context.object.modifiers[active_cutter].collection = bpy.data.collections["AB_Cutters_Object"]
+                    for i in range(0,leng) :
+                        bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object = bpy.data.collections['AB_Cutters_Object'].objects[i]
+                        bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object.color = (0.0517386, 0.70876, 1, 0.342857)
+                        bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object.display_type = 'WIRE'    
+                elif leng > len_len_mod_object_count:
+                    for mod in len_mod_object_count:
+                        bpy.ops.object.modifier_remove(modifier= mod)
+                    for k in range(0,leng):
+                        active = bpy.context.active_object    
+                        active.select_set(True)
+                        bpy.ops.object.modifier_add(type='BOOLEAN')
+                        active_mod = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                        bpy.ops.object.modifier_set_active(modifier=active_mod)
+                        bpy.context.object.modifiers[active_mod].name = "AB_Cutter_Object"+ str(k)
+                        active_cutter = bpy.data.objects[bpy.context.active_object.name].modifiers.active.name
+                        bpy.ops.object.modifier_set_active(modifier=active_cutter)
+                        bpy.context.object.modifiers[active_cutter].operation = 'DIFFERENCE'
+                        bpy.context.object.modifiers[active_cutter].operand_type = 'OBJECT'
+                        bpy.context.object.modifiers[active_cutter].solver = 'FAST'
+                        active.select_set(True)
+                        bpy.context.object.modifiers[active_cutter].collection = bpy.data.collections["AB_Cutters_Object"]
+                    for i in range(0,leng) :
+                        bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object = bpy.data.collections['AB_Cutters_Object'].objects[i]
+                        bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object.color = (0.0517386, 0.70876, 1, 0.342857)
+                        bpy.context.object.modifiers["AB_Cutter_Object"+ str(i)].object.display_type = 'WIRE'
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
@@ -5907,11 +5964,6 @@ class proxy_panel_add_objects (bpy.types.Operator):
     bl_label = ""
     bl_idname = "object.button_proxy_panel_add_objects"
 
-    #mesh_name= bpy.props.StringProperty()
-    #mesh_n = "Untitled"
-    #mesh_name = bpy.context.object.data.name
-    #mesh_name = ""
-
     add: bpy.props.StringProperty()
     mesh_name: bpy.props.StringProperty()
 
@@ -7269,7 +7321,6 @@ class Camera_Panel (bpy.types.Panel):
     bl_region_type = "UI"
     bl_category = "Arc Blend"
     
-    
 
     def draw(self, context):
         layout = self.layout
@@ -7314,25 +7365,18 @@ class Camera_Panel (bpy.types.Panel):
 # ADD CAMERA TO VIEW OPERATOR
 
 class camera_panel_add_camera_view (bpy.types.Operator):
+    """Add camera to view (Current View)"""
     bl_label = "Add Camera"
     bl_idname = "object.button_camera_panel_add_camera_view"
  
 
     def execute(self, context):
-        
         bpy.context.scene.camera = None
-        #bpy.ops.object.camera_add()
         bpy.ops.object.camera_add()
         bpy.context.object.data.name = bpy.context.object.name
-
-        #for i in bpy.context.view_layer.objects:
-        #    if i.type=="CAMERA":
-        #        print(i)
-
         bpy.ops.view3d.camera_to_view()
         bpy.context.scene.camera = None
         bpy.ops.view3d.object_as_camera()
-
         return {'FINISHED'}
 
 # ------------------------------------------------------------------------------
@@ -7344,34 +7388,21 @@ class camera_panel_list(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data,
                   active_propname, index):
-
         scene = context.scene
         row = layout.row(align=True)
-
         sub = row.row(align=True)
         sub.scale_x = 2
-
         sub.prop(item, "camera_item", text='', icon="OUTLINER_OB_CAMERA")
-
         sub = row.row(align=True)
         sub.scale_x = 1.1
         sub.enabled = bool(item.camera_item)
         sub.prop(item, "camera_display", text='',
                  icon='RESTRICT_VIEW_OFF' if item.camera_display else 'RESTRICT_VIEW_ON')
-        
-        
-        
         sub.operator("object.button_lock_camera_to_object", icon="VIEWZOOM")
-        
-        
-        
         sub = row.row(align=True)
         sub.scale_x = 0.3
         sub.prop(item, "name", text="", icon="LAYER_ACTIVE", emboss=False)
         sub.enabled = False
-
-        #sub.prop(item,"proxy_render_frame",text='', icon='RESTRICT_RENDER_OFF'if item.proxy_render_frame else'RESTRICT_RENDER_ON')
-
 
 # ------------------------------------------------------------------------------
 # ADD CAMERA TO LIST
@@ -7379,21 +7410,15 @@ class camera_panel_list(bpy.types.UIList):
 
 class camera_panel_add_camera (bpy.types.Operator):
     """Add a new item to the list"""
-
     bl_label = ""
     bl_idname = "object.button_camera_panel_add_camera"
-    
-    #add: bpy.props.StringProperty()
-    #camera_name: bpy.props.StringProperty()
 
     def execute(self, context):
         try:
             scene = bpy.context.scene
-            #camera =  bpy.data.objects[self.camera_name]
             len_cam_scn = len(bpy.data.scenes[:])
             for i in range(0,len_cam_scn):
                 camera = bpy.data.scenes[i].camera
-                #camera= bpy.data.objects['Camera']
                 index = scene.camera_list_index
                 item = scene.camera_list.add()
                 item.name = camera.name
@@ -7413,9 +7438,6 @@ class camera_panel_remove_camera (bpy.types.Operator):
     bl_label = ""
     bl_idname = "object.button_camera_panel_remove_camera"
 
-    #rem: bpy.props.StringProperty()
-    #camera_name: bpy.props.StringProperty()
-
     def execute(self, context):
         
         try:
@@ -7423,7 +7445,6 @@ class camera_panel_remove_camera (bpy.types.Operator):
             len_cam_scn = len(bpy.data.scenes[:])
             for i in range(0,len_cam_scn):
                 camera = bpy.data.scenes[i].camera
-                #camera = bpy.data.objects[self.camera_name]
                 index = scene.camera_list_index
                 scene.camera_list_index -= 1
                 scene.camera_list.remove(index)
@@ -7432,6 +7453,8 @@ class camera_panel_remove_camera (bpy.types.Operator):
         return {'FINISHED'}
 # ------------------------------------------------------------------------------
 # DEF CAMERA
+
+
 def camera_return_one_time(mesh, active_idx, prop_api):
     """Returning once per elements"""
     scene= bpy.context.scene
@@ -7440,7 +7463,6 @@ def camera_return_one_time(mesh, active_idx, prop_api):
         if i.camera_ui_index != active_idx:
             exec(f"i.{prop_api}= False")
     return None
-
 
 def camera_display_upd(self, context):
     
@@ -7478,13 +7500,10 @@ class lock_camera_to_object(bpy.types.Operator):
     bl_idname = "object.button_lock_camera_to_object"
 
     def execute(self, context):
-        
         bpy.context.space_data.lock_camera = True
         bpy.ops.view3d.camera_to_view_selected()
         bpy.context.space_data.lock_camera = False
-
         return {"FINISHED"}
-
 
 # ------------------------------------------------------------------------------
 # CAMERA PROPERTY GROUP
@@ -7493,15 +7512,12 @@ class lock_camera_to_object(bpy.types.Operator):
 class camera_panel_list_item(bpy.types.PropertyGroup):
     id: bpy.props.IntProperty()
     camera: bpy.props.PointerProperty(name="Camera",type=bpy.types.Camera)
-
     # Name of the items in the list
     name: bpy.props.StringProperty(description="Object Name")
     # Random props in the lists
     camera_ui_index: bpy.props.IntProperty(description='UI List Index')
     camera_item: bpy.props.PointerProperty(type=bpy.types.Camera, description='Camera Name')
     camera_display: bpy.props.BoolProperty(default=False, description="Display in Viewport", update=camera_display_upd)
-    
-   
 
     def copy(self):
         self.camera = self.id_data.copy()
@@ -7526,16 +7542,12 @@ class data_context_camera_lock(Panel):
     
     def draw(self, context):
         layout = self.layout
-
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
-
         view = context.space_data
-
         col = layout.column(align=True)
         sub = col.column()
         sub.active = bool(view.region_3d.view_perspective != 'CAMERA' or view.region_quadviews)
-
         sub.prop(view, "lock_object")
         lock_object = view.lock_object
         if lock_object:
@@ -7546,7 +7558,6 @@ class data_context_camera_lock(Panel):
                     else "bones",
                     text="Bone",
                 )
-
         col = layout.column(heading="Lock", align=True)
         if not lock_object:
             col.prop(view, "lock_cursor", text="To 3D Cursor")
@@ -7562,11 +7573,8 @@ class data_context_camera(bpy.types.Panel):
     bl_category = "Arc Blend"
     bl_parent_id = "PT_Camera_Panel"
    
-        
     def draw(self, context):
         layout = self.layout
-
-    
 
 # ------------------------------------------------------------------------------
 # CAMERA LENS
@@ -7580,7 +7588,6 @@ class data_context_camera_lens(bpy.types.Panel):
     bl_parent_id = "data_context_camera"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     
-   
    
     def draw(self, context):
         layout = self.layout
@@ -7625,21 +7632,17 @@ class data_context_camera_lens(bpy.types.Panel):
                         col.prop(ccam, "fisheye_polynomial_k2", text="K2")
                         col.prop(ccam, "fisheye_polynomial_k3", text="K3")
                         col.prop(ccam, "fisheye_polynomial_k4", text="K4")
-
                 elif engine in {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}:
                     if cam.lens_unit == 'MILLIMETERS':
                         col.prop(cam, "lens")
                     elif cam.lens_unit == 'FOV':
                         col.prop(cam, "angle")
                     col.prop(cam, "lens_unit")
-
             col = layout.column()
             col.separator()
-
             sub = col.column(align=True)
             sub.prop(cam, "shift_x", text="Shift X")
             sub.prop(cam, "shift_y", text="Y")
-
             col.separator()
             sub = col.column(align=True)
             sub.prop(cam, "clip_start", text="Clip Start")
@@ -7692,8 +7695,6 @@ class data_context_camera_dof_aperture(bpy.types.Panel):
     bl_category = "Arc Blend"
     bl_parent_id = "data_context_camera_dof"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
-    
-    
 
     def draw(self, context):
         layout = self.layout
@@ -7702,12 +7703,9 @@ class data_context_camera_dof_aperture(bpy.types.Panel):
             cam = context.scene.camera.data
             dof = cam.dof
             layout.active = dof.use_dof
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
-
             col = flow.column()
             col.prop(dof, "aperture_fstop")
-
             col = flow.column()
             col.prop(dof, "aperture_blades")
             col.prop(dof, "aperture_rotation")
@@ -7743,19 +7741,15 @@ class data_context_camera_camera(bpy.types.Panel):
         layout = self.layout
         try:
             cam = context.scene.camera.data
-
             layout.use_property_split = True
-
             col = layout.column()
             col.prop(cam, "sensor_fit")
-
             if cam.sensor_fit == 'AUTO':
                 col.prop(cam, "sensor_width", text="Size")
             else:
                 sub = col.column(align=True)
                 sub.active = cam.sensor_fit == 'HORIZONTAL'
                 sub.prop(cam, "sensor_width", text="Width")
-
                 sub = col.column(align=True)
                 sub.active = cam.sensor_fit == 'VERTICAL'
                 sub.prop(cam, "sensor_height", text="Height")
@@ -7794,13 +7788,9 @@ class data_context_camera_safe_areas(bpy.types.Panel):
         try:
             safe_data = context.scene.safe_areas
             camera = context.scene.camera.data
-
             layout.use_property_split = True
-
             layout.active = camera.show_safe_areas
-
             col = layout.column()
-
             sub = col.column()
             sub.prop(safe_data, "title", slider=True)
             sub.prop(safe_data, "action", slider=True)
@@ -7819,7 +7809,6 @@ class data_context_camera_safe_areas_center_cut(bpy.types.Panel):
     def draw_header(self, context):
         try:
             cam = context.scene.camera.data
-
             layout = self.layout
             layout.active = cam.show_safe_areas
             layout.prop(cam, "show_safe_center", text="")
@@ -7831,11 +7820,8 @@ class data_context_camera_safe_areas_center_cut(bpy.types.Panel):
         try:
             safe_data = context.scene.safe_areas
             camera = context.scene.camera.data
-
             layout.use_property_split = True
-
             layout.active = camera.show_safe_areas and camera.show_safe_center
-
             col = layout.column()
             col.prop(safe_data, "title_center", slider=True)
             col.prop(safe_data, "action_center", slider=True)
@@ -7866,10 +7852,8 @@ class data_context_camera_background_image(bpy.types.Panel):
         try:
             cam = context.scene.camera.data
             use_multiview = context.scene.render.use_multiview
-
             col = layout.column()
             col.operator("view3d.background_image_add", text="Add Image")
-
             for i, bg in enumerate(cam.background_images):
                 layout.active = cam.show_background_images
                 box = layout.box()
@@ -7883,7 +7867,6 @@ class data_context_camera_background_image(bpy.types.Panel):
                     row.label(text="Active Clip")
                 else:
                     row.label(text="Not Set")
-
                 row.prop(
                     bg,
                     "show_background_image",
@@ -7891,13 +7874,10 @@ class data_context_camera_background_image(bpy.types.Panel):
                     emboss=False,
                     icon='RESTRICT_VIEW_OFF' if bg.show_background_image else 'RESTRICT_VIEW_ON',
                 )
-
                 row.operator("view3d.background_image_remove", text="", emboss=False, icon='X').index = i
-
                 if bg.show_expanded:
                     row = box.row()
                     row.prop(bg, "source", expand=True)
-
                     has_bg = False
                     if bg.source == 'IMAGE':
                         row = box.row()
@@ -7905,52 +7885,38 @@ class data_context_camera_background_image(bpy.types.Panel):
                         if bg.image is not None:
                             box.template_image(bg, "image", bg.image_user, compact=True)
                             has_bg = True
-
                             if use_multiview:
                                 box.prop(bg.image, "use_multiview")
-
                                 column = box.column()
                                 column.active = bg.image.use_multiview
-
                                 column.label(text="Views Format:")
                                 column.row().prop(bg.image, "views_format", expand=True)
-
                                 sub = column.box()
                                 sub.active = bg.image.views_format == 'STEREO_3D'
                                 sub.template_image_stereo_3d(bg.image.stereo_3d_format)
-
                     elif bg.source == 'MOVIE_CLIP':
                         box.prop(bg, "use_camera_clip", text="Active Clip")
-
                         column = box.column()
                         column.active = not bg.use_camera_clip
                         column.template_ID(bg, "clip", open="clip.open")
-
                         if bg.clip:
                             column.template_movieclip(bg, "clip", compact=True)
-
                         if bg.use_camera_clip or bg.clip:
                             has_bg = True
-
                         column = box.column()
                         column.active = has_bg
                         column.prop(bg.clip_user, "use_render_undistorted")
                         column.prop(bg.clip_user, "proxy_render_size")
-
                     if has_bg:
                         col = box.column()
                         col.prop(bg, "alpha", slider=True)
                         col.row().prop(bg, "display_depth", expand=True)
-
                         col.row().prop(bg, "frame_method", expand=True)
-
                         row = box.row()
                         row.prop(bg, "offset")
-
                         col = box.column()
                         col.prop(bg, "rotation")
                         col.prop(bg, "scale")
-
                         col = box.column(heading="Flip")
                         col.prop(bg, "use_flip_x", text="X")
                         col.prop(bg, "use_flip_y", text="Y")
@@ -7959,7 +7925,6 @@ class data_context_camera_background_image(bpy.types.Panel):
 
 # ------------------------------------------------------------------------------
 # VIEWPORT DISPLAY
-
 
 
 class data_context_camera_display(bpy.types.Panel):
@@ -7975,19 +7940,14 @@ class data_context_camera_display(bpy.types.Panel):
         layout = self.layout
         try:
             layout.use_property_split = True
-
             cam = context.scene.camera.data
-
             col = layout.column(align=True)
-
             col.prop(cam, "display_size", text="Size")
-
             col = layout.column(heading="Show")
             col.prop(cam, "show_limits", text="Limits")
             col.prop(cam, "show_mist", text="Mist")
             col.prop(cam, "show_sensor", text="Sensor")
             col.prop(cam, "show_name", text="Name")
-
             col = layout.column(align=False, heading="Passepartout")
             col.use_property_decorate = False
             row = col.row(align=True)
@@ -8015,9 +7975,7 @@ class data_context_camera_display_composition_guides(bpy.types.Panel):
         layout.use_property_split = True
         try:
             cam = context.scene.camera.data
-
             layout.prop(cam, "show_composition_thirds")
-
             col = layout.column(heading="Center", align=True)
             col.prop(cam, "show_composition_center")
             col.prop(cam, "show_composition_center_diagonal", text="Diagonal")
@@ -8033,6 +7991,859 @@ class data_context_camera_display_composition_guides(bpy.types.Panel):
         except AttributeError :
             pass
 
+# ------------------------------------------------------------------------------
+# LIGHT PANEL
+
+class Light_Panel (bpy.types.Panel):
+    bl_label = "AB Light"
+    bl_idname = "PT_Light_Panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    
+
+    def draw(self, context):
+        layout = self.layout
+        ob = context.object
+        scene = context.scene
+        cam = context.scene.camera
+        col = layout.column()
+        row = layout.row()
+        col.label(text="Light Panel :" , icon="LIGHT")
+        col.operator("object.button_light_point", text="Add Light to Scene", icon="OUTLINER_OB_LIGHT")
+        # draw template
+        col1 = row.column()
+        col2 = row.column()
+        template = col1
+        template.template_list("light_panel_list", "light_list", scene, "light_list",
+                                   scene, "light_list_index", rows=3)
+        template.scale_y = 1.1
+        # draw side bar
+        col.separator(factor=0)
+        
+        #
+        add = col2.column(align=True)
+        AB_ADD = add.operator(
+            "object.button_light_panel_add_light", icon='ADD', text="")
+        
+        rem = col2.column(align=True)
+        AB_REMOVE = rem.operator(
+            "object.button_light_panel_remove_light", icon='REMOVE', text="")
+
+        col.column_flow(columns=3, align=True)
+
+# ------------------------------------------------------------------------------
+# LIGHT LIST
+
+
+class light_panel_list(bpy.types.UIList):
+    """UI Light List"""
+
+    def draw_item(self, context, layout, data, item, icon, active_data,
+                  active_propname, index):
+
+        scene = context.scene
+        row = layout.row(align=True)
+        sub = row.row(align=True)
+        sub.scale_x = 2
+        sub.prop(item, "light_item", text='', icon="OUTLINER_OB_LIGHT")
+        sub = row.row(align=True)
+        sub.scale_x = 1.1
+        sub.enabled = bool(item.light_item)
+        sub.prop(item, "light_display", text='',
+                 icon='RESTRICT_VIEW_OFF' if item.light_display else 'RESTRICT_VIEW_ON')
+        sub = row.row(align=True)
+        sub.scale_x = 0.3
+        sub.prop(item, "name", text="", icon="LAYER_ACTIVE", emboss=False)
+        sub.enabled = False
+
+# ------------------------------------------------------------------------------
+# ADD LIGHT TO LIST
+
+class light_panel_add_light (bpy.types.Operator):
+    """Add a new item to the list"""
+
+    bl_label = ""
+    bl_idname = "object.button_light_panel_add_light"
+    
+
+    def execute(self, context):
+        try:
+            light_list_scn =[]
+            for i in bpy.context.scene.objects[:]:
+                if i.type == "LIGHT":
+                    light_list_scn.append(i)
+            for i in light_list_scn:
+                scene= bpy.context.scene
+                light = i
+                index = scene.light_list_index
+                item = scene.light_list.add()
+                item.name = light.name
+                item.light_ui_index = len(scene.light_list)
+                scene.light_list_index = len(scene.light_list) - 1
+        except (AttributeError,KeyError,UnboundLocalError) :
+            pass
+
+        return {'FINISHED'}
+
+# ------------------------------------------------------------------------------
+# DELETE OBJECT FROM LIST LIGHT
+
+
+class light_panel_remove_light (bpy.types.Operator):
+    """Remove item from the list"""
+
+    bl_label = ""
+    bl_idname = "object.button_light_panel_remove_light"
+
+    def execute(self, context):
+        try:
+            light_list_scn =[]
+            for i in bpy.context.scene.objects[:]:
+                if i.type == "LIGHT":
+                    light_list_scn.append(i)
+            for i in light_list_scn:
+                scene = bpy.context.scene
+                light = i
+                index = scene.light_list_index
+                scene.light_list_index -= 1
+                scene.light_list.remove(index)
+        except (AttributeError,KeyError,UnboundLocalError) :
+            pass
+        return {'FINISHED'}
+
+# ------------------------------------------------------------------------------
+# DEF LIGHT
+def light_return_one_time(scene, active_idx, prop_api):
+    """Returning once per elements"""
+    AB_list = scene.light_list
+    
+    for i in AB_list:
+        if i.light_ui_index != active_idx:
+            exec(f"i.{prop_api}= False")
+    return None
+
+
+def light_display_upd(self, context):
+    
+    if self.light_display == True:
+        light_return_one_time(self.id_data, self.light_ui_index, "light_display")
+    
+        for i in bpy.data.scenes[bpy.context.scene.name].light_list[:]:
+               if i.light_display== True:
+                   bpy.context.active_object.select_set(False)
+                   bpy.context.view_layer.objects.active = bpy.data.objects[i.name]
+                   bpy.context.object.select_set(True)
+       
+    else:
+        pass
+
+# ------------------------------------------------------------------------------
+# LIGHT PROPERTY GROUP
+
+
+class light_panel_list_item(bpy.types.PropertyGroup):
+    id: bpy.props.IntProperty()
+    light: bpy.props.PointerProperty(name="Light",type=bpy.types.Light)
+
+    # Name of the items in the list
+    name: bpy.props.StringProperty(description="Light Name")
+    # Random props in the lists
+    light_ui_index: bpy.props.IntProperty(description='UI List Index')
+    light_item: bpy.props.PointerProperty(type=bpy.types.Light, description='Light Name')
+    light_display: bpy.props.BoolProperty(default=False, description="Display in Viewport", update=light_display_upd)
+    
+   
+
+    def copy(self):
+        self.light = self.id_data.copy()
+        self.name = self.light.name
+        return self.light
+
+    def add(self, light):
+        self.light = light
+        self.name = light.name
+        return self.light
+
+
+
+# ------------------------------------------------------------------------------
+# LIGHT BUTTON PANEL
+
+class DataButtonsPanel:
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "data"
+
+    @classmethod
+    def poll(cls, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                engine = context.engine
+                return active.data and (engine in cls.COMPAT_ENGINES)
+        except (AttributeError,KeyError):
+            pass
+# ------------------------------------------------------------------------------
+# LIGHT BUTTON PANEL
+    
+class light_panel_list_context_light(DataButtonsPanel, Panel):
+    bl_label = ""
+    bl_options = {'HIDE_HEADER'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Light_Panel"
+
+    def draw(self, context):
+        layout = self.layout
+        ob = context.object
+        space = context.space_data
+
+        if ob:
+            layout.template_ID(ob, "data")
+        elif light:
+            layout.template_ID(space, "pin_id")
+
+
+# ------------------------------------------------------------------------------
+# LIGHT PANEL LIST Light x
+
+class light_panel_list_EEVEE_light_x(DataButtonsPanel, Panel):
+    bl_label = "Light"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Light_Panel"
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    def draw(self, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context = active.data
+                layout = self.layout
+                light = context
+                # Compact layout for node editor.
+                layout.use_property_split = False
+                layout.row().prop(light, "type",expand=True)
+                col = layout.column()
+                col.prop(light, "color")
+                col.prop(light, "energy")
+                col.separator()
+                col.prop(light, "diffuse_factor", text="Diffuse")
+                col.prop(light, "specular_factor", text="Specular")
+                col.prop(light, "volume_factor", text="Volume")
+                col.separator()
+                if light.type in {'POINT', 'SPOT'}:
+                    col.prop(light, "shadow_soft_size", text="Radius")
+                elif light.type == 'SUN':
+                    col.prop(light, "angle")
+                elif light.type == 'AREA':
+                    col.prop(light, "shape")
+                    sub = col.column(align=True)
+                    if light.shape in {'SQUARE', 'DISK'}:
+                        sub.prop(light, "size")
+                    elif light.shape in {'RECTANGLE', 'ELLIPSE'}:
+                        sub.prop(light, "size", text="Size X")
+                        sub.prop(light, "size_y", text="Y")
+        except (AttributeError,KeyError):
+            pass
+# ------------------------------------------------------------------------------
+# LIGHT PANEL distance
+class light_panel_list_EEVEE_light_distance(DataButtonsPanel, Panel):
+    bl_label = "Custom Distance"
+    bl_parent_id = "light_panel_list_EEVEE_light_x"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    @classmethod
+    def poll(cls, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context1 = active.data
+                light = context1
+                engine = context.engine
+                return (light and light.type != 'SUN') and (engine in cls.COMPAT_ENGINES)
+        except (AttributeError,KeyError):
+            pass
+        
+    def draw_header(self, context):
+        active = bpy.context.active_object
+        try:
+            for i in bpy.context.scene.objects[:]:
+                if i.type == "LIGHT":
+                    context = i.data
+                    light = context
+                    layout = self.layout
+                    layout.prop(light, "use_custom_distance", text="")
+        except (AttributeError,KeyError):
+            pass
+    def draw(self, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context = active.data
+                layout = self.layout
+                light = context
+                layout.active = light.use_custom_distance
+                layout.use_property_split = True
+
+                layout.prop(light, "cutoff_distance", text="Distance")
+        except (AttributeError,KeyError):
+            pass
+# ------------------------------------------------------------------------------
+# LIGHT PANEL shadow
+
+class light_panel_list_EEVEE_shadow(DataButtonsPanel, Panel):
+    bl_label = "Shadow"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Light_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    @classmethod
+    def poll(cls, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context1 = active.data
+                light = context1
+                engine = context.engine
+                return (
+                    (light and light.type in {'POINT', 'SUN', 'SPOT', 'AREA'}) and
+                    (engine in cls.COMPAT_ENGINES)
+                )
+        except (AttributeError,KeyError):
+            pass
+    def draw_header(self, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context = active.data
+                light = context
+                self.layout.prop(light, "use_shadow", text="")
+        except (AttributeError,KeyError):
+            pass
+
+    def draw(self, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context = active.data
+                layout = self.layout
+                layout.use_property_split = True
+                light = context
+                layout.active = light.use_shadow
+                col = layout.column()
+                sub = col.column(align=True)
+                if light.type != 'SUN':
+                    sub.prop(light, "shadow_buffer_clip_start", text="Clip Start")
+                col.prop(light, "shadow_buffer_bias", text="Bias")
+        except (AttributeError,KeyError):
+            pass
+# ------------------------------------------------------------------------------
+# LIGHT PANEL shadow map
+class light_panel_list_EEVEE_shadow_cascaded_shadow_map(DataButtonsPanel, Panel):
+    bl_label = "Cascaded Shadow Map"
+    bl_parent_id = "light_panel_list_EEVEE_shadow"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    @classmethod
+    def poll(cls, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context1 = active.data
+                light = context1
+                engine = context.engine
+                return (light and light.type == 'SUN') and (engine in cls.COMPAT_ENGINES)
+        except (AttributeError,KeyError):
+            pass
+    def draw(self, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context = active.data
+                layout = self.layout
+                light = context
+                layout.use_property_split = True
+
+                col = layout.column()
+
+                col.prop(light, "shadow_cascade_count", text="Count")
+                col.prop(light, "shadow_cascade_fade", text="Fade")
+
+                col.prop(light, "shadow_cascade_max_distance", text="Max Distance")
+                col.prop(light, "shadow_cascade_exponent", text="Distribution")
+        except (AttributeError,KeyError):
+            pass
+# ------------------------------------------------------------------------------
+# LIGHT PANEL shadow contact
+class light_panel_list_EEVEE_shadow_contact(DataButtonsPanel, Panel):
+    bl_label = "Contact Shadows"
+    bl_parent_id = "light_panel_list_EEVEE_shadow"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    @classmethod
+    def poll(cls, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context1 = active.data
+                light = context1
+                engine = context.engine
+                return (
+                    (light and light.type in {'POINT', 'SUN', 'SPOT', 'AREA'}) and
+                    (engine in cls.COMPAT_ENGINES)
+                )
+        except (AttributeError,KeyError):
+            pass
+
+    def draw_header(self, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context = active.data
+                light = context
+                layout = self.layout
+                layout.active = light.use_shadow
+                layout.prop(light, "use_contact_shadow", text="")
+        except (AttributeError,KeyError):
+            pass
+
+    def draw(self, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context = active.data
+                layout = self.layout
+                light = context
+                layout.use_property_split = True
+
+                col = layout.column()
+                col.active = light.use_shadow and light.use_contact_shadow
+
+                col.prop(light, "contact_shadow_distance", text="Distance")
+                col.prop(light, "contact_shadow_bias", text="Bias")
+                col.prop(light, "contact_shadow_thickness", text="Thickness")
+        except (AttributeError,KeyError):
+            pass
+
+# ------------------------------------------------------------------------------
+# LIGHT PANEL area
+class light_panel_list_area(DataButtonsPanel, Panel):
+    bl_label = "Area Shape"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_WORKBENCH'}
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id = "PT_Light_Panel"
+
+    @classmethod
+    def poll(cls, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context1 = active.data
+                light = context1
+                engine = context.engine
+                return (light and light.type == 'AREA') and (engine in cls.COMPAT_ENGINES)
+        except AttributeError:
+            pass
+    def draw(self, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context = active.data
+                layout = self.layout
+                light = context
+                col = layout.column()
+                col.row().prop(light, "shape", expand=True)
+                sub = col.row(align=True)
+                if light.shape in {'SQUARE', 'DISK'}:
+                    sub.prop(light, "size")
+                elif light.shape in {'RECTANGLE', 'ELLIPSE'}:
+                    sub.prop(light, "size", text="Size X")
+                    sub.prop(light, "size_y", text="Size Y")
+        except AttributeError:
+            pass
+# ------------------------------------------------------------------------------
+# LIGHT PANEL spot
+class light_panel_list_spot(DataButtonsPanel, Panel):
+    bl_label = "Spot Shape"
+    bl_parent_id = "light_panel_list_EEVEE_light_x"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+
+    @classmethod
+    def poll(cls, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context1 = active.data
+                light = context1
+                engine = context.engine
+                return (light and light.type == 'SPOT') and (engine in cls.COMPAT_ENGINES)
+        except AttributeError:
+            pass
+    def draw(self, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context = active.data
+                layout = self.layout
+                layout.use_property_split = True
+                light = context
+                col = layout.column()
+                col.prop(light, "spot_size", text="Size")
+                col.prop(light, "spot_blend", text="Blend", slider=True)
+                col.prop(light, "show_cone")
+        except AttributeError:
+            pass
+# ------------------------------------------------------------------------------
+# LIGHT PANEL falloff curve
+class light_panel_list_falloff_curve(DataButtonsPanel, Panel):
+    bl_label = "Falloff Curve"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE'}
+
+    @classmethod
+    def poll(cls, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context1 = active.data
+                light = context1
+                engine = context.engine
+
+                return (
+                    (light and light.type in {'POINT', 'SPOT'} and light.falloff_type == 'CUSTOM_CURVE') and
+                    (engine in cls.COMPAT_ENGINES)
+                )
+        except AttributeError:
+            pass
+    def draw(self, context):
+        active = bpy.context.active_object
+        try:
+            if active.type == "LIGHT":
+                context = active.data
+                light = context
+
+                self.layout.template_curve_mapping(
+                    light, "falloff_curve", use_negative_slope=True)
+        except AttributeError:
+            pass
+
+# ------------------------------------------------------------------------------
+# Material Panel
+class Material_PT_ab_Panel (bpy.types.Panel):
+    bl_id = "Material_PT_ab_Panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_label= "AB Material"
+    
+    def draw(self,context):
+        layout=self.layout
+        col= layout.column()
+
+class MATERIAL_MT_ab_context_menu(Menu):
+    bl_label = "Material Specials"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("material.copy", icon='COPYDOWN')
+        layout.operator("object.material_slot_copy")
+        layout.operator("material.paste", icon='PASTEDOWN')
+        layout.operator("object.material_slot_remove_unused")
+# ------------------------------------------------------------------------------
+# Material Ui List
+
+class MATERIAL_UL_ab_matslots(bpy.types.UIList):
+
+    def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):
+        slot = item
+        ma = slot.material
+
+        layout.context_pointer_set("id", ma)
+        layout.context_pointer_set("material_slot", slot)
+
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            if ma:
+                layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
+            else:
+                layout.label(text="", icon_value=icon)
+        elif self.layout_type == 'GRID':
+            layout.alignment = 'CENTER'
+            layout.label(text="", icon_value=icon)
+# ------------------------------------------------------------------------------
+# Material Button Panel
+    
+class MaterialButtonsPanel:
+    bl_context = "material"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id="Material_PT_ab_Panel"
+    # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
+
+    @classmethod
+    def poll(cls, context):
+        mat = context.active_object.active_material
+        return mat and (context.engine in cls.COMPAT_ENGINES) and not mat.grease_pencil
+
+# ------------------------------------------------------------------------------
+# Context Material
+       
+class EEVEE_MATERIAL_PT_ab_context_material(MaterialButtonsPanel, Panel):
+    bl_label = ""
+    bl_context = "material"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_parent_id ="Material_PT_ab_Panel"
+    bl_options = {'HIDE_HEADER'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        ob = context.object
+        mat = bpy.context.object.active_material
+
+        if (ob and ob.type == 'GPENCIL') or (mat and mat.grease_pencil):
+            return False
+
+        return (ob or mat) and (context.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        mat = bpy.context.object.active_material
+        ob = context.object
+        #slot = context.object.material_slots
+        slot = context.object.material_slots
+        space = context.space_data
+
+        if ob:
+            is_sortable = len(ob.material_slots) > 1
+            rows = 3
+            if is_sortable:
+                rows = 5
+
+            row = layout.row()
+
+            row.template_list("MATERIAL_UL_matslots", "", ob, "material_slots", ob, "active_material_index", rows=rows)
+
+            col = row.column(align=True)
+            col.operator("object.material_slot_add", icon='ADD', text="")
+            col.operator("object.material_slot_remove", icon='REMOVE', text="")
+
+            col.separator()
+
+            col.menu("MATERIAL_MT_context_menu", icon='DOWNARROW_HLT', text="")
+
+            if is_sortable:
+                col.separator()
+
+                col.operator("object.material_slot_move", icon='TRIA_UP', text="").direction = 'UP'
+                col.operator("object.material_slot_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
+
+        row = layout.row()
+
+        if ob:
+            row.template_ID(ob, "active_material", new="material.new")
+
+
+            if ob.mode == 'EDIT':
+                row = layout.row(align=True)
+                row.operator("object.material_slot_assign", text="Assign")
+                row.operator("object.material_slot_select", text="Select")
+                row.operator("object.material_slot_deselect", text="Deselect")
+
+        elif mat:
+            row.template_ID(space, "pin_id")
+
+# ------------------------------------------------------------------------------
+# Node Panel Draw    
+ 
+def panel_node_draw(layout, ntree, _output_type, input_name):
+    node = ntree.get_output_node('EEVEE')
+
+    if node:
+        input = find_node_input(node, input_name)
+        if input:
+            layout.template_node_view(ntree, node, input)
+        else:
+            layout.label(text="Incompatible output node")
+    else:
+        layout.label(text="No output node")
+# ------------------------------------------------------------------------------
+# Surface Panel
+
+class EEVEE_MATERIAL_PT_ab_surface(MaterialButtonsPanel, Panel):
+    bl_label = "Surface"
+    bl_context = "material"
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        mat = bpy.context.active_object.active_material
+
+        layout.prop(mat, "use_nodes", icon='NODETREE')
+        layout.separator()
+
+        layout.use_property_split = True
+
+        if mat.use_nodes:
+            panel_node_draw(layout, mat.node_tree, 'OUTPUT_MATERIAL', "Surface")
+        else:
+            layout.prop(mat, "diffuse_color", text="Base Color")
+            layout.prop(mat, "metallic")
+            layout.prop(mat, "specular_intensity", text="Specular")
+            layout.prop(mat, "roughness")
+# ------------------------------------------------------------------------------
+# Volume Panel
+
+class EEVEE_MATERIAL_PT_ab_volume(MaterialButtonsPanel, Panel):
+    bl_label = "Volume"
+    bl_context = "material"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    @classmethod
+    def poll(cls, context):
+        engine = context.engine
+        mat = bpy.context.active_object.active_material
+        return mat and mat.use_nodes and (engine in cls.COMPAT_ENGINES) and not mat.grease_pencil
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.use_property_split = True
+
+        mat = bpy.context.active_object.active_material
+
+        panel_node_draw(layout, mat.node_tree, 'OUTPUT_MATERIAL', "Volume")
+# ------------------------------------------------------------------------------
+# Volume Panel
+
+def draw_material_settings(self, context):
+    layout = self.layout
+    layout.use_property_split = True
+    layout.use_property_decorate = False
+
+    mat = bpy.context.active_object.active_material
+
+    layout.prop(mat, "use_backface_culling")
+    layout.prop(mat, "blend_method")
+    layout.prop(mat, "shadow_method")
+
+    row = layout.row()
+    row.active = ((mat.blend_method == 'CLIP') or (mat.shadow_method == 'CLIP'))
+    row.prop(mat, "alpha_threshold")
+
+    if mat.blend_method not in {'OPAQUE', 'CLIP', 'HASHED'}:
+        layout.prop(mat, "show_transparent_back")
+
+    layout.prop(mat, "use_screen_refraction")
+    layout.prop(mat, "refraction_depth")
+    layout.prop(mat, "use_sss_translucency")
+    layout.prop(mat, "pass_index")
+
+class EEVEE_MATERIAL_PT_ab_settings(MaterialButtonsPanel, Panel):
+    bl_label = "Settings"
+    bl_context = "material"
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    def draw(self, context):
+        draw_material_settings(self, context)
+        
+# ------------------------------------------------------------------------------
+# Material Panel Viewport
+        
+class MATERIAL_PT_ab_viewport_settings(MaterialButtonsPanel, Panel):
+    bl_label = "Settings"
+    bl_context = "material"
+    bl_parent_id = "MATERIAL_PT_ab_viewport"
+    COMPAT_ENGINES = {'BLENDER_RENDER'}
+
+    def draw(self, context):
+        draw_material_settings(self, context)
+
+
+class MATERIAL_PT_ab_viewport(MaterialButtonsPanel, Panel):
+    bl_label = "Viewport Display"
+    bl_context = "material"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_order = 10
+
+    @classmethod
+    def poll(cls, context):
+        mat = bpy.context.active_object.active_material
+        return mat and not mat.grease_pencil
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        mat = bpy.context.active_object.active_material
+
+        col = layout.column()
+        col.prop(mat, "diffuse_color", text="Color")
+        col.prop(mat, "metallic")
+        col.prop(mat, "roughness")
+# ------------------------------------------------------------------------------
+# Material Panel Viewport
+
+class MATERIAL_PT_ab_lineart(MaterialButtonsPanel, Panel):
+    bl_label = "Line Art"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_order = 10
+
+    @classmethod
+    def poll(cls, context):
+        mat = bpy.context.active_object.active_material
+        return mat and not mat.grease_pencil
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        mat = bpy.context.active_object.active_material
+        lineart = mat.lineart
+
+        layout.prop(lineart, "use_material_mask", text="Material Mask")
+
+        col = layout.column(align=True)
+        col.active = lineart.use_material_mask
+        row = col.row(align=True, heading="Masks")
+        for i in range(8):
+            row.prop(lineart, "use_material_mask_bits", text=" ", index=i, toggle=True)
+            if i == 3:
+                row = col.row(align=True)
+
+        row = layout.row(align=True, heading="Custom Occlusion")
+        row.prop(lineart, "mat_occlusion", text="Levels")
 # ------------------------------------------------------------------------------
 # REGISTERATION AREA
 
@@ -8084,9 +8895,6 @@ def register():
     bpy.utils.register_class(modifier_bevel_apply)
     bpy.types.Scene.AB_Bevel = bpy.props.PointerProperty(
         type=modifier_bevel_detail)
-    bpy.utils.register_class(generate_panel)
-    bpy.utils.register_class(deform_panel)
-    bpy.utils.register_class(physics_panel)
     bpy.utils.register_class(display_panel)
     bpy.utils.register_class(Loop_Menu)
     bpy.utils.register_class(loop_multiple_select)
@@ -8167,21 +8975,13 @@ def register():
     bpy.utils.register_class(Modelling_Panel)
     bpy.utils.register_class(cutter_box)
     bpy.utils.register_class(cutter_box_object)
-    
     bpy.utils.register_class(cutter_apply_modifier)
-    
-    
-    
-    
-    
     bpy.utils.register_class(view_3d_top)
     bpy.utils.register_class(view_3d_bottom)
     bpy.utils.register_class(view_3d_front)
     bpy.utils.register_class(view_3d_back)
     bpy.utils.register_class(view_3d_right)
     bpy.utils.register_class(view_3d_left)
-    
-    
     bpy.utils.register_class(Modelling_Panel_Vertex_Selection)
     bpy.utils.register_class(vertex_selection_make_circle)
     bpy.utils.register_class(vertex_selection_rip_vertex)
@@ -8272,22 +9072,16 @@ def register():
     bpy.types.Mesh.scatter_mesh_list = bpy.props.CollectionProperty(type=scatter_panel_list_item)
     bpy.types.Mesh.scatter_list_index = bpy.props.IntProperty(
         name="Index for scatter_mesh_list", default=0)
-        
-     
-        
-        
+    #Camera     
     bpy.utils.register_class(Camera_Panel)
     bpy.utils.register_class(camera_panel_add_camera_view)
     bpy.utils.register_class(camera_panel_list)   
     bpy.utils.register_class(camera_panel_add_camera)
     bpy.utils.register_class(camera_panel_remove_camera)
     bpy.utils.register_class(camera_panel_list_item)
-    
-    
-    # Scene
+    #Camera Scene
     bpy.types.Scene.camera_list = bpy.props.CollectionProperty(type=camera_panel_list_item)
     bpy.types.Scene.camera_list_index = bpy.props.IntProperty(name="Index for camera_list", default=0)
-    
     bpy.utils.register_class(data_context_camera_lock)
     bpy.utils.register_class(data_context_camera)
     bpy.utils.register_class(data_context_camera_lens)
@@ -8300,7 +9094,45 @@ def register():
     bpy.utils.register_class(data_context_camera_display)
     bpy.utils.register_class(data_context_camera_display_composition_guides)
     bpy.utils.register_class(lock_camera_to_object)
- 
+    #Light
+    bpy.utils.register_class(Light_Panel)
+    bpy.utils.register_class(light_panel_list)   
+    bpy.utils.register_class(light_panel_add_light)
+    bpy.utils.register_class(light_panel_remove_light)
+    bpy.utils.register_class(light_panel_list_item)
+    #Light Scene
+    bpy.types.Scene.light_list = bpy.props.CollectionProperty(type=light_panel_list_item)
+    bpy.types.Scene.light_list_index = bpy.props.IntProperty(name="Index for light_list", default=0)
+    bpy.utils.register_class(light_panel_list_context_light)
+    bpy.utils.register_class(light_panel_list_EEVEE_light_x)
+    bpy.utils.register_class(light_panel_list_EEVEE_light_distance)
+    bpy.utils.register_class(light_panel_list_EEVEE_shadow)
+    bpy.utils.register_class(light_panel_list_EEVEE_shadow_cascaded_shadow_map)
+    bpy.utils.register_class(light_panel_list_EEVEE_shadow_contact)
+    bpy.utils.register_class(light_panel_list_area)
+    bpy.utils.register_class(light_panel_list_spot)
+    bpy.utils.register_class(light_panel_list_falloff_curve)
+    #Material Panel
+    bpy.utils.register_class(Material_PT_ab_Panel)
+    bpy.utils.register_class(MATERIAL_MT_ab_context_menu)
+    bpy.utils.register_class(MATERIAL_UL_ab_matslots)
+    bpy.utils.register_class(EEVEE_MATERIAL_PT_ab_context_material)
+    bpy.utils.register_class(EEVEE_MATERIAL_PT_ab_surface)
+    bpy.utils.register_class(EEVEE_MATERIAL_PT_ab_volume)
+    bpy.utils.register_class(EEVEE_MATERIAL_PT_ab_settings)
+    bpy.utils.register_class(MATERIAL_PT_ab_viewport)
+    bpy.utils.register_class(MATERIAL_PT_ab_viewport_settings)
+    bpy.utils.register_class(MATERIAL_PT_ab_lineart)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -8352,9 +9184,6 @@ def unregister():
     bpy.utils.unregister_class(modifier_bevel_detail_executer)
     bpy.utils.unregister_class(modifier_bevel_apply)
     del bpy.types.Scene.AB_Bevel
-    bpy.utils.unregister_class(generate_panel)
-    bpy.utils.unregister_class(deform_panel)
-    bpy.utils.unregister_class(physics_panel)
     bpy.utils.unregister_class(display_panel)
     bpy.utils.unregister_class(Loop_Menu)
     bpy.utils.unregister_class(loop_multiple_select)
@@ -8528,6 +9357,8 @@ def unregister():
     del bpy.types.Mesh.scatter_mesh_list
     del bpy.types.Mesh.scatter_list_index
     del bpy.types.Object.scatter_item_obj
+    
+    #Camera
     bpy.utils.unregister_class(Camera_Panel)
     bpy.utils.unregister_class(camera_panel_add_camera_view)
     bpy.utils.unregister_class(camera_panel_list)   
@@ -8550,6 +9381,36 @@ def unregister():
     bpy.utils.unregister_class(data_context_camera_display_composition_guides)
     bpy.utils.unregister_class(lock_camera_to_object)
     
+    #Light
+    bpy.utils.unregister_class(Light_Panel)
+    bpy.utils.unregister_class(light_panel_list)   
+    bpy.utils.unregister_class(light_panel_add_light)
+    bpy.utils.unregister_class(light_panel_remove_light)
+    bpy.utils.unregister_class(light_panel_list_item)
+    #Light Scene
+    del bpy.types.Scene.light_list
+    del bpy.types.Scene.light_list_index
+    bpy.utils.unregister_class(light_panel_list_context_light)
+    bpy.utils.unregister_class(light_panel_list_EEVEE_light_x)
+    bpy.utils.unregister_class(light_panel_list_EEVEE_light_distance)
+    bpy.utils.unregister_class(light_panel_list_EEVEE_shadow)
+    bpy.utils.unregister_class(light_panel_list_EEVEE_shadow_cascaded_shadow_map)
+    bpy.utils.unregister_class(light_panel_list_EEVEE_shadow_contact)
+    bpy.utils.unregister_class(light_panel_list_area)
+    bpy.utils.unregister_class(light_panel_list_spot)
+    bpy.utils.unregister_class(light_panel_list_falloff_curve)
+    #Material Panel
+    bpy.utils.unregister_class(Material_PT_ab_Panel)
+    bpy.utils.unregister_class(MATERIAL_MT_ab_context_menu)
+    bpy.utils.unregister_class(MATERIAL_UL_ab_matslots)
+    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_context_material)
+    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_surface)
+    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_volume)
+    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_settings)
+    bpy.utils.unregister_class(MATERIAL_PT_ab_viewport)
+    bpy.utils.unregister_class(MATERIAL_PT_ab_viewport_settings)
+    bpy.utils.unregister_class(MATERIAL_PT_ab_lineart)
+  
     
 
 # ------------------------------------------------------------------------------
