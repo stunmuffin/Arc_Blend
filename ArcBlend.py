@@ -55,12 +55,13 @@ bl_info = {
 # ARC BLEND PANEL
 
 
-class arcblend (bpy.types.Panel):
+class ARCBLEND_PT_Panel (bpy.types.Panel):
     bl_label = "AB Create"
-    bl_idname = "PT_ArcBlend"
+    bl_idname = "ARCBLEND_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -69,13 +70,14 @@ class arcblend (bpy.types.Panel):
 # MESH PANEL
 
 
-class Add_Mesh (bpy.types.Panel):
+class ADDMESH_PT_Panel (bpy.types.Panel):
     bl_label = "Mesh"
-    bl_idname = "PT_AddMesh"
+    bl_idname = "ADDMESH_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -102,13 +104,14 @@ class Add_Mesh (bpy.types.Panel):
 # CURVE PANEL
 
 
-class Add_Curve (bpy.types.Panel):
+class ADDCURVE_PT_Panel (bpy.types.Panel):
     bl_label = "Curve"
-    bl_idname = "PT_AddCurve"
+    bl_idname = "ADDCURVE_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -129,13 +132,14 @@ class Add_Curve (bpy.types.Panel):
 # SURFACE PANEL----------------------------------------------------------------
 
 
-class Add_Surface (bpy.types.Panel):
+class ADDSURFACE_PT_Panel (bpy.types.Panel):
     bl_label = "Surface"
-    bl_idname = "PT_AddSurface"
+    bl_idname = "ADDSURFACE_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -232,13 +236,14 @@ class mball_cube (bpy.types.Operator):
 # METABALL PANEL
 
 
-class Add_Metaball (bpy.types.Panel):
+class ADDMETABALL_PT_Panel (bpy.types.Panel):
     bl_label = "METABALL"
-    bl_idname = "PT_AddMetaball"
+    bl_idname = "ADDMETABALL_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -257,13 +262,14 @@ class Add_Metaball (bpy.types.Panel):
 # ----------------------------------------------TEXT PANEL------------------------------------------------------
 
 
-class Add_Text (bpy.types.Panel):
+class ADDTEXT_PT_Panel (bpy.types.Panel):
     bl_label = "Add Text"
-    bl_idname = "PT_AddText"
+    bl_idname = "ADDTEXT_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -277,13 +283,14 @@ class Add_Text (bpy.types.Panel):
 # ----------------------------------------------VOLUME PANEL----------------------------------------------------
 
 
-class Add_Volume (bpy.types.Panel):
+class ADDVOLUME_PT_Panel (bpy.types.Panel):
     bl_label = "Volume"
-    bl_idname = "PT_AddVolume"
+    bl_idname = "ADDVOLUME_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -379,13 +386,14 @@ class grease_pencil_ola (bpy.types.Operator):
 # GREASE PENCIL PANEL
 
 
-class Add_Grease_Pencil (bpy.types.Panel):
+class ADDGREASEPENCIL_PT_Panel (bpy.types.Panel):
     bl_label = "GREASE PENCIL"
-    bl_idname = "PT_AddGreasePencil"
+    bl_idname = "ADDGREASEPENCIL_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -405,13 +413,14 @@ class Add_Grease_Pencil (bpy.types.Panel):
 # ARMATURE PANEL
 
 
-class Add_Armature (bpy.types.Panel):
+class ADDARMATURE_PT_Panel (bpy.types.Panel):
     bl_label = "Armature"
-    bl_idname = "PT_AddArmature"
+    bl_idname = "ADDARMATURE_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -439,13 +448,14 @@ class lattice_button (bpy.types.Operator):
 # LATTICE PANEL
 
 
-class Add_Lattice (bpy.types.Panel):
+class ADDLATTICE_PT_Panel (bpy.types.Panel):
     bl_label = "Lattice"
-    bl_idname = "PT_AddLattice"
+    bl_idname = "ADDLATTICE_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -572,13 +582,14 @@ class empty_image (bpy.types.Operator):
 # EMPTY PANEL
 
 
-class Add_Empty (bpy.types.Panel):
+class ADDEMPTY_PT_Panel (bpy.types.Panel):
     bl_label = "Empty"
-    bl_idname = "PT_AddEmpty"
+    bl_idname = "ADDEMPTY_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -603,13 +614,14 @@ class Add_Empty (bpy.types.Panel):
 # IMAGE PANEL
 
 
-class Add_Image (bpy.types.Panel):
+class ADDIMAGE_PT_Panel (bpy.types.Panel):
     bl_label = "Image"
-    bl_idname = "PT_AddImage"
+    bl_idname = "ADDIMAGE_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -679,13 +691,14 @@ class light_area (bpy.types.Operator):
 # LIGHT PANEL
 
 
-class Add_Light (bpy.types.Panel):
+class ADDLIGHT_PT_Panel (bpy.types.Panel):
     bl_label = "Light"
-    bl_idname = "PT_AddLight"
+    bl_idname = "ADDLIGHT_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -745,13 +758,14 @@ class light_probe_irradiencevolume (bpy.types.Operator):
 # LIGHT PROBE PANEL
 
 
-class Add_Light_Probe (bpy.types.Panel):
+class ADDLIGHTPROBE_PT_Panel (bpy.types.Panel):
     bl_label = "Light Probe"
-    bl_idname = "PT_AddLightProbe"
+    bl_idname = "ADDLIGHTPROBE_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -787,13 +801,14 @@ class camera_normal (bpy.types.Operator):
 # CAMERA PANEL
 
 
-class Add_Camera (bpy.types.Panel):
+class ADDCAMERA_PT_Panel (bpy.types.Panel):
     bl_label = "Camera"
-    bl_idname = "PT_AddCamera"
+    bl_idname = "ADDCAMERA_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -822,13 +837,14 @@ class speaker_button (bpy.types.Operator):
 # SPEAKER PANEL
 
 
-class Add_Speaker (bpy.types.Panel):
+class ADDSPEAKER_PT_Panel (bpy.types.Panel):
     bl_label = "Speaker"
-    bl_idname = "PT_AddSpeaker"
+    bl_idname = "ADDSPEAKER_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -1034,13 +1050,14 @@ class forcefield_fluidflow (bpy.types.Operator):
 # FORCE FIELD PANEL
 
 
-class Add_Force_Field (bpy.types.Panel):
+class ADDFORCEFIELD_PT_Panel (bpy.types.Panel):
     bl_label = "Force Field"
-    bl_idname = "PT_AddForcefield"
+    bl_idname = "ADDFORCEFIELD_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -1093,13 +1110,14 @@ class collection_instance_collection (bpy.types.Operator):
 # COLLECTION PANEL
 
 
-class Add_Collection_instance (bpy.types.Panel):
+class ADDCOLLECTION_PT_Panel (bpy.types.Panel):
     bl_label = "Collection"
-    bl_idname = "PT_AddCollectioninstance"
+    bl_idname = "ADDCOLLECTION_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlend"
+    bl_parent_id = "ARCBLEND_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -1115,12 +1133,13 @@ class Add_Collection_instance (bpy.types.Panel):
 # ARC BLEND MODIFIERS PANEL
 
 
-class ArcBlendModifiers (bpy.types.Panel):
+class ARCBLENDMODIFIERS_PT_Panel (bpy.types.Panel):
     bl_label = "AB Modify"
-    bl_idname = "PT_ArcBlendModifiers"
+    bl_idname = "ARCBLENDMODIFIERS_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -1289,16 +1308,17 @@ class loop_mesh_find_quads (bpy.types.Operator):
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
-# Loopm Menu PANEL
+# Export Object
 
 
-class Loop_Menu (bpy.types.Panel):
+class EXPORT_PT_Object (bpy.types.Panel):
     bl_label = "Export Object Data"
-    bl_idname = "PT_ArcBlendCreateBox"
+    bl_idname = "EXPORT_PT_Object"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlendModifiers"
+    bl_parent_id = "ARCBLENDMODIFIERS_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -1383,13 +1403,14 @@ class loop_idtm(bpy.types.Operator):
 # TRANSFORM & EDİT PANEL
 
 
-class modifier (bpy.types.Panel):
+class MODIFIER_PT_Transform_And_Edit (bpy.types.Panel):
     bl_label = "Transform & Edit"
-    bl_idname = "PT_Transform"
+    bl_idname = "MODIFIER_PT_Transform_And_Edit"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_ArcBlendModifiers"
+    bl_parent_id = "ARCBLENDMODIFIERS_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -1400,13 +1421,14 @@ class modifier (bpy.types.Panel):
 # OBJECT  PANEL
 
 
-class transform_edit_object_panel (bpy.types.Panel):
+class TRANSFORM_PT_Edit_Object_Panel (bpy.types.Panel):
     bl_label = "Object"
-    bl_idname = "PT_Object_Transform"
+    bl_idname = "TRANSFORM_PT_Edit_Object_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Transform"
+    bl_parent_id = "MODIFIER_PT_Transform_And_Edit"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -1678,13 +1700,14 @@ class transform_edit_object_align_bound (bpy.types.Operator):
 # TRANSFORM  PANEL
 
 
-class transform (bpy.types.Panel):
+class TRANSFORM_PT_Panel (bpy.types.Panel):
     bl_label = "Transform"
-    bl_idname = "PT_Transformpanel"
+    bl_idname = "TRANSFORM_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Transform"
+    bl_parent_id = "MODIFIER_PT_Transform_And_Edit"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -1707,13 +1730,14 @@ class transform (bpy.types.Panel):
 # MODIFIER PANEL
 
 
-class modifier_panel (bpy.types.Panel):
+class MODIFIER_PT_Panel (bpy.types.Panel):
     bl_label = "Modifiers Panel"
-    bl_idname = "PT_modifier_panel"
+    bl_idname = "MODIFIER_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Transform"
+    bl_parent_id = "MODIFIER_PT_Transform_And_Edit"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -1724,13 +1748,14 @@ class modifier_panel (bpy.types.Panel):
 # MODIFY PANEL
 
 
-class modify_panel (bpy.types.Panel):
+class MODIFY_PT_Panel (bpy.types.Panel):
     bl_label = "Modify"
-    bl_idname = "PT_modify_panel"
+    bl_idname = "MODIFY_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_modifier_panel"
+    bl_parent_id = "MODIFIER_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -1741,13 +1766,14 @@ class modify_panel (bpy.types.Panel):
 # ARRAY PANEL
 
 
-class array_panel (bpy.types.Panel):
+class ARRAY_PT_Panel (bpy.types.Panel):
     bl_label = "Array"
-    bl_idname = "PT_array_panel"
+    bl_idname = "ARRAY_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_modify_panel"
+    bl_parent_id = "MODIFY_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -2653,13 +2679,14 @@ class modifier_array_detail (bpy.types.PropertyGroup):
 # RELATIVE OFFSET
 
 
-class Relative_Offset (bpy.types.Panel):
+class OFFSET_PT_Relative_Offset (bpy.types.Panel):
     bl_label = "Relative Offset"
-    bl_idname = "PT_Relative_Offset"
+    bl_idname = "OFFSET_PT_Relative_Offset"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_array_panel"  # Parent ID
+    bl_parent_id = "ARRAY_PT_Panel"  # Parent ID
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -2776,13 +2803,14 @@ class modifier_array_detail_executer (bpy.types.Operator):
 # BEVEL PANEL
 
 
-class bevel_panel (bpy.types.Panel):
+class BEVEL_PT_Panel (bpy.types.Panel):
     bl_label = "Bevel"
-    bl_idname = "PT_bavel_panel"
+    bl_idname = "BEVEL_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_modify_panel"  # Parent ID
+    bl_parent_id = "MODIFY_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -2999,13 +3027,14 @@ class modifier_bevel_detail_executer (bpy.types.Operator):
 # DISPLAY PANEL
 
 
-class display_panel (bpy.types.Panel):
+class DISPLAY_PT_Panel (bpy.types.Panel):
     bl_label = "Display Panel"
-    bl_idname = "PT_display_panel"
+    bl_idname = "DISPLAY_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Transform"  # Parent ID
+    bl_parent_id = "MODIFIER_PT_Transform_And_Edit"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -3136,12 +3165,13 @@ class display_panel_show_rendered (bpy.types.Operator):
 # VERTEX EDİT PANEL
 
 
-class edit_mode_vertex (bpy.types.Panel):
+class EDIT_PT_Vertex_Edit (bpy.types.Panel):
     bl_label = "Vertex Edit Panel"
-    bl_idname = "PT_Vertex_Edit"
+    bl_idname = "EDIT_PT_Vertex_Edit"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -3667,12 +3697,13 @@ class edit_mode_create_faces (bpy.types.Operator):
 # THEMES PANEL
 
 
-class Themes_Panel (bpy.types.Panel):
+class THEMES_PT_Panel (bpy.types.Panel):
     bl_label = "AB Themes"
-    bl_idname = "PT_Themes_Panel"
+    bl_idname = "THEMES_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -3803,12 +3834,13 @@ class themes_panel_reset (bpy.types.Operator):
 # MODELLING PANEL
 
 
-class Modelling_Panel(bpy.types.Panel):
+class MODELLING_PT_Panel(bpy.types.Panel):
     bl_label = "AB Modelling"
-    bl_idname = "PT_Modelling_Panel"
+    bl_idname = "MODELLING_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
     
         
     def draw(self, context):
@@ -4264,13 +4296,14 @@ class view_3d_left(bpy.types.Operator):
 # VERTEX SELECTION PANEL
 
 
-class Modelling_Panel_Vertex_Selection (bpy.types.Panel):
+class MODELLING_PT_Vertex_Selection (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "Vertex_Selection"
+    bl_idname = "MODELLING_PT_Vertex_Selection"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Modelling_Panel"
+    bl_parent_id = "MODELLING_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
 
@@ -4517,14 +4550,15 @@ class vertex_selection_assign_vertex_group (bpy.types.Operator):
 # ------------------------------------------------------------------------------
 # VERTEX GROUP PANEL
 
-class Modelling_Panel_Vertex_Group_Panel (bpy.types.Panel):
+class MODELLING_PT_Vertex_Group_Panel (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "Vertex_Groups"
+    bl_idname = "MODELLING_PT_Vertex_Group_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "Vertex_Selection"
+    bl_parent_id = "MODELLING_PT_Vertex_Selection"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
 
@@ -4593,13 +4627,14 @@ class Modelling_Panel_Vertex_Group_Panel (bpy.types.Panel):
 # MODIFY SELECTION PANEL
 
 
-class Modelling_Panel_Modify_Selection (bpy.types.Panel):
+class MODELLING_PT_Modify_Selection (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "Modify_Selection"
+    bl_idname = "MODELLING_PT_Modify_Selection"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Modelling_Panel"
+    bl_parent_id = "MODELLING_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
 
@@ -4716,13 +4751,14 @@ class loop_auto_edge_loop (bpy.types.Operator):
 # ------------------------------------------------------------------------------
 # EDIT PANEL
 
-class Modelling_Panel_Modify_Edit (bpy.types.Panel):
+class MODELLING_PT_Modify_Edit (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "PT_Modify_Edit"
+    bl_idname = "MODELLING_PT_Modify_Edit"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Modelling_Panel"
+    bl_parent_id = "MODELLING_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
 
@@ -5284,13 +5320,14 @@ class modelling_edit_orient_z (bpy.types.Operator):
 # ------------------------------------------------------------------------------
 # EDIT EDGES PANEL
 
-class Modelling_Panel_Modify_Edit_Faces (bpy.types.Panel):
+class MODELLING_PT_Modify_Edit_Faces (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "PT_Modify_Edit_Faces"
+    bl_idname = "MODELLING_PT_Modify_Edit_Faces"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Modelling_Panel"
+    bl_parent_id = "MODELLING_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
 
@@ -5625,12 +5662,13 @@ class modelling_edit_edges_collapse (bpy.types.Operator):
 # ------------------------------------------------------------------------------
 # PROXY PANEL
 
-class Proxy_Panel (bpy.types.Panel):
+class PROXY_PT_PANEL (bpy.types.Panel):
     bl_label = "AB Proxy"
-    bl_idname = "PT_Proxy_Panel"
+    bl_idname = "PROXY_PT_PANEL"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -5652,7 +5690,7 @@ class Proxy_Panel (bpy.types.Panel):
         template = col1.column()
         try:
             template.template_list(
-                "proxy_panel_object_list", "", mesh, "mesh_list", mesh, "list_index", rows=2)
+                "PROXY_UL_Object_List", "", mesh, "mesh_list", mesh, "list_index", rows=2)
         except (TypeError,AttributeError):
             pass
         template.scale_y = 1.1
@@ -5926,7 +5964,7 @@ class proxy_panel_convertto_bound_box (bpy.types.Operator):
 # PROXY OBJECT LIST
 
 
-class proxy_panel_object_list(bpy.types.UIList):
+class PROXY_UL_Object_List(bpy.types.UIList):
     """UI Proxy List"""
 
     def draw_item(self, context, layout, data, item, icon, active_data,
@@ -6520,7 +6558,7 @@ def find_modifier(ob, psys):
 # SCATTER OBJECT LIST
 
 
-class scatter_panel_object_list(bpy.types.UIList):
+class SCATTER_UL_Object_List(bpy.types.UIList):
     """UI Scatter List"""
 
     def draw_item(self, _context, layout, data, item, icon, _active_data, _active_propname, _index, _flt_flag):
@@ -6578,13 +6616,14 @@ class scatter_panel_object_list(bpy.types.UIList):
 # ------------------------------------------------------------------------------
 # SCATTER PANEL
 
-class Scatter_Panel (bpy.types.Panel):
+class SCATTER_PT_Panel (bpy.types.Panel):
     bl_label = "AB Scatter"
-    bl_idname = "PT_Scatter_Panel"
+    bl_idname = "SCATTER_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -6611,7 +6650,7 @@ class Scatter_Panel (bpy.types.Panel):
         # draw template
         template = col1.column()
         try:
-            template.template_list("scatter_panel_object_list", "particle_systems", ob, "particle_systems",
+            template.template_list("SCATTER_UL_Object_List", "particle_systems", ob, "particle_systems",
                                    ob.particle_systems, "active_index", rows=3)
         except (TypeError, AttributeError, UnboundLocalError, KeyError):
             pass
@@ -6694,14 +6733,15 @@ class scatter_panel_make_real_objects (bpy.types.Operator):
 # SCATTER VIEW AS PANEL
 
 
-class Scatter_Panel_Scatter_As (bpy.types.Panel):
+class SCATTER_PT_Scatter_As (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "PT_Scatter_Panel_Scatter_As"
+    bl_idname = "SCATTER_PT_Scatter_As"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Scatter_Panel"
+    bl_parent_id = "SCATTER_PT_Panel"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -6759,14 +6799,15 @@ class Scatter_Panel_Scatter_As (bpy.types.Panel):
 # SCATTER PAINT PANEL
 
 
-class Scatter_Panel_Paint_Panel (bpy.types.Panel):
+class SCATTER_PT_Paint_Panel (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "PT_Scatter_Panel_Paint_Panel"
+    bl_idname = "SCATTER_PT_Paint_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Scatter_Panel"
+    bl_parent_id = "SCATTER_PT_Panel"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -6818,14 +6859,15 @@ class Scatter_Panel_Paint_Panel (bpy.types.Panel):
 # SCATTER ROTATION PANEL
 
 
-class Scatter_Panel_Rotation_Panel (bpy.types.Panel):
+class SCATTER_PT_Rotation_Panel (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "PT_Scatter_Panel_Rotation_Panel"
+    bl_idname = "SCATTER_PT_Rotation_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Scatter_Panel"
+    bl_parent_id = "SCATTER_PT_Panel"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -6898,14 +6940,15 @@ class Scatter_Panel_Rotation_Panel (bpy.types.Panel):
 # ------------------------------------------------------------------------------
 # SCATTER OBJECT PANEL
 
-class Scatter_Panel_Object (bpy.types.Panel):
+class SCATTER_PT_Object (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "PT_Scatter_Panel_Object"
+    bl_idname = "SCATTER_PT_Object"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Scatter_Panel_Scatter_As"
+    bl_parent_id = "SCATTER_PT_Scatter_As"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -6956,14 +6999,15 @@ class Scatter_Panel_Object (bpy.types.Panel):
 # SCATTER COLLECTION PANEL
 
 
-class Scatter_Panel_Collection (bpy.types.Panel):
+class SCATTER_PT_Collection (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "PT_Scatter_Panel_Collection"
+    bl_idname = "SCATTER_PT_Collection"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Scatter_Panel_Scatter_As"
+    bl_parent_id = "SCATTER_PT_Scatter_As"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -7016,13 +7060,13 @@ class Scatter_Panel_Collection (bpy.types.Panel):
 # ------------------------------------------------------------------------------
 # SCATTER COLLECTION USE COUNT PANEL
 
-class Scatter_Panel_Collection_Use_Count (bpy.types.Panel):
+class SCATTER_PT_Collection_Use_Count (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "PT_Scatter_Panel_Collection_Use_Count"
+    bl_idname = "SCATTER_PT_Collection_Use_Count"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Scatter_Panel_Collection"
+    bl_parent_id = "SCATTER_PT_Collection"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -7104,14 +7148,15 @@ class Scatter_Panel_Collection_Use_Count (bpy.types.Panel):
 # ------------------------------------------------------------------------------
 # SCATTER EXTRA PANEL
 
-class Scatter_Panel_Extra (bpy.types.Panel):
+class SCATTER_PT_Extra (bpy.types.Panel):
     bl_label = ""
-    bl_idname = "PT_Scatter_Panel_Extra"
+    bl_idname = "SCATTER_PT_Extra"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Scatter_Panel_Scatter_As"
+    bl_parent_id = "SCATTER_PT_Scatter_As"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -7314,12 +7359,13 @@ class scatter_panel_list_item(bpy.types.PropertyGroup):
 # ------------------------------------------------------------------------------
 # CAMERA PANEL
 
-class Camera_Panel (bpy.types.Panel):
+class CAMERA_PT_Panel (bpy.types.Panel):
     bl_label = "AB Camera"
-    bl_idname = "PT_Camera_Panel"
+    bl_idname = "CAMERA_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
     
 
     def draw(self, context):
@@ -7339,7 +7385,7 @@ class Camera_Panel (bpy.types.Panel):
         col1 = row.column()
         col2 = row.column()
         template = col1
-        template.template_list("camera_panel_list", "camera_list", scene, "camera_list",
+        template.template_list("CAMERA_UL_List", "camera_list", scene, "camera_list",
                                    scene, "camera_list_index", rows=3)
         
         template.scale_y = 1.1
@@ -7383,7 +7429,7 @@ class camera_panel_add_camera_view (bpy.types.Operator):
 # CAMERA LIST
 
 
-class camera_panel_list(bpy.types.UIList):
+class CAMERA_UL_List(bpy.types.UIList):
     """UI Camera List"""
 
     def draw_item(self, context, layout, data, item, icon, active_data,
@@ -7531,13 +7577,13 @@ class camera_panel_list_item(bpy.types.PropertyGroup):
 # ------------------------------------------------------------------------------
 # VIEW LOCK
 
-class data_context_camera_lock(Panel):
+class CAMERA_PT_Data_Context_Camera_Lock(Panel):
     bl_label = "View Lock"
-    bl_idname = "data_context_camera_lock"
+    bl_idname = "CAMERA_PT_Data_Context_Camera_Lock"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Camera_Panel"
+    bl_parent_id = "CAMERA_PT_Panel"
    
     
     def draw(self, context):
@@ -7565,13 +7611,14 @@ class data_context_camera_lock(Panel):
 # ------------------------------------------------------------------------------
 # CAMERA AREA
 
-class data_context_camera(bpy.types.Panel):
+class CAMERA_PT_Data_Context_Camera(bpy.types.Panel):
     bl_label = "Camera Settings"
-    bl_idname = "data_context_camera"
+    bl_idname = "CAMERA_PT_Data_Context_Camera"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Camera_Panel"
+    bl_parent_id = "CAMERA_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
    
     def draw(self, context):
         layout = self.layout
@@ -7579,14 +7626,15 @@ class data_context_camera(bpy.types.Panel):
 # ------------------------------------------------------------------------------
 # CAMERA LENS
 
-class data_context_camera_lens(bpy.types.Panel):
+class CAMERA_PT_Data_Context_Camera_Lens(bpy.types.Panel):
     bl_label = "Lens"
-    bl_idname = "data_context_camera_lens"
+    bl_idname = "CAMERA_PT_Data_Context_Camera_Lens"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "data_context_camera"
+    bl_parent_id = "CAMERA_PT_Data_Context_Camera"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
     
    
     def draw(self, context):
@@ -7652,14 +7700,15 @@ class data_context_camera_lens(bpy.types.Panel):
 # ------------------------------------------------------------------------------
 # CAMERA DOF
 
-class data_context_camera_dof(bpy.types.Panel):
+class CAMERA_PT_Data_Context_Camera_Dof(bpy.types.Panel):
     bl_label = "Depth of Field"
-    bl_idname = "data_context_camera_dof"
+    bl_idname = "CAMERA_PT_Data_Context_Camera_Dof"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "data_context_camera"
+    bl_parent_id = "CAMERA_PT_Data_Context_Camera"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
         try:
@@ -7687,14 +7736,15 @@ class data_context_camera_dof(bpy.types.Panel):
 # ------------------------------------------------------------------------------
 # CAMERA DOF APERTURE
 
-class data_context_camera_dof_aperture(bpy.types.Panel):
+class CAMERA_PT_Data_Context_Camera_Dof_Aperture(bpy.types.Panel):
     bl_label = "Aperture"
-    bl_idname = "data_context_camera_dof_aperture"
+    bl_idname = "CAMERA_PT_Data_Context_Camera_Dof_Aperture"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "data_context_camera_dof"
+    bl_parent_id = "CAMERA_PT_Data_Context_Camera_Dof"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -7724,14 +7774,15 @@ class CAMERA_PT_presets(PresetPanel, Panel):
     preset_add_operator = "camera.preset_add"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     
-class data_context_camera_camera(bpy.types.Panel):
+class CAMERA_PT_Data_Context_Camera_Settings(bpy.types.Panel):
     bl_label = "Camera"
-    bl_idname = "data_context_camera_camera"
+    bl_idname = "CAMERA_PT_Data_Context_Camera_Settings"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "data_context_camera"
+    bl_parent_id = "CAMERA_PT_Data_Context_Camera"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header_preset(self, _context):
         CAMERA_PT_presets.draw_panel_header(self.layout)
@@ -7765,14 +7816,15 @@ class SAFE_AREAS_PT_presets(PresetPanel, Panel):
     preset_add_operator = "safe_areas.preset_add"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
-class data_context_camera_safe_areas(bpy.types.Panel):
+class CAMERA_PT_Data_Context_Camera_Safe_Areas(bpy.types.Panel):
     bl_label = "Safe Areas"
     bl_options = {'DEFAULT_CLOSED'}
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "data_context_camera"
+    bl_parent_id = "CAMERA_PT_Data_Context_Camera"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
         try:
@@ -7797,14 +7849,15 @@ class data_context_camera_safe_areas(bpy.types.Panel):
         except AttributeError :
             pass
 
-class data_context_camera_safe_areas_center_cut(bpy.types.Panel):
+class CAMERA_PT_Data_Context_Camera_Safe_Areas_Center_Cut(bpy.types.Panel):
     bl_label = "Center-Cut Safe Areas"
-    bl_parent_id = "data_context_camera_safe_areas"
+    bl_parent_id = "CAMERA_PT_Data_Context_Camera_Safe_Areas"
     bl_options = {'DEFAULT_CLOSED'}
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    
 
     def draw_header(self, context):
         try:
@@ -7830,13 +7883,13 @@ class data_context_camera_safe_areas_center_cut(bpy.types.Panel):
 # ------------------------------------------------------------------------------
 # SAFE AREAS        
         
-class data_context_camera_background_image(bpy.types.Panel):
+class CAMERA_PT_Data_Context_Camera_Background_Image(bpy.types.Panel):
     bl_label = "Background Images"
     bl_options = {'DEFAULT_CLOSED'}
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "data_context_camera"
+    bl_parent_id = "CAMERA_PT_Data_Context_Camera"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw_header(self, context):
@@ -7927,13 +7980,13 @@ class data_context_camera_background_image(bpy.types.Panel):
 # VIEWPORT DISPLAY
 
 
-class data_context_camera_display(bpy.types.Panel):
+class CAMERA_PT_Data_Context_Camera_Display(bpy.types.Panel):
     bl_label = "Viewport Display"
     bl_options = {'DEFAULT_CLOSED'}
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "data_context_camera"
+    bl_parent_id = "CAMERA_PT_Data_Context_Camera"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw(self, context):
@@ -7961,9 +8014,9 @@ class data_context_camera_display(bpy.types.Panel):
             pass
 
 
-class data_context_camera_display_composition_guides(bpy.types.Panel):
+class CAMERA_PT_Data_Context_Camera_Display_Composition_Guides(bpy.types.Panel):
     bl_label = "Composition Guides"
-    bl_parent_id = "data_context_camera_display"
+    bl_parent_id = "CAMERA_PT_Data_Context_Camera_Display"
     bl_options = {'DEFAULT_CLOSED'}
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -7994,12 +8047,13 @@ class data_context_camera_display_composition_guides(bpy.types.Panel):
 # ------------------------------------------------------------------------------
 # LIGHT PANEL
 
-class Light_Panel (bpy.types.Panel):
+class LIGHT_PT_Panel (bpy.types.Panel):
     bl_label = "AB Light"
-    bl_idname = "PT_Light_Panel"
+    bl_idname = "LIGHT_PT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
     
 
     def draw(self, context):
@@ -8015,7 +8069,7 @@ class Light_Panel (bpy.types.Panel):
         col1 = row.column()
         col2 = row.column()
         template = col1
-        template.template_list("light_panel_list", "light_list", scene, "light_list",
+        template.template_list("LIGHT_UL_List", "light_list", scene, "light_list",
                                    scene, "light_list_index", rows=3)
         template.scale_y = 1.1
         # draw side bar
@@ -8036,7 +8090,7 @@ class Light_Panel (bpy.types.Panel):
 # LIGHT LIST
 
 
-class light_panel_list(bpy.types.UIList):
+class LIGHT_UL_List(bpy.types.UIList):
     """UI Light List"""
 
     def draw_item(self, context, layout, data, item, icon, active_data,
@@ -8187,14 +8241,14 @@ class DataButtonsPanel:
 # ------------------------------------------------------------------------------
 # LIGHT BUTTON PANEL
     
-class light_panel_list_context_light(DataButtonsPanel, Panel):
+class LIGHT_PT_List_Context_Light(DataButtonsPanel, Panel):
     bl_label = ""
     bl_options = {'HIDE_HEADER'}
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Light_Panel"
+    bl_parent_id = "LIGHT_PT_Panel"
 
     def draw(self, context):
         layout = self.layout
@@ -8210,13 +8264,13 @@ class light_panel_list_context_light(DataButtonsPanel, Panel):
 # ------------------------------------------------------------------------------
 # LIGHT PANEL LIST Light x
 
-class light_panel_list_EEVEE_light_x(DataButtonsPanel, Panel):
+class LIGHT_PT_List_EEVEE_Light(DataButtonsPanel, Panel):
     bl_label = "Light"
     bl_options = {'DEFAULT_CLOSED'}
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Light_Panel"
+    bl_parent_id = "LIGHT_PT_Panel"
     COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     def draw(self, context):
@@ -8253,9 +8307,9 @@ class light_panel_list_EEVEE_light_x(DataButtonsPanel, Panel):
             pass
 # ------------------------------------------------------------------------------
 # LIGHT PANEL distance
-class light_panel_list_EEVEE_light_distance(DataButtonsPanel, Panel):
+class LIGHT_PT_List_EEVEE_Light_Distance(DataButtonsPanel, Panel):
     bl_label = "Custom Distance"
-    bl_parent_id = "light_panel_list_EEVEE_light_x"
+    bl_parent_id = "LIGHT_PT_List_EEVEE_Light"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
@@ -8301,12 +8355,12 @@ class light_panel_list_EEVEE_light_distance(DataButtonsPanel, Panel):
 # ------------------------------------------------------------------------------
 # LIGHT PANEL shadow
 
-class light_panel_list_EEVEE_shadow(DataButtonsPanel, Panel):
+class LIGHT_PT_List_EEVEE_Shadow(DataButtonsPanel, Panel):
     bl_label = "Shadow"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Light_Panel"
+    bl_parent_id = "LIGHT_PT_Panel"
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
@@ -8352,9 +8406,9 @@ class light_panel_list_EEVEE_shadow(DataButtonsPanel, Panel):
             pass
 # ------------------------------------------------------------------------------
 # LIGHT PANEL shadow map
-class light_panel_list_EEVEE_shadow_cascaded_shadow_map(DataButtonsPanel, Panel):
+class LIGHT_PT_List_EEVEE_Shadow_Cascaded_Shadow_Map(DataButtonsPanel, Panel):
     bl_label = "Cascaded Shadow Map"
-    bl_parent_id = "light_panel_list_EEVEE_shadow"
+    bl_parent_id = "LIGHT_PT_List_EEVEE_Shadow"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
@@ -8392,9 +8446,9 @@ class light_panel_list_EEVEE_shadow_cascaded_shadow_map(DataButtonsPanel, Panel)
             pass
 # ------------------------------------------------------------------------------
 # LIGHT PANEL shadow contact
-class light_panel_list_EEVEE_shadow_contact(DataButtonsPanel, Panel):
+class LIGHT_PT_List_EEVEE_Shadow_Contact(DataButtonsPanel, Panel):
     bl_label = "Contact Shadows"
-    bl_parent_id = "light_panel_list_EEVEE_shadow"
+    bl_parent_id = "LIGHT_PT_List_EEVEE_Shadow"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
@@ -8447,13 +8501,13 @@ class light_panel_list_EEVEE_shadow_contact(DataButtonsPanel, Panel):
 
 # ------------------------------------------------------------------------------
 # LIGHT PANEL area
-class light_panel_list_area(DataButtonsPanel, Panel):
+class LIGHT_PT_List_Area(DataButtonsPanel, Panel):
     bl_label = "Area Shape"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_WORKBENCH'}
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id = "PT_Light_Panel"
+    bl_parent_id = "LIGHT_PT_Panel"
 
     @classmethod
     def poll(cls, context):
@@ -8485,9 +8539,9 @@ class light_panel_list_area(DataButtonsPanel, Panel):
             pass
 # ------------------------------------------------------------------------------
 # LIGHT PANEL spot
-class light_panel_list_spot(DataButtonsPanel, Panel):
+class LIGHT_PT_List_Spot(DataButtonsPanel, Panel):
     bl_label = "Spot Shape"
-    bl_parent_id = "light_panel_list_EEVEE_light_x"
+    bl_parent_id = "LIGHT_PT_List_EEVEE_Light"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -8520,7 +8574,7 @@ class light_panel_list_spot(DataButtonsPanel, Panel):
             pass
 # ------------------------------------------------------------------------------
 # LIGHT PANEL falloff curve
-class light_panel_list_falloff_curve(DataButtonsPanel, Panel):
+class LIGHT_PT_List_Falloff_Curve(DataButtonsPanel, Panel):
     bl_label = "Falloff Curve"
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE'}
@@ -8554,12 +8608,13 @@ class light_panel_list_falloff_curve(DataButtonsPanel, Panel):
 
 # ------------------------------------------------------------------------------
 # Material Panel
-class Material_PT_ab_Panel (bpy.types.Panel):
-    bl_id = "Material_PT_ab_Panel"
+class MATERIAL_PT_abpanel (bpy.types.Panel):
+    bl_id = "MATERIAL_PT_abpanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
     bl_label= "AB Material"
+    bl_options = {'DEFAULT_CLOSED'}
     
     def draw(self,context):
         layout=self.layout
@@ -8603,7 +8658,7 @@ class MaterialButtonsPanel:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id="Material_PT_ab_Panel"
+    bl_parent_id="MATERIAL_PT_abpanel"
     # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
 
     @classmethod
@@ -8620,7 +8675,7 @@ class EEVEE_MATERIAL_PT_ab_context_material(MaterialButtonsPanel, Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Arc Blend"
-    bl_parent_id ="Material_PT_ab_Panel"
+    bl_parent_id ="MATERIAL_PT_abpanel"
     bl_options = {'HIDE_HEADER'}
     COMPAT_ENGINES = {'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
@@ -8844,49 +8899,62 @@ class MATERIAL_PT_ab_lineart(MaterialButtonsPanel, Panel):
 
         row = layout.row(align=True, heading="Custom Occlusion")
         row.prop(lineart, "mat_occlusion", text="Levels")
+        
+class ASSETBROWSER_PT_arcblend(bpy.types.Panel):
+    bl_id = "ASSETBROWSER_arcblend"
+    bl_label= "Asset Browser"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
+    
+    def draw(self,context):
+        layout = self.layout
+        col = layout.column(align=False)
+        col.label(text="<<<Coming Soon>>>")
 # ------------------------------------------------------------------------------
 # REGISTERATION AREA
 
 
 def register():
-    bpy.utils.register_class(arcblend)
-    bpy.utils.register_class(Add_Mesh)
-    bpy.utils.register_class(Add_Curve)
-    bpy.utils.register_class(Add_Surface)
-    bpy.utils.register_class(Add_Metaball)
-    bpy.utils.register_class(Add_Text)
-    bpy.utils.register_class(Add_Volume)
-    bpy.utils.register_class(Add_Grease_Pencil)
-    bpy.utils.register_class(Add_Armature)
-    bpy.utils.register_class(Add_Lattice)
-    bpy.utils.register_class(Add_Empty)
-    bpy.utils.register_class(Add_Image)
-    bpy.utils.register_class(Add_Light)
-    bpy.utils.register_class(Add_Light_Probe)
-    bpy.utils.register_class(Add_Camera)
-    bpy.utils.register_class(Add_Speaker)
-    bpy.utils.register_class(Add_Force_Field)
-    bpy.utils.register_class(Add_Collection_instance)
-    bpy.utils.register_class(ArcBlendModifiers)
-    bpy.utils.register_class(modifier)
-    bpy.utils.register_class(transform_edit_object_panel)
+    bpy.utils.register_class(ARCBLEND_PT_Panel)
+    bpy.utils.register_class(ADDMESH_PT_Panel)
+    bpy.utils.register_class(ADDCURVE_PT_Panel)
+    bpy.utils.register_class(ADDSURFACE_PT_Panel)
+    bpy.utils.register_class(ADDMETABALL_PT_Panel)
+    bpy.utils.register_class(ADDTEXT_PT_Panel)
+    bpy.utils.register_class(ADDVOLUME_PT_Panel)
+    bpy.utils.register_class(ADDGREASEPENCIL_PT_Panel)
+    bpy.utils.register_class(ADDARMATURE_PT_Panel)
+    bpy.utils.register_class(ADDLATTICE_PT_Panel)
+    bpy.utils.register_class(ADDEMPTY_PT_Panel)
+    bpy.utils.register_class(ADDIMAGE_PT_Panel)
+    bpy.utils.register_class(ADDLIGHT_PT_Panel)
+    bpy.utils.register_class(ADDLIGHTPROBE_PT_Panel)
+    bpy.utils.register_class(ADDCAMERA_PT_Panel)
+    bpy.utils.register_class(ADDSPEAKER_PT_Panel)
+    bpy.utils.register_class(ADDFORCEFIELD_PT_Panel)
+    bpy.utils.register_class(ADDCOLLECTION_PT_Panel)
+    bpy.utils.register_class(ARCBLENDMODIFIERS_PT_Panel)
+    bpy.utils.register_class(MODIFIER_PT_Transform_And_Edit)
+    bpy.utils.register_class(TRANSFORM_PT_Edit_Object_Panel)
     bpy.utils.register_class(transform_edit_object_align_x)
     bpy.utils.register_class(transform_edit_object_align_y)
     bpy.utils.register_class(transform_edit_object_align_z)
     bpy.utils.register_class(transform_edit_object_align_bound)
     bpy.utils.register_class(transform_edit_object_purge)
-    bpy.utils.register_class(transform)
-    bpy.utils.register_class(modifier_panel)
-    bpy.utils.register_class(modify_panel)
-    bpy.utils.register_class(array_panel)
+    bpy.utils.register_class(TRANSFORM_PT_Panel)
+    bpy.utils.register_class(MODIFIER_PT_Panel)
+    bpy.utils.register_class(MODIFY_PT_Panel)
+    bpy.utils.register_class(ARRAY_PT_Panel)
     bpy.utils.register_class(modifier_array)
     bpy.utils.register_class(modifier_array_detail)
     bpy.utils.register_class(modifier_array_detail_executer)
     bpy.utils.register_class(modifier_array_apply)
-    bpy.utils.register_class(Relative_Offset)
+    bpy.utils.register_class(OFFSET_PT_Relative_Offset)
     bpy.types.Scene.Arc_Blend = bpy.props.PointerProperty(
         type=modifier_array_detail)
-    bpy.utils.register_class(bevel_panel)
+    bpy.utils.register_class(BEVEL_PT_Panel)
     bpy.utils.register_class(modifier_bevel_button)
     bpy.utils.register_class(modifier_bevel_v_button)
     bpy.utils.register_class(modifier_bevel_e_button)
@@ -8895,8 +8963,8 @@ def register():
     bpy.utils.register_class(modifier_bevel_apply)
     bpy.types.Scene.AB_Bevel = bpy.props.PointerProperty(
         type=modifier_bevel_detail)
-    bpy.utils.register_class(display_panel)
-    bpy.utils.register_class(Loop_Menu)
+    bpy.utils.register_class(DISPLAY_PT_Panel)
+    bpy.utils.register_class(EXPORT_PT_Object)
     bpy.utils.register_class(loop_multiple_select)
     bpy.utils.register_class(loop_multiple_select_ring)
     bpy.utils.register_class(loop_select)
@@ -8954,7 +9022,7 @@ def register():
     bpy.utils.register_class(forcefield_drag)
     bpy.utils.register_class(forcefield_fluidflow)
     bpy.utils.register_class(collection_instance_collection)
-    bpy.utils.register_class(edit_mode_vertex)
+    bpy.utils.register_class(EDIT_PT_Vertex_Edit)
     bpy.utils.register_class(edit_mode_add_vertex)
     bpy.utils.register_class(edit_mode_bridge_vertices)
     bpy.utils.register_class(edit_mode_delete_vertices)
@@ -8968,11 +9036,11 @@ def register():
     bpy.utils.register_class(display_panel_show_solid)
     bpy.utils.register_class(display_panel_show_material)
     bpy.utils.register_class(display_panel_show_rendered)
-    bpy.utils.register_class(Themes_Panel)
+    bpy.utils.register_class(THEMES_PT_Panel)
     bpy.utils.register_class(themes_panel_mak)
     bpy.utils.register_class(themes_panel_white_chalk)
     bpy.utils.register_class(themes_panel_reset)
-    bpy.utils.register_class(Modelling_Panel)
+    bpy.utils.register_class(MODELLING_PT_Panel)
     bpy.utils.register_class(cutter_box)
     bpy.utils.register_class(cutter_box_object)
     bpy.utils.register_class(cutter_apply_modifier)
@@ -8982,7 +9050,7 @@ def register():
     bpy.utils.register_class(view_3d_back)
     bpy.utils.register_class(view_3d_right)
     bpy.utils.register_class(view_3d_left)
-    bpy.utils.register_class(Modelling_Panel_Vertex_Selection)
+    bpy.utils.register_class(MODELLING_PT_Vertex_Selection)
     bpy.utils.register_class(vertex_selection_make_circle)
     bpy.utils.register_class(vertex_selection_rip_vertex)
     bpy.utils.register_class(vertex_selection_merge_vertex_last)
@@ -8990,12 +9058,12 @@ def register():
     bpy.utils.register_class(vertex_selection_connect_vertex_path)
     bpy.utils.register_class(vertex_selection_create_vertices)
     bpy.utils.register_class(vertex_selection_assign_vertex_group)
-    bpy.utils.register_class(Modelling_Panel_Vertex_Group_Panel)
-    bpy.utils.register_class(Modelling_Panel_Modify_Selection)
+    bpy.utils.register_class(MODELLING_PT_Vertex_Group_Panel)
+    bpy.utils.register_class(MODELLING_PT_Modify_Selection)
     bpy.utils.register_class(loop_grow_edge_select)
     bpy.utils.register_class(loop_shrink_edge_select)
     bpy.utils.register_class(loop_auto_edge_loop)
-    bpy.utils.register_class(Modelling_Panel_Modify_Edit_Faces)
+    bpy.utils.register_class(MODELLING_PT_Modify_Edit_Faces)
     bpy.utils.register_class(modelling_edit_faces_flip_normals)
     bpy.utils.register_class(modelling_edit_faces_recalculate_outside)
     bpy.utils.register_class(modelling_edit_faces_extrude)
@@ -9010,7 +9078,7 @@ def register():
     bpy.utils.register_class(modelling_edit_edges_connect)
     bpy.utils.register_class(modelling_edit_edges_extrude)
     bpy.utils.register_class(modelling_edit_edges_collapse)
-    bpy.utils.register_class(Modelling_Panel_Modify_Edit)
+    bpy.utils.register_class(MODELLING_PT_Modify_Edit)
     bpy.utils.register_class(modelling_edit_loop_cut)
     bpy.utils.register_class(modelling_edit_rotate_edges)
     bpy.utils.register_class(modelling_edit_offset_edge_loop_cut)
@@ -9029,10 +9097,10 @@ def register():
     bpy.utils.register_class(modelling_edit_orient_x)
     bpy.utils.register_class(modelling_edit_orient_y)
     bpy.utils.register_class(modelling_edit_orient_z)
-    bpy.utils.register_class(Proxy_Panel)
+    bpy.utils.register_class(PROXY_PT_PANEL)
     bpy.utils.register_class(proxy_panel_remeshx_result)
     bpy.utils.register_class(proxy_panel_convertto_point_cloud)
-    bpy.utils.register_class(proxy_panel_object_list)
+    bpy.utils.register_class(PROXY_UL_Object_List)
     bpy.utils.register_class(proxy_panel_add_objects)
     bpy.utils.register_class(proxy_panel_remove_objects)
     bpy.utils.register_class(proxy_panel_list_item)
@@ -9053,19 +9121,19 @@ def register():
     bpy.types.Mesh.list_index = bpy.props.IntProperty(
         name="Index for mesh_list", default=0)
     # bpy.types.Mesh.proxy_item = bpy.props.PointerProperty(type=bpy.types.Mesh,description='Original Mesh-Data name')
-    bpy.utils.register_class(Scatter_Panel)
+    bpy.utils.register_class(SCATTER_PT_Panel)
     bpy.utils.register_class(scatter_panel_make_real_objects)
-    bpy.utils.register_class(scatter_panel_object_list)
+    bpy.utils.register_class(SCATTER_UL_Object_List)
     bpy.utils.register_class(scatter_panel_add_objects)
     bpy.utils.register_class(scatter_panel_remove_objects)
     bpy.utils.register_class(scatter_panel_list_item)
-    bpy.utils.register_class(Scatter_Panel_Scatter_As)
-    bpy.utils.register_class(Scatter_Panel_Paint_Panel)
-    bpy.utils.register_class(Scatter_Panel_Rotation_Panel)
-    bpy.utils.register_class(Scatter_Panel_Object)
-    bpy.utils.register_class(Scatter_Panel_Collection)
-    bpy.utils.register_class(Scatter_Panel_Collection_Use_Count)
-    bpy.utils.register_class(Scatter_Panel_Extra)
+    bpy.utils.register_class(SCATTER_PT_Scatter_As)
+    bpy.utils.register_class(SCATTER_PT_Paint_Panel)
+    bpy.utils.register_class(SCATTER_PT_Rotation_Panel)
+    bpy.utils.register_class(SCATTER_PT_Object)
+    bpy.utils.register_class(SCATTER_PT_Collection)
+    bpy.utils.register_class(SCATTER_PT_Collection_Use_Count)
+    bpy.utils.register_class(SCATTER_PT_Extra)
     # Object
     bpy.types.Object.scatter_item_obj = bpy.props.PointerProperty(type=bpy.types.Mesh, description='Original Mesh-Data name')
     # Mesh
@@ -9073,47 +9141,47 @@ def register():
     bpy.types.Mesh.scatter_list_index = bpy.props.IntProperty(
         name="Index for scatter_mesh_list", default=0)
     #Camera     
-    bpy.utils.register_class(Camera_Panel)
+    bpy.utils.register_class(CAMERA_PT_Panel)
     bpy.utils.register_class(camera_panel_add_camera_view)
-    bpy.utils.register_class(camera_panel_list)   
+    bpy.utils.register_class(CAMERA_UL_List)   
     bpy.utils.register_class(camera_panel_add_camera)
     bpy.utils.register_class(camera_panel_remove_camera)
     bpy.utils.register_class(camera_panel_list_item)
     #Camera Scene
     bpy.types.Scene.camera_list = bpy.props.CollectionProperty(type=camera_panel_list_item)
     bpy.types.Scene.camera_list_index = bpy.props.IntProperty(name="Index for camera_list", default=0)
-    bpy.utils.register_class(data_context_camera_lock)
-    bpy.utils.register_class(data_context_camera)
-    bpy.utils.register_class(data_context_camera_lens)
-    bpy.utils.register_class(data_context_camera_dof)
-    bpy.utils.register_class(data_context_camera_dof_aperture)
-    bpy.utils.register_class(data_context_camera_camera)
-    bpy.utils.register_class(data_context_camera_safe_areas)
-    bpy.utils.register_class(data_context_camera_safe_areas_center_cut)
-    bpy.utils.register_class(data_context_camera_background_image)
-    bpy.utils.register_class(data_context_camera_display)
-    bpy.utils.register_class(data_context_camera_display_composition_guides)
+    bpy.utils.register_class(CAMERA_PT_Data_Context_Camera_Lock)
+    bpy.utils.register_class(CAMERA_PT_Data_Context_Camera)
+    bpy.utils.register_class(CAMERA_PT_Data_Context_Camera_Lens)
+    bpy.utils.register_class(CAMERA_PT_Data_Context_Camera_Dof)
+    bpy.utils.register_class(CAMERA_PT_Data_Context_Camera_Dof_Aperture)
+    bpy.utils.register_class(CAMERA_PT_Data_Context_Camera_Settings)
+    bpy.utils.register_class(CAMERA_PT_Data_Context_Camera_Safe_Areas)
+    bpy.utils.register_class(CAMERA_PT_Data_Context_Camera_Safe_Areas_Center_Cut)
+    bpy.utils.register_class(CAMERA_PT_Data_Context_Camera_Background_Image)
+    bpy.utils.register_class(CAMERA_PT_Data_Context_Camera_Display)
+    bpy.utils.register_class(CAMERA_PT_Data_Context_Camera_Display_Composition_Guides)
     bpy.utils.register_class(lock_camera_to_object)
     #Light
-    bpy.utils.register_class(Light_Panel)
-    bpy.utils.register_class(light_panel_list)   
+    bpy.utils.register_class(LIGHT_PT_Panel)
+    bpy.utils.register_class(LIGHT_UL_List)   
     bpy.utils.register_class(light_panel_add_light)
     bpy.utils.register_class(light_panel_remove_light)
     bpy.utils.register_class(light_panel_list_item)
     #Light Scene
     bpy.types.Scene.light_list = bpy.props.CollectionProperty(type=light_panel_list_item)
     bpy.types.Scene.light_list_index = bpy.props.IntProperty(name="Index for light_list", default=0)
-    bpy.utils.register_class(light_panel_list_context_light)
-    bpy.utils.register_class(light_panel_list_EEVEE_light_x)
-    bpy.utils.register_class(light_panel_list_EEVEE_light_distance)
-    bpy.utils.register_class(light_panel_list_EEVEE_shadow)
-    bpy.utils.register_class(light_panel_list_EEVEE_shadow_cascaded_shadow_map)
-    bpy.utils.register_class(light_panel_list_EEVEE_shadow_contact)
-    bpy.utils.register_class(light_panel_list_area)
-    bpy.utils.register_class(light_panel_list_spot)
-    bpy.utils.register_class(light_panel_list_falloff_curve)
+    bpy.utils.register_class(LIGHT_PT_List_Context_Light)
+    bpy.utils.register_class(LIGHT_PT_List_EEVEE_Light)
+    bpy.utils.register_class(LIGHT_PT_List_EEVEE_Light_Distance)
+    bpy.utils.register_class(LIGHT_PT_List_EEVEE_Shadow)
+    bpy.utils.register_class(LIGHT_PT_List_EEVEE_Shadow_Cascaded_Shadow_Map)
+    bpy.utils.register_class(LIGHT_PT_List_EEVEE_Shadow_Contact)
+    bpy.utils.register_class(LIGHT_PT_List_Area)
+    bpy.utils.register_class(LIGHT_PT_List_Spot)
+    bpy.utils.register_class(LIGHT_PT_List_Falloff_Curve)
     #Material Panel
-    bpy.utils.register_class(Material_PT_ab_Panel)
+    bpy.utils.register_class(MATERIAL_PT_abpanel)
     bpy.utils.register_class(MATERIAL_MT_ab_context_menu)
     bpy.utils.register_class(MATERIAL_UL_ab_matslots)
     bpy.utils.register_class(EEVEE_MATERIAL_PT_ab_context_material)
@@ -9123,6 +9191,9 @@ def register():
     bpy.utils.register_class(MATERIAL_PT_ab_viewport)
     bpy.utils.register_class(MATERIAL_PT_ab_viewport_settings)
     bpy.utils.register_class(MATERIAL_PT_ab_lineart)
+    bpy.utils.register_class(ASSETBROWSER_PT_arcblend)
+    
+    
     
     
     
@@ -9140,43 +9211,43 @@ def register():
 
 def unregister():
     # Unregister for Blender
-    bpy.utils.unregister_class(arcblend)
-    bpy.utils.unregister_class(Add_Mesh)
-    bpy.utils.unregister_class(Add_Curve)
-    bpy.utils.unregister_class(Add_Surface)
-    bpy.utils.unregister_class(Add_Metaball)
-    bpy.utils.unregister_class(Add_Text)
-    bpy.utils.unregister_class(Add_Volume)
-    bpy.utils.unregister_class(Add_Grease_Pencil)
-    bpy.utils.unregister_class(Add_Armature)
-    bpy.utils.unregister_class(Add_Lattice)
-    bpy.utils.unregister_class(Add_Empty)
-    bpy.utils.unregister_class(Add_Image)
-    bpy.utils.unregister_class(Add_Light)
-    bpy.utils.unregister_class(Add_Light_Probe)
-    bpy.utils.unregister_class(Add_Camera)
-    bpy.utils.unregister_class(Add_Speaker)
-    bpy.utils.unregister_class(Add_Force_Field)
-    bpy.utils.unregister_class(Add_Collection_instance)
-    bpy.utils.unregister_class(ArcBlendModifiers)
-    bpy.utils.unregister_class(modifier)
-    bpy.utils.unregister_class(transform_edit_object_panel)
+    bpy.utils.unregister_class(ARCBLEND_PT_Panel)
+    bpy.utils.unregister_class(ADDMESH_PT_Panel)
+    bpy.utils.unregister_class(ADDCURVE_PT_Panel)
+    bpy.utils.unregister_class(ADDSURFACE_PT_Panel)
+    bpy.utils.unregister_class(ADDMETABALL_PT_Panel)
+    bpy.utils.unregister_class(ADDTEXT_PT_Panel)
+    bpy.utils.unregister_class(ADDVOLUME_PT_Panel)
+    bpy.utils.unregister_class(ADDGREASEPENCIL_PT_Panel)
+    bpy.utils.unregister_class(ADDARMATURE_PT_Panel)
+    bpy.utils.unregister_class(ADDLATTICE_PT_Panel)
+    bpy.utils.unregister_class(ADDEMPTY_PT_Panel)
+    bpy.utils.unregister_class(ADDIMAGE_PT_Panel)
+    bpy.utils.unregister_class(ADDLIGHT_PT_Panel)
+    bpy.utils.unregister_class(ADDLIGHTPROBE_PT_Panel)
+    bpy.utils.unregister_class(ADDCAMERA_PT_Panel)
+    bpy.utils.unregister_class(ADDSPEAKER_PT_Panel)
+    bpy.utils.unregister_class(ADDFORCEFIELD_PT_Panel)
+    bpy.utils.unregister_class(ADDCOLLECTION_PT_Panel)
+    bpy.utils.unregister_class(ARCBLENDMODIFIERS_PT_Panel)
+    bpy.utils.unregister_class(MODIFIER_PT_Transform_And_Edit)
+    bpy.utils.unregister_class(TRANSFORM_PT_Edit_Object_Panel)
     bpy.utils.unregister_class(transform_edit_object_align_x)
     bpy.utils.unregister_class(transform_edit_object_align_y)
     bpy.utils.unregister_class(transform_edit_object_align_z)
     bpy.utils.unregister_class(transform_edit_object_align_bound)
     bpy.utils.unregister_class(transform_edit_object_purge)
-    bpy.utils.unregister_class(transform)
-    bpy.utils.unregister_class(modifier_panel)
-    bpy.utils.unregister_class(modify_panel)
-    bpy.utils.unregister_class(array_panel)
+    bpy.utils.unregister_class(TRANSFORM_PT_Panel)
+    bpy.utils.unregister_class(MODIFIER_PT_Panel)
+    bpy.utils.unregister_class(MODIFY_PT_Panel)
+    bpy.utils.unregister_class(ARRAY_PT_Panel)
     bpy.utils.unregister_class(modifier_array)
     bpy.utils.unregister_class(modifier_array_detail)
     bpy.utils.unregister_class(modifier_array_detail_executer)
     bpy.utils.unregister_class(modifier_array_apply)
-    bpy.utils.unregister_class(Relative_Offset)
+    bpy.utils.unregister_class(OFFSET_PT_Relative_Offset)
     del bpy.types.Scene.Arc_Blend
-    bpy.utils.unregister_class(bevel_panel)
+    bpy.utils.unregister_class(BEVEL_PT_Panel)
     bpy.utils.unregister_class(modifier_bevel_button)
     bpy.utils.unregister_class(modifier_bevel_v_button)
     bpy.utils.unregister_class(modifier_bevel_e_button)
@@ -9184,8 +9255,8 @@ def unregister():
     bpy.utils.unregister_class(modifier_bevel_detail_executer)
     bpy.utils.unregister_class(modifier_bevel_apply)
     del bpy.types.Scene.AB_Bevel
-    bpy.utils.unregister_class(display_panel)
-    bpy.utils.unregister_class(Loop_Menu)
+    bpy.utils.unregister_class(DISPLAY_PT_Panel)
+    bpy.utils.unregister_class(EXPORT_PT_Object)
     bpy.utils.unregister_class(loop_multiple_select)
     bpy.utils.unregister_class(loop_multiple_select_ring)
     bpy.utils.unregister_class(loop_select)
@@ -9243,7 +9314,7 @@ def unregister():
     bpy.utils.unregister_class(forcefield_drag)
     bpy.utils.unregister_class(forcefield_fluidflow)
     bpy.utils.unregister_class(collection_instance_collection)
-    bpy.utils.unregister_class(edit_mode_vertex)
+    bpy.utils.unregister_class(EDIT_PT_Vertex_Edit)
     bpy.utils.unregister_class(edit_mode_add_vertex)
     bpy.utils.unregister_class(edit_mode_bridge_vertices)
     bpy.utils.unregister_class(edit_mode_delete_vertices)
@@ -9257,11 +9328,11 @@ def unregister():
     bpy.utils.unregister_class(display_panel_show_solid)
     bpy.utils.unregister_class(display_panel_show_material)
     bpy.utils.unregister_class(display_panel_show_rendered)
-    bpy.utils.unregister_class(Themes_Panel)
+    bpy.utils.unregister_class(THEMES_PT_Panel)
     bpy.utils.unregister_class(themes_panel_mak)
     bpy.utils.unregister_class(themes_panel_white_chalk)
     bpy.utils.unregister_class(themes_panel_reset)
-    bpy.utils.unregister_class(Modelling_Panel)
+    bpy.utils.unregister_class(MODELLING_PT_Panel)
     bpy.utils.unregister_class(cutter_box)
     bpy.utils.unregister_class(cutter_box_object)
     bpy.utils.unregister_class(cutter_apply_modifier)
@@ -9272,7 +9343,7 @@ def unregister():
     bpy.utils.unregister_class(view_3d_back)
     bpy.utils.unregister_class(view_3d_right)
     bpy.utils.unregister_class(view_3d_left)
-    bpy.utils.unregister_class(Modelling_Panel_Vertex_Selection)
+    bpy.utils.unregister_class(MODELLING_PT_Vertex_Selection)
     bpy.utils.unregister_class(vertex_selection_make_circle)
     bpy.utils.unregister_class(vertex_selection_rip_vertex)
     bpy.utils.unregister_class(vertex_selection_merge_vertex_last)
@@ -9280,12 +9351,12 @@ def unregister():
     bpy.utils.unregister_class(vertex_selection_connect_vertex_path)
     bpy.utils.unregister_class(vertex_selection_create_vertices)
     bpy.utils.unregister_class(vertex_selection_assign_vertex_group)
-    bpy.utils.unregister_class(Modelling_Panel_Vertex_Group_Panel)
-    bpy.utils.unregister_class(Modelling_Panel_Modify_Selection)
+    bpy.utils.unregister_class(MODELLING_PT_Vertex_Group_Panel)
+    bpy.utils.unregister_class(MODELLING_PT_Modify_Selection)
     bpy.utils.unregister_class(loop_grow_edge_select)
     bpy.utils.unregister_class(loop_shrink_edge_select)
     bpy.utils.unregister_class(loop_auto_edge_loop)
-    bpy.utils.unregister_class(Modelling_Panel_Modify_Edit_Faces)
+    bpy.utils.unregister_class(MODELLING_PT_Modify_Edit_Faces)
     bpy.utils.unregister_class(modelling_edit_faces_flip_normals)
     bpy.utils.unregister_class(modelling_edit_faces_recalculate_outside)
     bpy.utils.unregister_class(modelling_edit_faces_extrude)
@@ -9300,7 +9371,7 @@ def unregister():
     bpy.utils.unregister_class(modelling_edit_edges_connect)
     bpy.utils.unregister_class(modelling_edit_edges_extrude)
     bpy.utils.unregister_class(modelling_edit_edges_collapse)
-    bpy.utils.unregister_class(Modelling_Panel_Modify_Edit)
+    bpy.utils.unregister_class(MODELLING_PT_Modify_Edit)
     bpy.utils.unregister_class(modelling_edit_loop_cut)
     bpy.utils.unregister_class(modelling_edit_rotate_edges)
     bpy.utils.unregister_class(modelling_edit_offset_edge_loop_cut)
@@ -9319,10 +9390,10 @@ def unregister():
     bpy.utils.unregister_class(modelling_edit_orient_x)
     bpy.utils.unregister_class(modelling_edit_orient_y)
     bpy.utils.unregister_class(modelling_edit_orient_z)
-    bpy.utils.unregister_class(Proxy_Panel)
+    bpy.utils.unregister_class(PROXY_PT_PANEL)
     bpy.utils.unregister_class(proxy_panel_remeshx_result)
     bpy.utils.unregister_class(proxy_panel_convertto_point_cloud)
-    bpy.utils.unregister_class(proxy_panel_object_list)
+    bpy.utils.unregister_class(PROXY_UL_Object_List)
     bpy.utils.unregister_class(proxy_panel_add_objects)
     bpy.utils.unregister_class(proxy_panel_remove_objects)
     bpy.utils.unregister_class(proxy_panel_list_item)
@@ -9332,14 +9403,14 @@ def unregister():
     bpy.utils.unregister_class(proxy_panel_list_apply_all_modifiers)
     bpy.utils.unregister_class(proxy_panel_convertto_hull_geometry)
     bpy.utils.unregister_class(proxy_panel_convertto_bound_box)
-    bpy.utils.unregister_class(Scatter_Panel_Scatter_As)
+    bpy.utils.unregister_class(SCATTER_PT_Scatter_As)
     bpy.utils.unregister_class(scatter_panel_make_real_objects)
-    bpy.utils.unregister_class(Scatter_Panel_Paint_Panel)
-    bpy.utils.unregister_class(Scatter_Panel_Rotation_Panel)
-    bpy.utils.unregister_class(Scatter_Panel_Object)
-    bpy.utils.unregister_class(Scatter_Panel_Collection)
-    bpy.utils.unregister_class(Scatter_Panel_Collection_Use_Count)
-    bpy.utils.unregister_class(Scatter_Panel_Extra)
+    bpy.utils.unregister_class(SCATTER_PT_Paint_Panel)
+    bpy.utils.unregister_class(SCATTER_PT_Rotation_Panel)
+    bpy.utils.unregister_class(SCATTER_PT_Object)
+    bpy.utils.unregister_class(SCATTER_PT_Collection)
+    bpy.utils.unregister_class(SCATTER_PT_Collection_Use_Count)
+    bpy.utils.unregister_class(SCATTER_PT_Extra)
     # del bpy.types.Scene.mesh_list
     # del bpy.types.Scene.list_index
     # del bpy.types.Scene.proxy_item
@@ -9349,8 +9420,8 @@ def unregister():
     del bpy.types.Mesh.mesh_list
     del bpy.types.Mesh.list_index
     # del bpy.types.Mesh.proxy_item
-    bpy.utils.unregister_class(Scatter_Panel)
-    bpy.utils.unregister_class(scatter_panel_object_list)
+    bpy.utils.unregister_class(SCATTER_PT_Panel)
+    bpy.utils.unregister_class(SCATTER_UL_Object_List)
     bpy.utils.unregister_class(scatter_panel_add_objects)
     bpy.utils.unregister_class(scatter_panel_remove_objects)
     bpy.utils.unregister_class(scatter_panel_list_item)
@@ -9359,48 +9430,48 @@ def unregister():
     del bpy.types.Object.scatter_item_obj
     
     #Camera
-    bpy.utils.unregister_class(Camera_Panel)
+    bpy.utils.unregister_class(CAMERA_PT_Panel)
     bpy.utils.unregister_class(camera_panel_add_camera_view)
-    bpy.utils.unregister_class(camera_panel_list)   
+    bpy.utils.unregister_class(CAMERA_UL_List)   
     bpy.utils.unregister_class(camera_panel_add_camera)
     bpy.utils.unregister_class(camera_panel_remove_camera)
     bpy.utils.unregister_class(camera_panel_list_item)
     del bpy.types.Scene.camera_list
     del bpy.types.Scene.camera_list_index
     
-    bpy.utils.unregister_class(data_context_camera_lock)
-    bpy.utils.unregister_class(data_context_camera)
-    bpy.utils.unregister_class(data_context_camera_lens)
-    bpy.utils.unregister_class(data_context_camera_dof)
-    bpy.utils.unregister_class(data_context_camera_dof_aperture)
-    bpy.utils.unregister_class(data_context_camera_camera)
-    bpy.utils.unregister_class(data_context_camera_safe_areas)
-    bpy.utils.unregister_class(data_context_camera_safe_areas_center_cut)
-    bpy.utils.unregister_class(data_context_camera_background_image)
-    bpy.utils.unregister_class(data_context_camera_display)
-    bpy.utils.unregister_class(data_context_camera_display_composition_guides)
+    bpy.utils.unregister_class(CAMERA_PT_Data_Context_Camera_Lock)
+    bpy.utils.unregister_class(CAMERA_PT_Data_Context_Camera)
+    bpy.utils.unregister_class(CAMERA_PT_Data_Context_Camera_Lens)
+    bpy.utils.unregister_class(CAMERA_PT_Data_Context_Camera_Dof)
+    bpy.utils.unregister_class(CAMERA_PT_Data_Context_Camera_Dof_Aperture)
+    bpy.utils.unregister_class(CAMERA_PT_Data_Context_Camera_Settings)
+    bpy.utils.unregister_class(CAMERA_PT_Data_Context_Camera_Safe_Areas)
+    bpy.utils.unregister_class(CAMERA_PT_Data_Context_Camera_Safe_Areas_Center_Cut)
+    bpy.utils.unregister_class(CAMERA_PT_Data_Context_Camera_Background_Image)
+    bpy.utils.unregister_class(CAMERA_PT_Data_Context_Camera_Display)
+    bpy.utils.unregister_class(CAMERA_PT_Data_Context_Camera_Display_Composition_Guides)
     bpy.utils.unregister_class(lock_camera_to_object)
     
     #Light
-    bpy.utils.unregister_class(Light_Panel)
-    bpy.utils.unregister_class(light_panel_list)   
+    bpy.utils.unregister_class(LIGHT_PT_Panel)
+    bpy.utils.unregister_class(LIGHT_UL_List)   
     bpy.utils.unregister_class(light_panel_add_light)
     bpy.utils.unregister_class(light_panel_remove_light)
     bpy.utils.unregister_class(light_panel_list_item)
     #Light Scene
     del bpy.types.Scene.light_list
     del bpy.types.Scene.light_list_index
-    bpy.utils.unregister_class(light_panel_list_context_light)
-    bpy.utils.unregister_class(light_panel_list_EEVEE_light_x)
-    bpy.utils.unregister_class(light_panel_list_EEVEE_light_distance)
-    bpy.utils.unregister_class(light_panel_list_EEVEE_shadow)
-    bpy.utils.unregister_class(light_panel_list_EEVEE_shadow_cascaded_shadow_map)
-    bpy.utils.unregister_class(light_panel_list_EEVEE_shadow_contact)
-    bpy.utils.unregister_class(light_panel_list_area)
-    bpy.utils.unregister_class(light_panel_list_spot)
-    bpy.utils.unregister_class(light_panel_list_falloff_curve)
+    bpy.utils.unregister_class(LIGHT_PT_List_Context_Light)
+    bpy.utils.unregister_class(LIGHT_PT_List_EEVEE_Light)
+    bpy.utils.unregister_class(LIGHT_PT_List_EEVEE_Light_Distance)
+    bpy.utils.unregister_class(LIGHT_PT_List_EEVEE_Shadow)
+    bpy.utils.unregister_class(LIGHT_PT_List_EEVEE_Shadow_Cascaded_Shadow_Map)
+    bpy.utils.unregister_class(LIGHT_PT_List_EEVEE_Shadow_Contact)
+    bpy.utils.unregister_class(LIGHT_PT_List_Area)
+    bpy.utils.unregister_class(LIGHT_PT_List_Spot)
+    bpy.utils.unregister_class(LIGHT_PT_List_Falloff_Curve)
     #Material Panel
-    bpy.utils.unregister_class(Material_PT_ab_Panel)
+    bpy.utils.unregister_class(MATERIAL_PT_abpanel)
     bpy.utils.unregister_class(MATERIAL_MT_ab_context_menu)
     bpy.utils.unregister_class(MATERIAL_UL_ab_matslots)
     bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_context_material)
@@ -9410,6 +9481,7 @@ def unregister():
     bpy.utils.unregister_class(MATERIAL_PT_ab_viewport)
     bpy.utils.unregister_class(MATERIAL_PT_ab_viewport_settings)
     bpy.utils.unregister_class(MATERIAL_PT_ab_lineart)
+    bpy.utils.unregister_class(ASSETBROWSER_PT_arcblend)
   
     
 
