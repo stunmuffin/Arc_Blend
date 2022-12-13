@@ -23,6 +23,7 @@
 
 • Working on pep8 code standarts.
 
+• Remesher problem fixed. Now it's available under the AB Proxy Panel (new name: REMESH)
 • ...
 
 # Installation
