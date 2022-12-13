@@ -11,6 +11,7 @@ from bl_ui.utils import PresetPanel
 from bpy.types import Panel
 from rna_prop_ui import PropertyPanel
 from bpy_extras.node_utils import find_node_input
+from bpy_extras import (asset_utils,)
 bl_info = {
     "name": "Arc_Blend_Tools",
     "author": "Stun Muffin (KB)",
@@ -3714,6 +3715,52 @@ class THEMES_PT_Panel (bpy.types.Panel):
         col.operator("object.button_themes_panel_white_chalk",
                      text="White Chalk Theme")
         col.operator("object.button_themes_panel_reset", text="Reset Theme")
+        
+# ------------------------------------------------------------------------------
+# THEMES PANEL 
+
+class VIEW3D_PT_view3d_properties(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Arc Blend"
+    bl_label = "View"
+    bl_parent_id= "THEMES_PT_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        view = context.space_data
+
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        col = layout.column()
+
+        subcol = col.column()
+        subcol.active = bool(view.region_3d.view_perspective != 'CAMERA' or view.region_quadviews)
+        subcol.prop(view, "lens", text="Focal Length")
+
+        subcol = col.column(align=True)
+        subcol.prop(view, "clip_start", text="Clip Start")
+        subcol.prop(view, "clip_end", text="End")
+
+        layout.separator()
+
+        col = layout.column(align=False, heading="Local Camera")
+        col.use_property_decorate = False
+        row = col.row(align=True)
+        sub = row.row(align=True)
+        sub.prop(view, "use_local_camera", text="")
+        sub = sub.row(align=True)
+        sub.enabled = view.use_local_camera
+        sub.prop(view, "camera", text="")
+
+        layout.separator()
+
+        col = layout.column(align=True)
+        col.prop(view, "use_render_border")
+        col.active = view.region_3d.view_perspective != 'CAMERA'
 
 # ------------------------------------------------------------------------------
 # DARK THEME
@@ -5752,13 +5799,6 @@ class PROXY_PT_PANEL (bpy.types.Panel):
                      text="Add Empty Mesh")
 
         if bpy.context.selected_objects != []:
-            row = layout.row(align=True)
-            row.scale_x = 1
-            row.label(text="Number of Faces:")
-            row.scale_x = 1.5
-            row.prop(Arc_Blend, "layer", text="")
-            layout.operator(
-                "object.button_proxy_panel_remeshx_result", text="Remesh")
             layout.operator(
                 "object.button_proxy_panel_convertto_point_cloud", text="Point Cloud")
             layout.operator(
@@ -5773,32 +5813,53 @@ class PROXY_PT_PANEL (bpy.types.Panel):
 # ------------------------------------------------------------------------------
 # REMESH APPLY OPERATOR
 
-
-class proxy_panel_remeshx_result (bpy.types.Operator):
+class PROXY_PT_REMESHER (bpy.types.Panel):
     """Remesh it.All data layers keeps in program"""
+
     bl_label = ""
-    bl_idname = "object.button_proxy_panel_remeshx_result"
+    bl_idname = "PROXY_PT_REMESHER"
+    bl_parent_id = "PROXY_PT_PANEL"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Arc Blend"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
-    def execute(self, context):
+    def draw_header(self, context):
+        
         layout = self.layout
-        obj = context.object
-        scene = context.scene
 
-        bpy.ops.object.duplicate()
-        x = f'{int(bpy.context.scene.Arc_Blend.layer)}'
-        bpy.context.active_object.data.name = "AB_Object_" + str(x)
-        bpy.context.active_object.name = "AB_Object_Remesh"
+        layout.label(text="REMESH", icon="MONKEY")
+        
 
-        bpy.context.object.data.remesh_mode = 'QUAD'
-        bpy.context.object.data.use_remesh_preserve_paint_mask = False
-        bpy.context.object.data.use_remesh_preserve_sculpt_face_sets = False
-        bpy.ops.object.quadriflow_remesh(
-            target_faces=int(bpy.context.scene.Arc_Blend.layer))
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        row = layout.row()
+        
+        if bpy.context.selected_objects != []:
 
-        time.sleep(1)
-        bpy.ops.object.delete()
+            mesh = bpy.context.object.data
+            row.prop(mesh, "remesh_mode", text="Mode", expand=True)
+            col = layout.column()
+            if mesh.remesh_mode == 'VOXEL':
+                col.prop(mesh, "remesh_voxel_size")
+                col.prop(mesh, "remesh_voxel_adaptivity")
+                col.prop(mesh, "use_remesh_fix_poles")
 
-        return {"FINISHED"}
+                col = layout.column(heading="Preserve")
+                col.prop(mesh, "use_remesh_preserve_volume", text="Volume")
+                col.prop(mesh, "use_remesh_preserve_paint_mask", text="Paint Mask")
+                col.prop(mesh, "use_remesh_preserve_sculpt_face_sets", text="Face Sets")
+                col.prop(mesh, "use_remesh_preserve_vertex_colors", text="Color Attributes")
+
+                col.operator("object.voxel_remesh", text="Voxel Remesh")
+            else:
+                col.operator("object.quadriflow_remesh", text="QuadriFlow Remesh")
+        else:
+            pass
+        
 # ------------------------------------------------------------------------------
 # CONVERT TO POINTS OPERATOR
 
@@ -8899,9 +8960,12 @@ class MATERIAL_PT_ab_lineart(MaterialButtonsPanel, Panel):
 
         row = layout.row(align=True, heading="Custom Occlusion")
         row.prop(lineart, "mat_occlusion", text="Levels")
-        
+
+# ------------------------------------------------------------------------------    
+# Panel Arc Blend
+
 class ASSETBROWSER_PT_arcblend(bpy.types.Panel):
-    bl_id = "ASSETBROWSER_arcblend"
+    bl_id = "ASSETBROWSER_PT_arcblend"
     bl_label= "Asset Browser"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -8912,6 +8976,8 @@ class ASSETBROWSER_PT_arcblend(bpy.types.Panel):
         layout = self.layout
         col = layout.column(align=False)
         col.label(text="<<<Coming Soon>>>")
+        
+        
 # ------------------------------------------------------------------------------
 # REGISTERATION AREA
 
@@ -9037,6 +9103,9 @@ def register():
     bpy.utils.register_class(display_panel_show_material)
     bpy.utils.register_class(display_panel_show_rendered)
     bpy.utils.register_class(THEMES_PT_Panel)
+    bpy.utils.register_class(VIEW3D_PT_view3d_properties)
+    
+    
     bpy.utils.register_class(themes_panel_mak)
     bpy.utils.register_class(themes_panel_white_chalk)
     bpy.utils.register_class(themes_panel_reset)
@@ -9098,7 +9167,7 @@ def register():
     bpy.utils.register_class(modelling_edit_orient_y)
     bpy.utils.register_class(modelling_edit_orient_z)
     bpy.utils.register_class(PROXY_PT_PANEL)
-    bpy.utils.register_class(proxy_panel_remeshx_result)
+    bpy.utils.register_class(PROXY_PT_REMESHER)
     bpy.utils.register_class(proxy_panel_convertto_point_cloud)
     bpy.utils.register_class(PROXY_UL_Object_List)
     bpy.utils.register_class(proxy_panel_add_objects)
@@ -9192,6 +9261,20 @@ def register():
     bpy.utils.register_class(MATERIAL_PT_ab_viewport_settings)
     bpy.utils.register_class(MATERIAL_PT_ab_lineart)
     bpy.utils.register_class(ASSETBROWSER_PT_arcblend)
+
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -9329,6 +9412,7 @@ def unregister():
     bpy.utils.unregister_class(display_panel_show_material)
     bpy.utils.unregister_class(display_panel_show_rendered)
     bpy.utils.unregister_class(THEMES_PT_Panel)
+    bpy.utils.unregister_class(VIEW3D_PT_view3d_properties)
     bpy.utils.unregister_class(themes_panel_mak)
     bpy.utils.unregister_class(themes_panel_white_chalk)
     bpy.utils.unregister_class(themes_panel_reset)
@@ -9391,7 +9475,7 @@ def unregister():
     bpy.utils.unregister_class(modelling_edit_orient_y)
     bpy.utils.unregister_class(modelling_edit_orient_z)
     bpy.utils.unregister_class(PROXY_PT_PANEL)
-    bpy.utils.unregister_class(proxy_panel_remeshx_result)
+    bpy.utils.unregister_class(PROXY_PT_REMESHER)
     bpy.utils.unregister_class(proxy_panel_convertto_point_cloud)
     bpy.utils.unregister_class(PROXY_UL_Object_List)
     bpy.utils.unregister_class(proxy_panel_add_objects)
@@ -9482,7 +9566,6 @@ def unregister():
     bpy.utils.unregister_class(MATERIAL_PT_ab_viewport_settings)
     bpy.utils.unregister_class(MATERIAL_PT_ab_lineart)
     bpy.utils.unregister_class(ASSETBROWSER_PT_arcblend)
-  
     
 
 # ------------------------------------------------------------------------------
