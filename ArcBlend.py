@@ -3108,7 +3108,12 @@ class display_panel_show_wireframe (bpy.types.Operator):
         obj = context.object
         scene = context.scene
         Arc_Blend = scene.Arc_Blend
-        bpy.context.space_data.shading.type = 'WIREFRAME'
+        for area in bpy.context.screen.areas: 
+            if area.type == 'VIEW_3D':
+                space = area.spaces.active
+                if space.type == 'VIEW_3D':
+                    space.shading.type = 'WIREFRAME'
+        #bpy.context.space_data.shading.type = 'WIREFRAME'
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
@@ -3772,15 +3777,20 @@ class themes_panel_mak (bpy.types.Operator):
     bl_idname = "object.button_themes_panel_mak"
 
     def execute(self, context):
-        bpy.context.space_data.shading.background_type = 'VIEWPORT'
-        bpy.context.space_data.shading.light = 'STUDIO'
-        bpy.context.space_data.shading.color_type = 'MATERIAL'
-        bpy.context.space_data.overlay.show_floor = True
-        bpy.context.space_data.overlay.show_axis_x = True
-        bpy.context.space_data.overlay.show_axis_y = True
-        bpy.context.space_data.overlay.show_axis_z = False
-        bpy.context.space_data.overlay.show_wireframes = True
-        bpy.context.space_data.shading.background_color = (0, 0, 0)
+        for area in bpy.context.screen.areas: 
+            if area.type == 'VIEW_3D':
+                space = area.spaces.active
+                if space.type == 'VIEW_3D':
+                    space.shading.type = 'SOLID'
+                    bpy.context.space_data.shading.background_type = 'VIEWPORT'
+                    bpy.context.space_data.shading.light = 'STUDIO'
+                    bpy.context.space_data.shading.color_type = 'MATERIAL'
+                    bpy.context.space_data.overlay.show_floor = True
+                    bpy.context.space_data.overlay.show_axis_x = True
+                    bpy.context.space_data.overlay.show_axis_y = True
+                    bpy.context.space_data.overlay.show_axis_z = False
+                    bpy.context.space_data.overlay.show_wireframes = True
+                    bpy.context.space_data.shading.background_color = (0, 0, 0)
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
@@ -3793,19 +3803,24 @@ class themes_panel_white_chalk (bpy.types.Operator):
     bl_idname = "object.button_themes_panel_white_chalk"
 
     def execute(self, context):
-        bpy.context.space_data.shading.background_type = 'VIEWPORT'
-        bpy.context.space_data.shading.light = 'FLAT'
-        bpy.context.space_data.shading.color_type = 'SINGLE'
-        bpy.context.space_data.shading.show_object_outline = True
-        bpy.context.space_data.shading.object_outline_color = (0, 0, 0)
-        bpy.context.space_data.shading.single_color = (1, 1, 1)
-        bpy.context.space_data.shading.object_outline_color = (0, 0, 0)
-        bpy.context.space_data.overlay.show_wireframes = True
-        bpy.context.space_data.overlay.show_floor = True
-        bpy.context.space_data.overlay.show_axis_x = True
-        bpy.context.space_data.overlay.show_axis_y = True
-        bpy.context.space_data.overlay.show_axis_z = True
-        bpy.context.space_data.shading.background_color = (1, 1, 1)
+        for area in bpy.context.screen.areas: 
+            if area.type == 'VIEW_3D':
+                space = area.spaces.active
+                if space.type == 'VIEW_3D':
+                    space.shading.type = 'SOLID'
+                    bpy.context.space_data.shading.background_type = 'VIEWPORT'
+                    bpy.context.space_data.shading.light = 'FLAT'
+                    bpy.context.space_data.shading.color_type = 'SINGLE'
+                    bpy.context.space_data.shading.show_object_outline = True
+                    bpy.context.space_data.shading.object_outline_color = (0, 0, 0)
+                    bpy.context.space_data.shading.single_color = (1, 1, 1)
+                    bpy.context.space_data.shading.object_outline_color = (0, 0, 0)
+                    bpy.context.space_data.overlay.show_wireframes = True
+                    bpy.context.space_data.overlay.show_floor = True
+                    bpy.context.space_data.overlay.show_axis_x = True
+                    bpy.context.space_data.overlay.show_axis_y = True
+                    bpy.context.space_data.overlay.show_axis_z = False
+                    bpy.context.space_data.shading.background_color = (1, 1, 1)
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
@@ -3819,62 +3834,67 @@ class themes_panel_reset (bpy.types.Operator):
 
     def execute(self, context):
         layout = self.layout
+        for area in bpy.context.screen.areas: 
+            if area.type == 'VIEW_3D':
+                space = area.spaces.active
+                if space.type == 'VIEW_3D':
+                    space.shading.type = 'SOLID'
 
-        bpy.context.space_data.shading.light = 'STUDIO'
-        bpy.context.space_data.shading.studio_light = 'Default'
-        bpy.context.space_data.shading.color_type = 'MATERIAL'
-        bpy.context.space_data.shading.background_type = 'THEME'
-        bpy.context.space_data.overlay.show_overlays = True
-        bpy.context.space_data.shading.show_backface_culling = False
-        bpy.context.space_data.shading.show_xray = False
-        bpy.context.space_data.shading.show_shadows = False
-        bpy.context.space_data.shading.show_cavity = False
-        bpy.context.space_data.shading.use_dof = False
-        bpy.context.space_data.shading.show_object_outline = True
-        bpy.context.space_data.shading.object_outline_color = (0, 0, 0)
-        bpy.context.space_data.shading.show_specular_highlight = True
+                    bpy.context.space_data.shading.light = 'STUDIO'
+                    bpy.context.space_data.shading.studio_light = 'Default'
+                    bpy.context.space_data.shading.color_type = 'MATERIAL'
+                    bpy.context.space_data.shading.background_type = 'THEME'
+                    bpy.context.space_data.overlay.show_overlays = True
+                    bpy.context.space_data.shading.show_backface_culling = False
+                    bpy.context.space_data.shading.show_xray = False
+                    bpy.context.space_data.shading.show_shadows = False
+                    bpy.context.space_data.shading.show_cavity = False
+                    bpy.context.space_data.shading.use_dof = False
+                    bpy.context.space_data.shading.show_object_outline = True
+                    bpy.context.space_data.shading.object_outline_color = (0, 0, 0)
+                    bpy.context.space_data.shading.show_specular_highlight = True
 
-        bpy.context.space_data.overlay.show_floor = True
-        bpy.context.space_data.overlay.show_ortho_grid = True
-        bpy.context.space_data.overlay.show_text = True
-        bpy.context.space_data.overlay.show_cursor = True
-        bpy.context.space_data.overlay.show_stats = False
-        bpy.context.space_data.overlay.show_annotation = True
+                    bpy.context.space_data.overlay.show_floor = True
+                    bpy.context.space_data.overlay.show_ortho_grid = True
+                    bpy.context.space_data.overlay.show_text = True
+                    bpy.context.space_data.overlay.show_cursor = True
+                    bpy.context.space_data.overlay.show_stats = False
+                    bpy.context.space_data.overlay.show_annotation = True
 
-        bpy.context.space_data.overlay.show_extras = True
-        bpy.context.space_data.overlay.show_bones = True
-        bpy.context.space_data.overlay.show_relationship_lines = True
-        bpy.context.space_data.overlay.show_outline_selected = True
-        bpy.context.space_data.overlay.show_motion_paths = True
-        bpy.context.space_data.overlay.show_object_origins = True
-        bpy.context.space_data.overlay.show_object_origins_all = False
+                    bpy.context.space_data.overlay.show_extras = True
+                    bpy.context.space_data.overlay.show_bones = True
+                    bpy.context.space_data.overlay.show_relationship_lines = True
+                    bpy.context.space_data.overlay.show_outline_selected = True
+                    bpy.context.space_data.overlay.show_motion_paths = True
+                    bpy.context.space_data.overlay.show_object_origins = True
+                    bpy.context.space_data.overlay.show_object_origins_all = False
 
-        bpy.context.space_data.overlay.show_wireframes = False
-        bpy.context.space_data.overlay.show_face_orientation = False
-        bpy.context.space_data.show_reconstruction = True
-        bpy.context.space_data.show_camera_path = False
-        bpy.context.space_data.show_bundle_names = False
-        bpy.context.space_data.tracks_display_type = 'PLAIN_AXES'
-        bpy.context.space_data.tracks_display_size = 0.2
+                    bpy.context.space_data.overlay.show_wireframes = False
+                    bpy.context.space_data.overlay.show_face_orientation = False
+                    bpy.context.space_data.show_reconstruction = True
+                    bpy.context.space_data.show_camera_path = False
+                    bpy.context.space_data.show_bundle_names = False
+                    bpy.context.space_data.tracks_display_type = 'PLAIN_AXES'
+                    bpy.context.space_data.tracks_display_size = 0.2
 
-        bpy.context.space_data.show_gizmo = True
-        bpy.context.space_data.show_gizmo_navigate = True
-        bpy.context.space_data.show_gizmo_tool = True
-        bpy.context.space_data.show_gizmo_context = True
-        bpy.context.scene.transform_orientation_slots[1].type = 'DEFAULT'
-        bpy.context.space_data.show_gizmo_object_translate = False
-        bpy.context.space_data.show_gizmo_object_rotate = False
-        bpy.context.space_data.show_gizmo_object_scale = False
-        bpy.context.space_data.show_gizmo_empty_image = True
-        bpy.context.space_data.show_gizmo_empty_force_field = True
-        bpy.context.space_data.show_gizmo_light_size = True
-        bpy.context.space_data.show_gizmo_light_look_at = True
-        bpy.context.space_data.show_gizmo_camera_lens = True
-        bpy.context.space_data.show_gizmo_camera_dof_distance = True
-        bpy.context.space_data.overlay.grid_scale = 1
-        bpy.context.space_data.overlay.show_axis_x = True
-        bpy.context.space_data.overlay.show_axis_y = True
-        bpy.context.space_data.overlay.show_axis_z = False
+                    bpy.context.space_data.show_gizmo = True
+                    bpy.context.space_data.show_gizmo_navigate = True
+                    bpy.context.space_data.show_gizmo_tool = True
+                    bpy.context.space_data.show_gizmo_context = True
+                    bpy.context.scene.transform_orientation_slots[1].type = 'DEFAULT'
+                    bpy.context.space_data.show_gizmo_object_translate = False
+                    bpy.context.space_data.show_gizmo_object_rotate = False
+                    bpy.context.space_data.show_gizmo_object_scale = False
+                    bpy.context.space_data.show_gizmo_empty_image = True
+                    bpy.context.space_data.show_gizmo_empty_force_field = True
+                    bpy.context.space_data.show_gizmo_light_size = True
+                    bpy.context.space_data.show_gizmo_light_look_at = True
+                    bpy.context.space_data.show_gizmo_camera_lens = True
+                    bpy.context.space_data.show_gizmo_camera_dof_distance = True
+                    bpy.context.space_data.overlay.grid_scale = 1
+                    bpy.context.space_data.overlay.show_axis_x = True
+                    bpy.context.space_data.overlay.show_axis_y = True
+                    bpy.context.space_data.overlay.show_axis_z = False
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
