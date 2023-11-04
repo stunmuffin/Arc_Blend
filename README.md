@@ -60,7 +60,7 @@
 
 •If you get any trouble you can reach me:
 
-•Gmail: ozgurhan38@gmail.com
+•Gmail: karefr3ddy@gmail.com
 
 •Twitter: https://twitter.com/muffin_stun
 
