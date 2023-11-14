@@ -51,7 +51,7 @@
 ![5](https://github.com/stunmuffin/Arc_Blend/assets/48792613/38974ced-4dd6-4f82-8cb2-8c834baa12a0)
 
 
-6.)Go to search  area and type : "Arc_Blend_Tools" and enable to Add-on.
+6.)Go to search  area and type : "Arc Blend Tools" and enable to Add-on.
 
 
 ![6](https://github.com/stunmuffin/Arc_Blend/assets/48792613/017320a8-1d7a-42d9-ac22-8f110a7bac55)
