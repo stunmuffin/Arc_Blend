@@ -24,7 +24,10 @@
 • Working on pep8 code standarts.
 
 • Remesher problem fixed. Now it's available under the AB Proxy Panel (new name: REMESH)
-• ...
+
+• Modify Panel Removed! (11/14/2023)
+• Changed the main files now you can install from just zip file. Separated the code modules. (11/14/2023)
+
 
 # Installation
 
@@ -32,9 +35,9 @@
 
 2.) Go to Code section.
 
-![1](https://user-images.githubusercontent.com/48792613/185794561-b18ed752-b5f4-4278-b3c3-523df34911f3.png)
+![1](https://github.com/stunmuffin/Arc_Blend/assets/48792613/aba49807-8a13-4e2a-b0a8-a5060528b897)
 
-3.) Download the file as a zip. Extract as a file.
+3.) Download the file as a zip.
 
 ![2](https://user-images.githubusercontent.com/48792613/185794564-df033d43-b8bb-4f7c-a812-c43174fcb337.png)
 
@@ -44,15 +47,21 @@
 
 5.) Addons >> Install and chose the "ArcBlend.py" and Install Add-on.
 
-![5](https://user-images.githubusercontent.com/48792613/185794588-7c7876f1-2dea-4800-bdae-d8425d8d6e90.png)
+
+![5](https://github.com/stunmuffin/Arc_Blend/assets/48792613/38974ced-4dd6-4f82-8cb2-8c834baa12a0)
+
 
 6.)Go to search  area and type : "Arc_Blend_Tools" and enable to Add-on.
 
-![6](https://user-images.githubusercontent.com/48792613/185794589-dc843eab-e14c-40d6-893e-0d2175afa9d0.png)
+
+![6](https://github.com/stunmuffin/Arc_Blend/assets/48792613/017320a8-1d7a-42d9-ac22-8f110a7bac55)
+
+
 
 7.)Congrats! You installed the addon. And go to blender and press "N" button to activate tool panel. Then you can see Arc Blend Tools there.
 
-![7](https://user-images.githubusercontent.com/48792613/185794590-83d4d070-aa6e-47a4-9892-abb3e07fd842.png)
+![7](https://github.com/stunmuffin/Arc_Blend/assets/48792613/ea6bcbe7-120f-4ca6-9c76-d3a77dbe6e51)
+
 
 •Thank you for download and using Arc Blend Tools!
 
