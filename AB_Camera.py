@@ -160,28 +160,28 @@ class camera_panel_remove_camera (bpy.types.Operator):
 
 def camera_return_one_time(mesh, active_idx, prop_api):
     """Returning once per elements"""
-    scene= bpy.context.scene
+    scene = bpy.context.scene
     AB_list = scene.camera_list
     for i in AB_list:
         if i.camera_ui_index != active_idx:
-            exec(f"i.{prop_api}= False")
+            exec(f"i.{prop_api} = False")
     return None
 
 def camera_display_upd(self, context):
-    
-    if self.camera_display == True:
+    if self.camera_display:
         camera_return_one_time(self.id_data, self.camera_ui_index, "camera_display")
-        len_cam=len(bpy.context.scene.camera_list)
-        for i in range(0,len_cam):
+        len_cam = len(bpy.context.scene.camera_list)
+        for i in range(0, len_cam):
             a = bpy.context.scene.camera_list[i].camera_item.name
             b = bpy.context.scene.camera_list[i].camera_display
-            if b == True:
-                bpy.context.active_object.select_set(False)
+            if b:
+                if bpy.context.view_layer.objects.active is not None:
+                    bpy.context.view_layer.objects.active.select_set(False)
                 bpy.context.scene.camera = bpy.data.objects[a]
                 bpy.context.view_layer.objects.active = bpy.data.objects[a]
                 bpy.context.object.select_set(True)
                 try:
-                    if bpy.context.active_object.type== 'CAMERA':
+                    if bpy.context.active_object.type == 'CAMERA':
                         for area in bpy.context.screen.areas:
                             if area.type == 'VIEW_3D':
                                 area.spaces[0].region_3d.view_perspective = 'CAMERA'
@@ -189,7 +189,7 @@ def camera_display_upd(self, context):
                 except AttributeError:
                     pass
     else:
-                    pass
+        pass
 
 
 # ------------------------------------------------------------------------------
