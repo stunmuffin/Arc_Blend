@@ -28,6 +28,9 @@
 • Modify Panel Removed! (11/14/2023)
 • Changed the main files now you can install from just zip file. Separated the code modules. (11/14/2023)
 
+• New Panel Added (Color Picker) (11/26/2023)
+
+
 
 # Installation
 
