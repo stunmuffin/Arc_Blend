@@ -46,6 +46,7 @@ from . import AB_Scatter
 from . import AB_Proxy
 from . import AB_Light
 from . import AB_Material
+from . import AB_Color_Picker
 
 
 
@@ -66,6 +67,7 @@ def register():
     AB_Proxy.register()
     AB_Light.register()
     AB_Material.register()
+    AB_Color_Picker.register()
 
 
 
@@ -81,6 +83,7 @@ def unregister():
     AB_Proxy.unregister()
     AB_Light.unregister()
     AB_Material.unregister()
+    AB_Color_Picker.unregister()
 
 
 # ------------------------------------------------------------------------------
