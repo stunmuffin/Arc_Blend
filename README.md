@@ -33,7 +33,9 @@
 
 ![ColorPalette](https://github.com/stunmuffin/Arc_Blend/assets/48792613/0b92cf24-90c3-44bc-8c55-04ab28dcf43d)
 
+• New Distribution Options Added ( AB Modify > Objects > Align Objects > Distribute Objects) (11/30/2023)
 
+![Distribute Objects](https://github.com/stunmuffin/Arc_Blend/assets/48792613/5a164496-c477-4b3e-921b-85897703bb58)
 
 # Installation
 
