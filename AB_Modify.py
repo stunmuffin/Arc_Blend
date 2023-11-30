@@ -313,6 +313,12 @@ class TRANSFORM_PT_Edit_Object_Panel (bpy.types.Panel):
     bl_category = "Arc Blend"
     bl_parent_id = "MODIFIER_PT_Transform_And_Edit"
     bl_options = {'DEFAULT_CLOSED'}
+    
+    
+    @classmethod
+    def poll(cls, context):
+        return context.object is not None  # Check if there's an active object
+
 
     def draw(self, context):
         layout = self.layout
@@ -321,21 +327,19 @@ class TRANSFORM_PT_Edit_Object_Panel (bpy.types.Panel):
         scene = context.scene
         Arc_Blend = scene.Arc_Blend
         col = layout.column()
-        if bpy.context.selected_objects != []:
-            try:
-                col.prop(obj, "name")
-                col.prop(obj, "type")
-                col.prop(obj, "active_material")
-                col.prop(obj, "data")
-                col.prop(obj, "parent")
-                col.prop(obj, "parent_type")
-            except (TypeError,KeyError):
-                pass
-            col.prop(Arc_Blend, "arc_blend_set_origin")
-            col = layout.column()
-            col.prop(Arc_Blend, "arc_blend_manuel_axis",
-                     text="Set Origin to Manuel Axis:", icon="EMPTY_AXIS")
-            if bpy.context.scene.Arc_Blend.arc_blend_manuel_axis:
+        
+        col.prop(obj, "name")
+        col.prop(obj, "type")
+        col.prop(obj, "active_material")
+        col.prop(obj, "data")
+        col.prop(obj, "parent")
+        col.prop(obj, "parent_type")
+        
+        col.prop(Arc_Blend, "arc_blend_set_origin")
+        col = layout.column()
+        col.prop(Arc_Blend, "arc_blend_manuel_axis",
+                        text="Set Origin to Manuel Axis:", icon="EMPTY_AXIS")
+        if bpy.context.scene.Arc_Blend.arc_blend_manuel_axis:
                 box1 = layout.box()
                 box1.prop(Arc_Blend, "arc_blend_manuel_origin_x",
                           text="Origin X Level")
@@ -343,13 +347,13 @@ class TRANSFORM_PT_Edit_Object_Panel (bpy.types.Panel):
                           text="Origin Y Level")
                 box1.prop(Arc_Blend, "arc_blend_manuel_origin",
                           text="Origin Z Level")
-            else:
+        else:
                 pass
-            col = layout.column()
-            sub = col.row(align=True)
-            sub.prop(Arc_Blend, "align_objects_xyz",
+        col = layout.column()
+        sub = col.row(align=True)
+        sub.prop(Arc_Blend, "align_objects_xyz",
                      text="Align Objects", icon="OUTLINER_OB_POINTCLOUD")
-            if bpy.context.scene.Arc_Blend.align_objects_xyz:
+        if bpy.context.scene.Arc_Blend.align_objects_xyz:
                 box = layout.box()
                 box.label(text="Align Objects (Fast): ")
                 sub = box.row(align=True)
@@ -366,16 +370,44 @@ class TRANSFORM_PT_Edit_Object_Panel (bpy.types.Panel):
                 if bpy.context.scene.Arc_Blend.distribute_objects:
                     sub = box.column(align=True)
                     sub.label(text="Distribute Objects : ")
-                    sub.prop(Arc_Blend, "distribute_x", text="X Copy : ")
-                    sub.prop(Arc_Blend, "distribute_y", text="Y Copy : ")
-                    # sub.prop(Arc_Blend, "distribute_z", text="Z Copy : ")
-                    sub = box.column(align=True)
-                    sub.label(text="Distribute Distance : ")
-                    sub.prop(Arc_Blend, "distribute_distance_object_x",
-                             text="X Distance : ")
-                    sub.prop(Arc_Blend, "distribute_distance_object_y",
-                             text="Y Distance : ")
-                    # sub.prop(Arc_Blend, "distribute_distance_object_z", text="Z Distance : ")
+                    sub.prop(Arc_Blend, "use_grid_3d", text="Distribute in Grid 3D")
+                    if Arc_Blend.use_grid_3d:
+                        sub.prop(Arc_Blend, "distribute_x", text="X Copy : ")
+                        sub.prop(Arc_Blend, "distribute_y", text="Y Copy : ")
+                        sub.prop(Arc_Blend, "distribute_z", text="Z Copy : ")
+                        sub = box.column(align=True)
+                        sub.label(text="Distribute Distance : ")
+                        sub.prop(Arc_Blend, "x_distance")
+                        sub.prop(Arc_Blend, "y_distance")
+                        sub.prop(Arc_Blend, "z_distance")  
+                        sub.operator("object.distribute_grid_3d", text="Distribute in Grid 3D")    
+                    sub.prop(Arc_Blend, "use_circle", text="Distribute in Circle")
+                    if Arc_Blend.use_circle:
+                        sub.prop(Arc_Blend, "radius")
+                        sub.operator("object.distribute_circle", text="Distribute in Circle")
+                    sub.prop(Arc_Blend, "use_square", text="Distribute in Square")
+                    if Arc_Blend.use_square:
+                        sub.prop(Arc_Blend, "square_length")
+                        sub.operator("object.distribute_square", text="Distribute in Square")
+                    sub.prop(Arc_Blend, "use_arc", text="Distribute in Arc")
+                    if Arc_Blend.use_arc:
+                        sub.prop(Arc_Blend, "radius_arc")
+                        sub.prop(Arc_Blend, "start_angle")
+                        sub.prop(Arc_Blend, "end_angle")
+                        sub.operator("object.distribute_arc", text="Distribute in Arc")
+                    sub.prop(Arc_Blend, "use_curve", text="Distribute on Curve")
+                    if Arc_Blend.use_curve:
+                        sub.prop(Arc_Blend, "curve_object")
+                        sub.operator("object.distribute_curve", text="Distribute Along Curve Segments")
+                    sub.prop(Arc_Blend, "use_vertices", text="Distribute on Mesh")
+                    if Arc_Blend.use_vertices:
+                        sub.prop(Arc_Blend, "mesh_object")
+                        sub.operator("object.distribute_on_vertices", text="Distribute Along Mesh Vertices")
+                        sub.operator("object.distribute_on_vertices_rotated", text="Distribute Vertices (Rotated)")
+                        sub.operator("object.distribute_on_edges", text="Distribute Along Mesh Edges")
+                        sub.operator("object.distribute_on_edgesrotated", text="Distribute Edges (Rotated)")
+                        sub.operator("object.distribute_on_faces", text="Distribute on Faces")
+                        sub.operator("object.distribute_on_facesrotated", text="Distribute on Faces (Rotated)")
                 else:
                     pass
                 box.prop(Arc_Blend, "proportional_align",
@@ -405,27 +437,29 @@ class TRANSFORM_PT_Edit_Object_Panel (bpy.types.Panel):
                     sub.prop(Arc_Blend, "scale_object_x", text="X Scale:")
                     sub.prop(Arc_Blend, "scale_object_y", text="Y Scale:")
                     sub.prop(Arc_Blend, "scale_object_z", text="Z Scale:")
-            else:
-                pass
-            row = layout.row()
-            row = layout.row(align=True)
-            row.operator("object.shade_smooth")
-            row.operator("object.shade_flat")
-            row = layout.row()
-            row = layout.row()
-            sub = row.row(align=True)
-            sub.scale_x = 1.5
-            sub.label(text="Color : ")
-            sub.scale_x = 4.6
-            sub.prop(obj, "color", text="")
-            row = layout.row()
-            row = layout.row(align=True)
-            row.operator(
-                "object.button_transform_edit_object_randomize_colors", text="Randomize Colors")
-            row.operator(
-                "object.button_transform_edit_object_reset_colors", text="Reset Colors")
         else:
-            pass
+                pass
+        row = layout.row()
+        row = layout.row(align=True)
+        row.operator("object.shade_smooth")
+        row.operator("object.shade_flat")
+        row = layout.row()
+        row = layout.row()
+        sub = row.row(align=True)
+        sub.scale_x = 1.5
+        sub.label(text="Color : ")
+        sub.scale_x = 4.6
+        if obj is not None:
+                layout.prop(obj, "color", text="Object Color")
+        else:
+                layout.label(text="No object selected")
+        row = layout.row()
+        row = layout.row(align=True)
+        row.operator(
+                "object.button_transform_edit_object_randomize_colors", text="Randomize Colors")
+        row.operator(
+                "object.button_transform_edit_object_reset_colors", text="Reset Colors")
+        
         col = layout.column()
         col.label(text="Turn ON/OFF Display Color : ")
         col.prop(Arc_Blend, "color_mode_display", text="", icon="FILE_REFRESH")
@@ -511,8 +545,14 @@ class transform_edit_object_align_x (bpy.types.Operator):
         Arc_Blend = scene.Arc_Blend
         selected = bpy.context.selected_objects
         active = bpy.context.active_object
-        for i in selected:
-            i.location.x = active.location.x
+        
+        if active is None:
+            self.report({'ERROR'}, "No active object. Select an active object.")
+            return {'CANCELLED'}
+        
+        for obj in selected:
+            if obj and hasattr(obj, 'location'):
+                obj.location.x = active.location.x
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
@@ -531,8 +571,13 @@ class transform_edit_object_align_y (bpy.types.Operator):
         Arc_Blend = scene.Arc_Blend
         selected = bpy.context.selected_objects
         active = bpy.context.active_object
-        for i in selected:
-            i.location.y = active.location.y
+        if active is None:
+            self.report({'ERROR'}, "No active object. Select an active object.")
+            return {'CANCELLED'}
+        
+        for obj in selected:
+            if obj and hasattr(obj, 'location'):
+                obj.location.y = active.location.y
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
@@ -551,8 +596,13 @@ class transform_edit_object_align_z (bpy.types.Operator):
         Arc_Blend = scene.Arc_Blend
         selected = bpy.context.selected_objects
         active = bpy.context.active_object
-        for i in selected:
-            i.location.z = active.location.z
+        if active is None:
+            self.report({'ERROR'}, "No active object. Select an active object.")
+            return {'CANCELLED'}
+        
+        for obj in selected:
+            if obj and hasattr(obj, 'location'):
+                obj.location.z = active.location.z
         return {"FINISHED"}
 
 # ------------------------------------------------------------------------------
@@ -863,6 +913,7 @@ def modelling_edit_mode_auto_edge_loop_upd(self, context):
     else:
         pass
 
+
 # ------------------------------------------------------------------------------
 # ALIGN OBJECT X UPDATE
 
@@ -901,6 +952,8 @@ def distance_object_z_upd(self, context):
     for i in range(1, len(selected)):
         selected[i].location.z = selected[i-1].location.z + \
             bpy.context.scene.Arc_Blend.distance_object_z
+
+
 
 # ------------------------------------------------------------------------------
 # ROTATION OBJECT X UPDATE
@@ -968,216 +1021,7 @@ def scale_object_z_upd(self, context):
         selected[i].scale[2] = selected[i-1].scale[2] + \
             bpy.context.scene.Arc_Blend.scale_object_z
 
-# ------------------------------------------------------------------------------
-# DISTRIBUTE DISTANCE OBJECT X UPDATE
 
-
-def distribute_distance_object_x_upd(self, context):
-    selected = bpy.context.selected_objects
-    active = bpy.context.active_object
-    quantity = len(bpy.context.selected_objects)
-    # Number of elements
-    number_x = bpy.context.scene.Arc_Blend.distribute_x
-    number_y = bpy.context.scene.Arc_Blend.distribute_y
-    # number_z = bpy.context.scene.Arc_Blend.distribute_z
-    # Bound is distance of two elements
-    bound_x = bpy.context.active_object.bound_box.data.dimensions[0]
-    # Max distance of all elements
-    # maximum_x = bound_x*quantity
-    distance_x = bpy.context.scene.Arc_Blend.distribute_distance_object_x
-    distance_y = bpy.context.scene.Arc_Blend.distribute_distance_object_y
-    # distance_z = bpy.context.scene.Arc_Blend.distribute_distance_object_z
-    try:
-        for i in range(1, number_x):
-            selected[i].location[0] = selected[i-1].location[0]+distance_x
-    except IndexError:
-        pass
-
-# ------------------------------------------------------------------------------
-# DISTRIBUTE DISTANCE OBJECT Y UPDATE
-
-
-def distribute_distance_object_y_upd(self, context):
-    selected = bpy.context.selected_objects
-    active = bpy.context.active_object
-    quantity = len(bpy.context.selected_objects)
-    # Number of elements
-    number_x = bpy.context.scene.Arc_Blend.distribute_x
-    number_y = bpy.context.scene.Arc_Blend.distribute_y
-    # number_z = bpy.context.scene.Arc_Blend.distribute_z
-    # Bound is distance of two elements
-    bound_x = bpy.context.active_object.bound_box.data.dimensions[0]
-    # Max distance of all elements
-    # maximum_x = bound_x*quantity
-    distance_x = bpy.context.scene.Arc_Blend.distribute_distance_object_x
-    distance_y = bpy.context.scene.Arc_Blend.distribute_distance_object_y
-    # distance_z = bpy.context.scene.Arc_Blend.distribute_distance_object_z
-    x_copy = distance_x
-    y_copy = distance_y
-    try:
-        if number_x != 0:
-            for i in range(number_x, number_x+number_y):
-                selected[i].location[1] = selected[i-number_x].location[1]+ distance_y
-        
-        elif number_x == 0:
-            for i in range(1, number_y):
-                selected[i].location[1] = selected[i-1].location[1] + distance_y
-
-    except IndexError:
-        pass
-
-# ------------------------------------------------------------------------------
-# DISTRIBUTE DISTANCE OBJECT Z UPDATE
-
-
-def distribute_distance_object_z_upd(self, context):
-    selected = bpy.context.selected_objects
-    active = bpy.context.active_object
-    quantity = len(bpy.context.selected_objects)
-    # Number of elements
-    number_x = bpy.context.scene.Arc_Blend.distribute_x
-    number_y = bpy.context.scene.Arc_Blend.distribute_y
-    number_z = bpy.context.scene.Arc_Blend.distribute_z
-    # Bound is distance of two elements
-    bound_x = bpy.context.active_object.bound_box.data.dimensions[0]
-    # Max distance of all elements
-    # maximum_x = bound_x*quantity
-    distance_x = bpy.context.scene.Arc_Blend.distribute_distance_object_x
-    distance_y = bpy.context.scene.Arc_Blend.distribute_distance_object_y
-    distance_z = bpy.context.scene.Arc_Blend.distribute_distance_object_z
-    try:
-        for i in range(number_x, number_x+number_z):
-            selected[i].location[2] = selected[i-1].location[2]+distance_z
-    except IndexError:
-        pass
-
-# ------------------------------------------------------------------------------
-# DISTRIBUTE OBJECT X UPDATE
-
-
-def distribute_x_upd(self, context):
-    selected = bpy.context.selected_objects
-    active = bpy.context.active_object
-    quantity = len(bpy.context.selected_objects)
-    # Number of elements
-    number_x = bpy.context.scene.Arc_Blend.distribute_x
-    number_y = bpy.context.scene.Arc_Blend.distribute_y
-    # number_z = bpy.context.scene.Arc_Blend.distribute_z
-    # Bound is distance of two elements
-    bound_x = bpy.context.active_object.bound_box.data.dimensions[0]
-    bound_y = bpy.context.active_object.bound_box.data.dimensions[1]
-    bound_z = bpy.context.active_object.bound_box.data.dimensions[2]
-    # Max distance of all elements
-    # maximum_x = bound_x*quantity
-    distance_x = bpy.context.scene.Arc_Blend.distribute_distance_object_x
-    distance_y = bpy.context.scene.Arc_Blend.distribute_distance_object_y
-    # distance_z = bpy.context.scene.Arc_Blend.distribute_distance_object_z
-
-    try:
-        for i in range(1, number_x):
-            selected[i].location[2] = active.location[2]
-            selected[i].location[1] = active.location[1]
-            selected[i].location[0] = active.location[0] + i*distance_x
-            
-        for b in range(number_x, quantity):
-            selected[b].location[0] = active.location[0]
-            selected[b].location[1] = active.location[1]
-            selected[b].location[2] = active.location[2]
-    except IndexError:
-        pass
-
-# ------------------------------------------------------------------------------
-# DISTRIBUTE OBJECT Y UPDATE
-
-
-def distribute_y_upd(self, context):
-    selected = bpy.context.selected_objects
-    active = bpy.context.active_object
-    # active = bpy.context.active_object.matrix_world.translation
-    quantity = len(bpy.context.selected_objects)
-    # Number of elements
-    number_x = bpy.context.scene.Arc_Blend.distribute_x
-    number_y = bpy.context.scene.Arc_Blend.distribute_y
-    # number_z = bpy.context.scene.Arc_Blend.distribute_z
-    # Bound is distance of two elements
-    bound_x = bpy.context.active_object.bound_box.data.dimensions[0]
-    bound_y = bpy.context.active_object.bound_box.data.dimensions[1]
-    bound_z = bpy.context.active_object.bound_box.data.dimensions[2]
-    # Max distance of all elements
-    # maximum_x = bound_x*quantity
-    distance_x = bpy.context.scene.Arc_Blend.distribute_distance_object_x
-    distance_y = bpy.context.scene.Arc_Blend.distribute_distance_object_y
-    # distance_z = bpy.context.scene.Arc_Blend.distribute_distance_object_z
-    x_copy = distance_x
-    y_copy = distance_y
-    try:
-        if number_x != 0:
-            for i in range(number_x, number_x+number_y):
-                selected[i].location[0] = selected[i-number_x].location[0]
-                selected[i].location[1] = selected[i -
-                                                   number_x].location[1]+y_copy
-                selected[i].location[2] = selected[i-number_x].location[2]
-            for b in range(number_x+number_y+number_x-1, quantity):
-                selected[b].location[0] = active.location[0]
-                selected[b].location[1] = active.location[1]
-                selected[b].location[2] = active.location[2]
-        elif number_x == 0:
-            for i in range(1, number_y):
-                selected[i].location[2] = active.location[2]
-                selected[i].location[1] = active.location[1]+ i*distance_y
-                selected[i].location[0] = active.location[0]
-                
-            for b in range(number_y, quantity):
-                selected[b].location[0] = active.location[0]
-                selected[b].location[1] = active.location[1]
-                selected[b].location[2] = active.location[2]
-    except IndexError:
-        pass
-
-# ------------------------------------------------------------------------------
-# DISTRIBUTE OBJECT Z UPDATE
-
-
-def distribute_z_upd(self, context):
-    selected = bpy.context.selected_objects
-    active = bpy.context.active_object
-    quantity = len(bpy.context.selected_objects)
-    # Number of elements
-    number_x = bpy.context.scene.Arc_Blend.distribute_x
-    number_y = bpy.context.scene.Arc_Blend.distribute_y
-    number_z = bpy.context.scene.Arc_Blend.distribute_z
-    # Bound is distance of two elements
-    bound_x = bpy.context.active_object.bound_box.data.dimensions[0]
-    bound_y = bpy.context.active_object.bound_box.data.dimensions[1]
-    bound_z = bpy.context.active_object.bound_box.data.dimensions[2]
-    # Max distance of all elements
-    # maximum_x = bound_x*quantity
-    try:
-        if number_x == 0 and number_y == 0:
-            for i in range(1, number_z):
-                selected[i].location[0] = selected[i-1].location[0]
-                selected[i].location[1] = selected[i-1].location[1]
-                selected[i].location[2] = selected[i-1].location[2]+bound_z
-            for b in range(number_z, quantity):
-                selected[b].location[2] = active.location[2]
-        elif number_x >= 1:
-            for i in range(number_x, number_x+number_z):
-                selected[i].location[0] = selected[i-number_x].location[0]
-                selected[i].location[1] = selected[i-number_x].location[1]
-                selected[i].location[2] = selected[i -
-                                                   number_x].location[2]+bound_z
-            for b in range(number_x+number_z, quantity):
-                selected[b].location[2] = active.location[2]
-        elif number_y >= 1:
-            for i in range(number_y, number_y+number_z):
-                selected[i].location[0] = selected[i-number_y].location[0]
-                selected[i].location[1] = selected[i-number_y].location[1]
-                selected[i].location[2] = selected[i -
-                                                   number_y].location[2]+bound_z
-            for b in range(number_y+number_z, quantity):
-                selected[b].location[2] = active.location[2]
-    except IndexError:
-        pass
 
 # ------------------------------------------------------------------------------
 # DEF TOGGLE X-RAY
@@ -1387,11 +1231,11 @@ class modifier_array_detail (bpy.types.PropertyGroup):
         name="Vertex Mode", default=False, update=modelling_edit_mode_auto_edge_loop_upd,)
     # ----------Object Align Distance Panel Mode -----------------------------
     distance_object_x: bpy.props.FloatProperty(
-        name="Distance Object X", soft_min=0, soft_max=100, update=distance_object_x_upd)
+        name="Distance Object X", soft_min=0, soft_max=100)
     distance_object_y: bpy.props.FloatProperty(
-        name="Distance Object Y", soft_min=0, soft_max=100, update=distance_object_y_upd)
+        name="Distance Object Y", soft_min=0, soft_max=100)
     distance_object_z: bpy.props.FloatProperty(
-        name="Distance Object Z", soft_min=0, soft_max=100, update=distance_object_z_upd)
+        name="Distance Object Z", soft_min=0, soft_max=100)
     # ----------Object Align Rotation Panel Mode -----------------------------
     rotation_object_x: bpy.props.FloatProperty(
         name="Rotation Object X", soft_min=0, soft_max=100, update=rotation_object_x_upd, subtype="ANGLE")
@@ -1413,17 +1257,19 @@ class modifier_array_detail (bpy.types.PropertyGroup):
     proportional_align: bpy.props.BoolProperty(
         name="Proportional Align : ", default=False)
     # ----------Distribute Align Distance Panel Mode -----------------------------
-    distribute_distance_object_x: bpy.props.FloatProperty(
-        name="Distance Object X", soft_min=0, soft_max=100, update=distribute_distance_object_x_upd)
-    distribute_distance_object_y: bpy.props.FloatProperty(
-        name="Distance Object Y", soft_min=0, soft_max=100, update=distribute_distance_object_y_upd)
-    # distribute_distance_object_z: bpy.props.FloatProperty(name="Distance Object Z", soft_min=0, soft_max=100,update=distribute_distance_object_z_upd)
+    distance_object_x: bpy.props.FloatProperty(
+        name="Distance Object X", soft_min=0, soft_max=100, update=distance_object_x_upd)
+    distance_object_y: bpy.props.FloatProperty(
+        name="Distance Object Y", soft_min=0, soft_max=100, update=distance_object_y_upd)
+    distance_object_z: bpy.props.FloatProperty(
+        name="Distance Object Z", soft_min=0, soft_max=100, update=distance_object_z_upd)
     # ----------Distribute Objects-----------------------------
     distribute_x: bpy.props.IntProperty(
-        name="Distribute Object X", min=0, max=10000, update=distribute_x_upd)
+        name="Distribute Object X", min=0, max=10000, default=1)
     distribute_y: bpy.props.IntProperty(
-        name="Distribute Object Y", min=0, max=10000, update=distribute_y_upd)
-    # distribute_z: bpy.props.IntProperty(name = "Distribute Object Z", min = 0, max = 10000,update=distribute_z_upd)
+        name="Distribute Object Y", min=0, max=10000, default=1)
+    distribute_z: bpy.props.IntProperty(
+        name="Distribute Object Z", min=1, max=10000 , default=1)
     distribute_objects: bpy.props.BoolProperty(
         name="Distribute Objects : ", default=False)
     # ----------RELATIVE OFFSET Check Box-----------------------------
@@ -1458,6 +1304,103 @@ class modifier_array_detail (bpy.types.PropertyGroup):
         name="Viewport Display", default=False, update = cutter_object_collection_viewport_upd)
     cutter_object_collection_render: bpy.props.BoolProperty(
         name="Render Display", default=False, update = cutter_object_collection_render_upd)
+    
+    
+    x_distance: bpy.props.FloatProperty(
+        name="X Distance",
+        default=3.0,
+        min=0,
+        description="X Distance"
+        )
+    y_distance: bpy.props.FloatProperty(
+        name="Y Distance",
+        default=3.0,
+        min=0,
+        description="Y Distance"
+        )
+    z_distance: bpy.props.FloatProperty(
+        name="Z Distance",
+        default=3.0,
+        min=0,
+        description="Z Distance"
+        )
+    
+    
+    radius: bpy.props.FloatProperty(
+        name="Radius Circle",
+        default=3.0,
+        min=0,
+        description="Distribute the Circle Radius"
+        )
+    square_length: bpy.props.FloatProperty(
+        name="Square Length",
+        default=3.0,
+        min=0,
+        description="Distribute the Square Length"
+        )
+    radius_arc:bpy.props.FloatProperty(
+        name="Radius Arc",
+        default=3.0,
+        min=0,
+        description="Distribute Radius Arc"
+        )
+    start_angle :bpy.props.FloatProperty(
+        name="Start Angle Radius Arc",
+        default=3.0,
+        min=0,
+        description="Start Angle Radius Arc"
+        )
+    end_angle: bpy.props.StringProperty(
+        name="End Angle",
+        default="math.pi",
+        description="End angle for distribution",
+    )
+    curve_object: bpy.props.PointerProperty(
+    type=bpy.types.Object,
+    name="Select Curve",
+    description="Select the Curve Object",
+    )
+    
+    mesh_object: bpy.props.PointerProperty(
+        name="Select Mesh",
+        type=bpy.types.Object,
+        description="Select the Mesh Object",
+    )
+    
+    use_grid_3d: bpy.props.BoolProperty(
+        name="Distribute in 3D Grid",
+        default=False,
+        description="Enable distribution in a 3D grid pattern",
+    )
+    
+    use_circle: bpy.props.BoolProperty(
+        name="Distribute in Circle",
+        default=False,
+        description="Enable distribution in a circular pattern",
+    )
+    
+    use_square: bpy.props.BoolProperty(
+        name="Distribute in Square",
+        default=False,
+        description="Enable distribution in a square pattern",
+    )
+    use_arc: bpy.props.BoolProperty(
+        name="Distribute in Arc",
+        default=False,
+        description="Enable distribution in an Arc pattern",
+    )
+    
+    use_curve: bpy.props.BoolProperty(
+        name="Distribute on Curve",
+        default=False,
+        description="Enable distribution on a Curve pattern",
+    )
+    
+    use_vertices: bpy.props.BoolProperty(
+        name="Distribute on Mesh",
+        default=False,
+        description="Enable distribution on a Mesh vertices pattern",
+    )
     
 # ------------------------------------------------------------------------------
 # RELATIVE OFFSET
@@ -1506,6 +1449,9 @@ class OFFSET_PT_Relative_Offset (bpy.types.Panel):
                 False
         else:
             pass
+
+
+
 
 
 
@@ -1652,6 +1598,538 @@ class display_panel_show_rendered (bpy.types.Operator):
         bpy.context.space_data.shading.type = 'RENDERED'
         return {"FINISHED"}
 
+# ------------------------------------------------------------------------------
+# Function to get the position along the chosen axis
+def get_position(obj, axis='X'):
+    if axis == 'X':
+        return obj.location.x
+    elif axis == 'Y':
+        return obj.location.y
+    elif axis == 'Z':
+        return obj.location.z
+    else:
+        return 0  # Return default value if axis is not recognized
+
+
+
+
+# ------------------------------------------------------------------------------
+#Distribute Grid 3D
+class OBJECT_OT_DistributeGrid3D(bpy.types.Operator):
+    bl_idname = "object.distribute_grid_3d"
+    bl_label = "Distribute in 3D Grid"
+    
+    def execute(self, context):
+        # Accessing scene properties directly
+        scene = context.scene
+        x_copies = scene.Arc_Blend.distribute_x
+        y_copies = scene.Arc_Blend.distribute_y
+        z_copies = scene.Arc_Blend.distribute_z
+        x_distance = bpy.context.scene.Arc_Blend.x_distance
+        y_distance = bpy.context.scene.Arc_Blend.y_distance 
+        z_distance = bpy.context.scene.Arc_Blend.z_distance
+            
+        selected_objects = bpy.context.selected_objects
+        if len(selected_objects) < 1:
+            self.report({'ERROR'}, "Please select at least one object.")
+            return {'CANCELLED'}
+
+        # Sort objects based on their positions along X, Y, and Z axes
+        sorted_objects_x = sorted(selected_objects, key=lambda obj: obj.location.x)
+        sorted_objects_y = sorted(selected_objects, key=lambda obj: obj.location.y)
+        sorted_objects_z = sorted(selected_objects, key=lambda obj: obj.location.z)
+
+        # Distribute objects in a 3D grid pattern along X, Y, and Z axes
+        for i in range(z_copies):
+            for j in range(y_copies):
+                for k in range(x_copies):
+                    index = i * (y_copies * x_copies) + j * x_copies + k
+                    if index < len(sorted_objects_x):
+                        obj = sorted_objects_x[index]
+                        location = obj.location.copy()
+                        location.x = k * x_distance  # Set X position
+                        location.y = j * y_distance  # Set Y position
+                        location.z = i * z_distance  # Set Z position
+                        obj.location = location
+        
+        return {'FINISHED'}
+
+
+#Distribute objects in a circular pattern
+class OBJECT_OT_DistributeCircle(bpy.types.Operator):
+    bl_idname = "object.distribute_circle"
+    bl_label = "Distribute in Circle"
+    
+    def execute(self, context):
+        radius= bpy.context.scene.Arc_Blend.radius
+        selected_objects = bpy.context.selected_objects
+        num_objects = len(selected_objects)
+
+        if num_objects < 1:
+            print("Please select at least one object.")
+            return
+
+        angle_increment = (2 * math.pi) / num_objects
+        angle = 0
+
+        # Sort objects based on their positions along the circle
+        sorted_objects = sorted(selected_objects, key=lambda obj: obj.name)
+
+        # Distribute objects along a circular path
+        for obj in sorted_objects:
+            location = obj.location.copy()
+            location.x = radius * math.cos(angle)  # Calculate X position
+            location.y = radius * math.sin(angle)  # Calculate Y position
+            obj.location = location
+            angle += angle_increment
+        return {'FINISHED'}
+
+
+
+#Distribute objects in a Square pattern
+class OBJECT_OT_DistributeSquare(bpy.types.Operator):
+    bl_idname = "object.distribute_square"
+    bl_label = "Distribute in Square"
+    
+    def execute(self, context):
+        side_length = bpy.context.scene.Arc_Blend.square_length 
+        selected_objects = bpy.context.selected_objects
+    
+        num_objects = len(selected_objects)
+
+        if num_objects < 1:
+            print("Please select at least one object.")
+            return
+
+        # Determine the number of objects per side
+        objects_per_side = int(math.sqrt(num_objects))
+
+        # Sort objects based on their positions for even distribution
+        sorted_objects = sorted(selected_objects, key=lambda obj: obj.name)
+
+        # Distribute objects along a square path
+        for i, obj in enumerate(sorted_objects):
+            row = i // objects_per_side
+            col = i % objects_per_side
+
+            location = obj.location.copy()
+            location.x = (col - objects_per_side / 2) * side_length  # Calculate X position
+            location.y = (row - objects_per_side / 2) * side_length  # Calculate Y position
+            obj.location = location
+        return {'FINISHED'}
+
+
+#Distribute objects in a Arc pattern
+class OBJECT_OT_DistributeArc(bpy.types.Operator):
+    bl_idname = "object.distribute_arc"
+    bl_label = "Distribute in Arc"
+    
+    def execute(self, context):
+        radius = bpy.context.scene.Arc_Blend.radius_arc 
+        start_angle = bpy.context.scene.Arc_Blend.start_angle 
+        end_angle = eval(bpy.context.scene.Arc_Blend.end_angle.replace("'", ""))
+
+        
+        
+        selected_objects = bpy.context.selected_objects
+        
+        num_objects = len(selected_objects)
+
+        if num_objects < 1:
+            print("Please select at least one object.")
+            return
+
+        angle_increment = (end_angle - start_angle) / max(num_objects - 1, 1)
+
+        # Sort objects based on their positions for even distribution
+        sorted_objects = sorted(selected_objects, key=lambda obj: obj.name)
+
+        # Distribute objects along an arc path
+        angle = start_angle
+        for obj in sorted_objects:
+            location = obj.location.copy()
+            location.x = radius * math.cos(angle)  # Calculate X position
+            location.y = radius * math.sin(angle)  # Calculate Y position
+            obj.location = location
+            angle += angle_increment
+        return {'FINISHED'}
+  
+
+# Function to calculate the distance between two points in 3D space
+def distance(p1, p2):
+    return math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2 + (p1.z - p2.z)**2)
+
+
+
+class OBJECT_OT_DistributeCurve(bpy.types.Operator):
+    bl_idname = "object.distribute_curve"
+    bl_label = "Distribute Along Curve"
+    
+    def execute(self, context):
+        selected_objects = bpy.context.selected_objects
+        if len(selected_objects) < 1:
+            print("Please select at least one object.")
+            return {'CANCELLED'}
+        
+        curve_object = context.scene.Arc_Blend.curve_object
+        if curve_object is None or curve_object.type != 'CURVE':
+            print("Please select a curve object.")
+            return {'CANCELLED'}
+        
+        curve_data = curve_object.data
+
+        # Calculate the total length of the curve
+        curve_length = 0
+        for spline in curve_data.splines:
+            for segment in spline.bezier_points:
+                if segment.handle_right:
+                    curve_length += (segment.handle_right - segment.co).length
+                if segment.handle_left:
+                    curve_length += (segment.handle_left - segment.co).length
+
+        # Calculate the step along the curve for object distribution
+        num_objects = len(selected_objects)
+        step = curve_length / max(num_objects - 1, 1)
+
+        # Place objects along the curve
+        current_position = 0
+        for obj in selected_objects:
+            current_length = 0
+            found_segment = None
+
+            # Find the segment where the object should be placed
+            for spline in curve_data.splines:
+                for segment in spline.bezier_points:
+                    if segment.handle_right:
+                        seg_length = (segment.handle_right - segment.co).length
+                        current_length += seg_length
+                        if current_length >= current_position:
+                            found_segment = segment
+                            break
+                    if found_segment:
+                        break
+                    if segment.handle_left:
+                        seg_length = (segment.handle_left - segment.co).length
+                        current_length += seg_length
+                        if current_length >= current_position:
+                            found_segment = segment
+                            break
+                    if found_segment:
+                        break
+                
+                if found_segment:
+                    break
+            
+            if found_segment:
+                location = curve_object.matrix_world @ found_segment.co
+                obj.location = location
+            
+            current_position += step
+
+        return {'FINISHED'}
+
+class OBJECT_OT_DistributeOnVertices(bpy.types.Operator):
+    bl_idname = "object.distribute_on_vertices"
+    bl_label = "Distribute on Vertices"
+    
+    def execute(self, context):
+        
+        mesh_object = bpy.context.scene.Arc_Blend.mesh_object
+
+        
+        selected_objects = bpy.context.selected_objects
+        if len(selected_objects) < 1:
+            print("Please select at least one object.")
+            return {'CANCELLED'}
+        
+ 
+        if mesh_object is None or mesh_object.type != 'MESH':
+            print("Please select a mesh object.")
+            return {'CANCELLED'}
+        
+        distribution_objects = bpy.context.selected_objects
+        #[obj for obj in bpy.context.selected_objects if obj.type != 'MESH']
+        
+        if not distribution_objects:
+            print("Please select objects to distribute.")
+            return {'CANCELLED'}
+        
+        selected_vertices = [v for v in mesh_object.data.vertices if v.select]
+        
+        if not selected_vertices:
+            print("Please select vertices on the mesh object.")
+            return {'CANCELLED'}
+        
+        num_vertices = len(selected_vertices)
+        num_distribution_objects = len(distribution_objects)
+        
+        if num_vertices == 0 or num_distribution_objects == 0:
+            print("No vertices selected or no objects to distribute.")
+            return {'CANCELLED'}
+        
+        # Distribute objects on selected vertices of the mesh object
+        for i, vertex in enumerate(selected_vertices):
+            obj_index = i % num_distribution_objects
+            target_object = distribution_objects[obj_index]
+            
+            # Place the distribution object on the vertex location
+            target_object.location = mesh_object.matrix_world @ vertex.co
+        
+        return {'FINISHED'}
+
+class OBJECT_OT_DistributeOnEdges(bpy.types.Operator):
+    bl_idname = "object.distribute_on_edges"
+    bl_label = "Distribute on Edges"
+    
+    def execute(self, context):
+        selected_objects = bpy.context.selected_objects
+        mesh_object = bpy.context.scene.Arc_Blend.mesh_object
+
+        if len(selected_objects) < 1:
+            print("Please select at least one object.")
+            return {'CANCELLED'}
+
+        if mesh_object is None or mesh_object.type != 'MESH':
+            print("Please select a mesh object.")
+            return {'CANCELLED'}
+
+        distribution_objects = selected_objects
+
+        selected_edges = [e for e in mesh_object.data.edges if e.select]
+
+        if not selected_edges:
+            print("Please select edges on the mesh object.")
+            return {'CANCELLED'}
+
+        num_edges = len(selected_edges)
+        num_distribution_objects = len(distribution_objects)
+
+        if num_edges == 0 or num_distribution_objects == 0:
+            print("No edges selected or no objects to distribute.")
+            return {'CANCELLED'}
+
+        # Distribute objects along selected edges of the mesh object
+        for i, edge in enumerate(selected_edges):
+            obj_index = i % num_distribution_objects
+            target_object = distribution_objects[obj_index]
+
+            if len(edge.vertices) != 2:
+                continue  # Skip edges without two vertices
+
+            # Calculate the center of the edge
+            edge_center = (mesh_object.matrix_world @ mesh_object.data.vertices[edge.vertices[0]].co +
+                           mesh_object.matrix_world @ mesh_object.data.vertices[edge.vertices[1]].co) / 2
+
+            # Place the distribution object at the edge center
+            target_object.location = edge_center
+
+        return {'FINISHED'}
+
+class OBJECT_OT_DistributeOnEdgesRotated(bpy.types.Operator):
+    bl_idname = "object.distribute_on_edgesrotated"
+    bl_label = "Distribute on Edges Rotated"
+    
+    def execute(self, context):
+        selected_objects = bpy.context.selected_objects
+        mesh_object = bpy.context.scene.Arc_Blend.mesh_object
+
+        if len(selected_objects) < 1:
+            print("Please select at least one object.")
+            return {'CANCELLED'}
+
+        if mesh_object is None or mesh_object.type != 'MESH':
+            print("Please select a mesh object.")
+            return {'CANCELLED'}
+
+        distribution_objects = selected_objects
+
+        selected_edges = [e for e in mesh_object.data.edges if e.select]
+
+        if not selected_edges:
+            print("Please select edges on the mesh object.")
+            return {'CANCELLED'}
+
+        num_edges = len(selected_edges)
+        num_distribution_objects = len(distribution_objects)
+
+        if num_edges == 0 or num_distribution_objects == 0:
+            print("No edges selected or no objects to distribute.")
+            return {'CANCELLED'}
+
+        # Distribute objects along selected edges of the mesh object
+        for i, edge in enumerate(selected_edges):
+            obj_index = i % num_distribution_objects
+            target_object = distribution_objects[obj_index]
+
+            if len(edge.vertices) != 2:
+                continue  # Skip edges without two vertices
+
+            # Calculate the center of the edge
+            edge_center = (mesh_object.matrix_world @ mesh_object.data.vertices[edge.vertices[0]].co +
+                           mesh_object.matrix_world @ mesh_object.data.vertices[edge.vertices[1]].co) / 2
+
+            # Place the distribution object at the edge center
+            target_object.location = edge_center
+
+            # Calculate the rotation for the object
+            vec = mesh_object.data.vertices[edge.vertices[1]].co - mesh_object.data.vertices[edge.vertices[0]].co
+            quat = vec.to_track_quat('X', 'Z')
+            target_object.rotation_euler = quat.to_euler()
+
+        return {'FINISHED'}
+
+class OBJECT_OT_DistributeOnFacesRotated(bpy.types.Operator):
+    bl_idname = "object.distribute_on_facesrotated"
+    bl_label = "Distribute on Faces Rotated"
+    
+    def execute(self, context):
+        selected_objects = bpy.context.selected_objects
+        mesh_object = bpy.context.scene.Arc_Blend.mesh_object
+
+        if len(selected_objects) < 1:
+            print("Please select at least one object.")
+            return {'CANCELLED'}
+
+        if mesh_object is None or mesh_object.type != 'MESH':
+            print("Please select a mesh object.")
+            return {'CANCELLED'}
+
+        distribution_objects = selected_objects
+
+        selected_faces = [f for f in mesh_object.data.polygons if f.select]
+
+        if not selected_faces:
+            print("Please select faces on the mesh object.")
+            return {'CANCELLED'}
+
+        num_faces = len(selected_faces)
+        num_distribution_objects = len(distribution_objects)
+
+        if num_faces == 0 or num_distribution_objects == 0:
+            print("No faces selected or no objects to distribute.")
+            return {'CANCELLED'}
+
+        # Distribute objects along selected faces of the mesh object
+        for i, face in enumerate(selected_faces):
+            obj_index = i % num_distribution_objects
+            target_object = distribution_objects[obj_index]
+
+            # Calculate the center of the face
+            face_center = mesh_object.matrix_world @ face.center
+
+            # Place the distribution object at the face center
+            target_object.location = face_center
+
+            # Calculate the normal of the face
+            face_normal = face.normal
+
+            # Calculate the rotation for the object
+            quat = face_normal.to_track_quat('Z', 'Y')
+            target_object.rotation_euler = quat.to_euler()
+
+        return {'FINISHED'}
+    
+    
+    
+class OBJECT_OT_DistributeOnFaces(bpy.types.Operator):
+    bl_idname = "object.distribute_on_faces"
+    bl_label = "Distribute on Faces"
+    
+    def execute(self, context):
+        selected_objects = bpy.context.selected_objects
+        mesh_object = bpy.context.scene.Arc_Blend.mesh_object
+
+        if len(selected_objects) < 1:
+            print("Please select at least one object.")
+            return {'CANCELLED'}
+
+        if mesh_object is None or mesh_object.type != 'MESH':
+            print("Please select a mesh object.")
+            return {'CANCELLED'}
+
+        distribution_objects = selected_objects
+
+        selected_faces = [f for f in mesh_object.data.polygons if f.select]
+
+        if not selected_faces:
+            print("Please select faces on the mesh object.")
+            return {'CANCELLED'}
+
+        num_faces = len(selected_faces)
+        num_distribution_objects = len(distribution_objects)
+
+        if num_faces == 0 or num_distribution_objects == 0:
+            print("No faces selected or no objects to distribute.")
+            return {'CANCELLED'}
+
+        # Distribute objects along selected faces of the mesh object
+        for i, face in enumerate(selected_faces):
+            obj_index = i % num_distribution_objects
+            target_object = distribution_objects[obj_index]
+
+            # Calculate the center of the face
+            face_center = mesh_object.matrix_world @ face.center
+
+            # Place the distribution object at the face center
+            target_object.location = face_center
+
+        return {'FINISHED'}
+
+
+
+
+
+class OBJECT_OT_DistributeOnVerticesRotated(bpy.types.Operator):
+    bl_idname = "object.distribute_on_vertices_rotated"
+    bl_label = "Distribute on Vertices Rotated"
+
+    def execute(self, context):
+        mesh_object = bpy.context.scene.Arc_Blend.mesh_object
+        selected_objects = bpy.context.selected_objects
+
+        if len(selected_objects) < 1:
+            print("Please select at least one object.")
+            return {'CANCELLED'}
+
+        if mesh_object is None or mesh_object.type != 'MESH':
+            print("Please select a mesh object.")
+            return {'CANCELLED'}
+
+        distribution_objects = selected_objects
+
+        selected_vertices = [v for v in mesh_object.data.vertices if v.select]
+
+        if not selected_vertices:
+            print("Please select vertices on the mesh object.")
+            return {'CANCELLED'}
+
+        num_vertices = len(selected_vertices)
+        num_distribution_objects = len(distribution_objects)
+
+        if num_vertices == 0 or num_distribution_objects == 0:
+            print("No vertices selected or no objects to distribute.")
+            return {'CANCELLED'}
+
+        # Distribute objects on selected vertices of the mesh object
+        for i, vertex in enumerate(selected_vertices):
+            obj_index = i % num_distribution_objects
+            target_object = distribution_objects[obj_index]
+
+            # Place the distribution object on the vertex location
+            target_object.location = mesh_object.matrix_world @ vertex.co
+
+            # Calculate the rotation for the object based on the vertex normal
+            normal = mesh_object.data.vertices[vertex.index].normal
+
+            # Calculate the rotation angles from the normal
+            rot_quat = normal.to_track_quat('Z', 'Y')
+
+            # Apply the rotation to the object
+            target_object.rotation_euler = rot_quat.to_euler()
+
+        return {'FINISHED'}
+
+
 def register():
     bpy.utils.register_class(ARCBLENDMODIFIERS_PT_Panel)
     bpy.utils.register_class(MODIFIER_PT_Transform_And_Edit)
@@ -1687,6 +2165,19 @@ def register():
     bpy.utils.register_class(display_panel_show_solid)
     bpy.utils.register_class(display_panel_show_material)
     bpy.utils.register_class(display_panel_show_rendered)
+    bpy.utils.register_class(OBJECT_OT_DistributeGrid3D)
+    bpy.utils.register_class(OBJECT_OT_DistributeCircle)
+    bpy.utils.register_class(OBJECT_OT_DistributeSquare)
+    bpy.utils.register_class(OBJECT_OT_DistributeArc)
+    bpy.utils.register_class(OBJECT_OT_DistributeCurve)
+    bpy.utils.register_class(OBJECT_OT_DistributeOnVertices)
+    bpy.utils.register_class(OBJECT_OT_DistributeOnEdges)
+    bpy.utils.register_class(OBJECT_OT_DistributeOnEdgesRotated)
+    bpy.utils.register_class(OBJECT_OT_DistributeOnFaces)
+    bpy.utils.register_class(OBJECT_OT_DistributeOnFacesRotated)
+    bpy.utils.register_class(OBJECT_OT_DistributeOnVerticesRotated)
+    
+    
 
 
 def unregister():
@@ -1724,4 +2215,15 @@ def unregister():
     bpy.utils.unregister_class(display_panel_show_solid)
     bpy.utils.unregister_class(display_panel_show_material)
     bpy.utils.unregister_class(display_panel_show_rendered)
+    bpy.utils.unregister_class(OBJECT_OT_DistributeGrid3D)
+    bpy.utils.unregister_class(OBJECT_OT_DistributeCircle)
+    bpy.utils.unregister_class(OBJECT_OT_DistributeSquare)
+    bpy.utils.unregister_class(OBJECT_OT_DistributeArc)
+    bpy.utils.unregister_class(OBJECT_OT_DistributeCurve)
+    bpy.utils.unregister_class(OBJECT_OT_DistributeOnVertices)
+    bpy.utils.unregister_class(OBJECT_OT_DistributeOnEdges)
+    bpy.utils.unregister_class(OBJECT_OT_DistributeOnEdgesRotated)
+    bpy.utils.unregister_class(OBJECT_OT_DistributeOnFaces)
+    bpy.utils.unregister_class(OBJECT_OT_DistributeOnFacesRotated)
+    bpy.utils.unregister_class(OBJECT_OT_DistributeOnVerticesRotated)
     
