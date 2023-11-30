@@ -1640,9 +1640,8 @@ class modelling_edit_faces_extrude_individual (bpy.types.Operator):
         Arc_Blend = scene.Arc_Blend
 
         bpy.ops.mesh.extrude_faces_move("INVOKE_DEFAULT",
-                                        MESH_OT_extrude_faces_indiv={
-                                            "mirror": False},
-                                        TRANSFORM_OT_shrink_fatten={"value": 0, "use_even_offset": False, "mirror": False, "use_proportional_edit": False, "proportional_edit_falloff": 'SMOOTH', "proportional_size": 1, "use_proportional_connected": False, "use_proportional_projected": False, "snap": False, "snap_target": 'CLOSEST', "snap_point": (0, 0, 0), "snap_align": False, "snap_normal": (0, 0, 0), "release_confirm": False, "use_accurate": False})
+                                        MESH_OT_extrude_faces_indiv={"mirror": False},
+                                        TRANSFORM_OT_shrink_fatten={"value": 0, "use_even_offset": False, "mirror": False, "use_proportional_edit": False, "proportional_edit_falloff": 'SMOOTH', "proportional_size": 1, "use_proportional_connected": False, "use_proportional_projected": False, "snap": False, "release_confirm": False, "use_accurate": False})
 
         return {"FINISHED"}
 # ------------------------------------------------------------------------------
