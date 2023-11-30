@@ -1198,11 +1198,11 @@ class modifier_array_detail (bpy.types.PropertyGroup):
     )
     # Manuel Origin Change
     arc_blend_manuel_origin: bpy.props.IntProperty(
-        name="Z level", soft_min=-100, soft_max=100, update=origin_set_manuel_upd, subtype="PERCENTAGE")
+        name="Z level", soft_min=0, soft_max=100, update=origin_set_manuel_upd, subtype="PERCENTAGE")
     arc_blend_manuel_origin_y: bpy.props.IntProperty(
-        name="Y level", soft_min=-100, soft_max=100, update=origin_set_manuel_upd_y, subtype="PERCENTAGE")
+        name="Y level", soft_min=0, soft_max=100, update=origin_set_manuel_upd_y, subtype="PERCENTAGE")
     arc_blend_manuel_origin_x: bpy.props.IntProperty(
-        name="X level", soft_min=-100, soft_max=100, update=origin_set_manuel_upd_x, subtype="PERCENTAGE")
+        name="X level", soft_min=0, soft_max=100, update=origin_set_manuel_upd_x, subtype="PERCENTAGE")
     # ----------SET Origin Manuel Axis ON/OFF----------------------------------
     arc_blend_manuel_axis: bpy.props.BoolProperty(
         name="Set Origin of the Objects", default=False, description="Opens to manuel axis settings")
