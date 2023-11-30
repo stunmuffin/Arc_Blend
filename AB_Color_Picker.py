@@ -330,9 +330,9 @@ def rgb_to_hex(rgb):
     return hex_color.upper()  # Optionally, convert to uppercase
 
     
-class ColorPalettePanelArcBlend(bpy.types.Panel):
+class PANEL_PT_ColorPaletteArcBlend(bpy.types.Panel):
     bl_label = "AB Color Palette"
-    bl_idname = "PT_ColorPalette"
+    bl_idname = "PANEL_PT_ColorPaletteArcBlend"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Arc Blend"
@@ -488,7 +488,7 @@ def register():
         name="Hex Color",
         default=""  # Set default hex color here
     )
-    bpy.utils.register_class(ColorPalettePanelArcBlend)
+    bpy.utils.register_class(PANEL_PT_ColorPaletteArcBlend)
     bpy.utils.register_class(ImportCSSPaletteOperator)
     bpy.utils.register_class(ExportCSSPaletteOperator)
     bpy.utils.register_class(ImportJPEGPaletteOperator)  # Register the new operator
@@ -504,7 +504,7 @@ def unregister():
     del bpy.types.Scene.css_palette_file
     del bpy.types.Scene.jpeg_palette_file  # Remove the JPEG file property
     del bpy.types.Scene.hex_color
-    bpy.utils.unregister_class(ColorPalettePanelArcBlend)
+    bpy.utils.unregister_class(PANEL_PT_ColorPaletteArcBlend)
     bpy.utils.unregister_class(ImportCSSPaletteOperator)
     bpy.utils.unregister_class(ExportCSSPaletteOperator)
     bpy.utils.unregister_class(ImportJPEGPaletteOperator)  # Register the new operator
