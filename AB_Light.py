@@ -83,28 +83,30 @@ class LIGHT_UL_List(bpy.types.UIList):
 # ------------------------------------------------------------------------------
 # ADD LIGHT TO LIST
 
-class light_panel_add_light (bpy.types.Operator):
+class light_panel_add_light(bpy.types.Operator):
     """Add a new item to the list"""
 
     bl_label = ""
     bl_idname = "object.button_light_panel_add_light"
-    
 
     def execute(self, context):
         try:
-            light_list_scn =[]
+            light_list_scn = []
             for i in bpy.context.scene.objects[:]:
                 if i.type == "LIGHT":
                     light_list_scn.append(i)
             for i in light_list_scn:
-                scene= bpy.context.scene
+                scene = bpy.context.scene
                 light = i
                 index = scene.light_list_index
                 item = scene.light_list.add()
                 item.name = light.name
                 item.light_ui_index = len(scene.light_list)
                 scene.light_list_index = len(scene.light_list) - 1
-        except (AttributeError,KeyError,UnboundLocalError) :
+                
+                # Break after adding one item to the list
+                break
+        except (AttributeError, KeyError, UnboundLocalError):
             pass
 
         return {'FINISHED'}
@@ -113,15 +115,15 @@ class light_panel_add_light (bpy.types.Operator):
 # DELETE OBJECT FROM LIST LIGHT
 
 
-class light_panel_remove_light (bpy.types.Operator):
-    """Remove item from the list"""
+class light_panel_remove_light(bpy.types.Operator):
+    """Remove items from the list"""
 
     bl_label = ""
     bl_idname = "object.button_light_panel_remove_light"
 
     def execute(self, context):
         try:
-            light_list_scn =[]
+            light_list_scn = []
             for i in bpy.context.scene.objects[:]:
                 if i.type == "LIGHT":
                     light_list_scn.append(i)
@@ -131,9 +133,13 @@ class light_panel_remove_light (bpy.types.Operator):
                 index = scene.light_list_index
                 scene.light_list_index -= 1
                 scene.light_list.remove(index)
-        except (AttributeError,KeyError,UnboundLocalError) :
+                # Break after adding one item to the list
+                break
+        except (AttributeError, KeyError, UnboundLocalError):
             pass
+
         return {'FINISHED'}
+
 
 # ------------------------------------------------------------------------------
 # DEF LIGHT
