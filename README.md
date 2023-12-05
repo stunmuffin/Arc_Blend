@@ -56,6 +56,11 @@
 
 ![Align Tools](https://github.com/stunmuffin/Arc_Blend/assets/48792613/2185e7e1-1214-4a37-9a5c-48f37bda44e0)
 
+• Added new featues Copy and Paste Material or Materials:
+
+![CopyPasteMaterial](https://github.com/stunmuffin/Arc_Blend/assets/48792613/8bb7e603-aac9-4601-940f-b082b1dbc15f)
+
+
 # Installation
 
 1.) Go to main area :  https://github.com/stunmuffin/Arc_Blend
