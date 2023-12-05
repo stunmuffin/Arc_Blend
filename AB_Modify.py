@@ -417,48 +417,48 @@ class TRANSFORM_PT_Edit_Object_Panel (bpy.types.Panel):
                 box.prop(Arc_Blend, "align_objects_panel",
                          text="Align Tools ", icon="ALIGN_JUSTIFY")
                 if bpy.context.scene.Arc_Blend.align_objects_panel:
-                    alignment_list = bpy.context.scene.alignment_list
-                    col = layout.column()
-                    box = layout.box()
+                    sub = box.column(align=True)
+
 
                     # Main Label: Align Position (World)
-                    box.label(text="Align Position (Global)", icon='WORLD_DATA')
+                    sub.label(text="Align Position (Global):", icon='WORLD_DATA')
 
                     # Features X Y Z check box
-                    row = box.row()
-                    
-                    row.prop(alignment_list, "align_position_x" , text= "X")
-                    row.prop(alignment_list, "align_position_y" , text= "Y")
-                    row.prop(alignment_list, "align_position_z" , text= "Z")
-                    
+                    sub = box.row()
+                    sub.prop(alignment_list, "align_position_x" , text= "X")
+                    sub.prop(alignment_list, "align_position_y" , text= "Y")
+                    sub.prop(alignment_list, "align_position_z" , text= "Z")
+                    sub = box.column(align=True)
                     
 
                     # Align Position Options: Minimum, Center, Origin, Maximum
-                    box.label(text="Align Position Options:")
+                    sub.label(text="Align Position Options:")
                     
-                    box.prop(alignment_list, "selected_alignment", text="Selected Object")
-                    box.prop(alignment_list, "target_alignment", text="Target Object")
+                    sub.prop(alignment_list, "selected_alignment", text="Selected Object")
+                    sub.prop(alignment_list, "target_alignment", text="Target Object")
                     
                     box.operator("object.align_objects", text= "Align")
 
                         
 
-                    box.prop(alignment_list, "target_objects")
+                    sub.prop(alignment_list, "target_objects")
                     
-
+                    sub = box.column(align=True)
                     # Align Orientation (Local) X Y Z check box
-                    box.label(text="Align Orientation (Local)")
-                    row = box.row()
-                    row.prop(alignment_list, "align_orientation_x", text= "X")
-                    row.prop(alignment_list, "align_orientation_y", text= "Y")
-                    row.prop(alignment_list, "align_orientation_z", text= "Z")
+                    sub.label(text="Align Orientation (Local):")
+                    sub = box.row()
+                    sub.prop(alignment_list, "align_orientation_x", text= "X")
+                    sub.prop(alignment_list, "align_orientation_y", text= "Y")
+                    sub.prop(alignment_list, "align_orientation_z", text= "Z")
+                    sub = box.column(align=True)
 
                     # Match Scale: X Y Z
-                    box.label(text="Match Scale:")
-                    row = box.row()
-                    row.prop(alignment_list, "match_scale_x", text= "X")
-                    row.prop(alignment_list, "match_scale_y", text= "Y")
-                    row.prop(alignment_list, "match_scale_z", text= "Z")
+                    sub.label(text="Match Scale:")
+                    sub = box.row()
+                    sub.prop(alignment_list, "match_scale_x", text= "X")
+                    sub.prop(alignment_list, "match_scale_y", text= "Y")
+                    sub.prop(alignment_list, "match_scale_z", text= "Z")
+                    sub = box.column(align=True)
                     
                     
                          
