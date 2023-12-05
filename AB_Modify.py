@@ -1,6 +1,6 @@
 import random
 import sys
-from mathutils import Matrix, Vector
+from mathutils import Matrix, Vector,Euler
 import time
 import numpy as np
 import math
@@ -327,6 +327,7 @@ class TRANSFORM_PT_Edit_Object_Panel (bpy.types.Panel):
         scene = context.scene
         Arc_Blend = scene.Arc_Blend
         col = layout.column()
+        alignment_list = bpy.context.scene.alignment_list
         
         col.prop(obj, "name")
         col.prop(obj, "type")
@@ -367,6 +368,8 @@ class TRANSFORM_PT_Edit_Object_Panel (bpy.types.Panel):
                     "object.button_transform_edit_object_align_bound", text="All")
                 box.prop(Arc_Blend, "distribute_objects",
                          text="Distribute Objects ", icon="MOD_ARRAY")
+                
+                
                 if bpy.context.scene.Arc_Blend.distribute_objects:
                     sub = box.column(align=True)
                     sub.label(text="Distribute Objects : ")
@@ -410,8 +413,57 @@ class TRANSFORM_PT_Edit_Object_Panel (bpy.types.Panel):
                         sub.operator("object.distribute_on_facesrotated", text="Distribute on Faces (Rotated)")
                 else:
                     pass
+                
+                box.prop(Arc_Blend, "align_objects_panel",
+                         text="Align Objects ", icon="ALIGN_JUSTIFY")
+                if bpy.context.scene.Arc_Blend.align_objects_panel:
+                    alignment_list = bpy.context.scene.alignment_list
+                    col = layout.column()
+                    box = layout.box()
+
+                    # Main Label: Align Position (World)
+                    box.label(text="Align Position (Global)", icon='WORLD_DATA')
+
+                    # Features X Y Z check box
+                    row = box.row()
+                    
+                    row.prop(alignment_list, "align_position_x" , text= "X")
+                    row.prop(alignment_list, "align_position_y" , text= "Y")
+                    row.prop(alignment_list, "align_position_z" , text= "Z")
+                    
+                    
+
+                    # Align Position Options: Minimum, Center, Origin, Maximum
+                    box.label(text="Align Position Options:")
+                    
+                    box.prop(alignment_list, "selected_alignment", text="Selected Object")
+                    box.prop(alignment_list, "target_alignment", text="Target Object")
+                    
+                    box.operator("object.align_objects", text= "Align")
+
+                        
+
+                    box.prop(alignment_list, "target_objects")
+                    
+
+                    # Align Orientation (Local) X Y Z check box
+                    box.label(text="Align Orientation (Local)")
+                    row = box.row()
+                    row.prop(alignment_list, "align_orientation_x", text= "X")
+                    row.prop(alignment_list, "align_orientation_y", text= "Y")
+                    row.prop(alignment_list, "align_orientation_z", text= "Z")
+
+                    # Match Scale: X Y Z
+                    box.label(text="Match Scale:")
+                    row = box.row()
+                    row.prop(alignment_list, "match_scale_x", text= "X")
+                    row.prop(alignment_list, "match_scale_y", text= "Y")
+                    row.prop(alignment_list, "match_scale_z", text= "Z")
+                    
+                    
+                         
                 box.prop(Arc_Blend, "proportional_align",
-                         text="Proportional Align ", icon="ALIGN_JUSTIFY")
+                         text="Proportional Align ", icon="SORTSIZE")
                 if bpy.context.scene.Arc_Blend.proportional_align:
                     # col = layout.column()
                     box.label(text="Align Objects Distance : ")
@@ -1083,6 +1135,714 @@ def cutter_object_collection_render_upd(self, context):
     except (TypeError,KeyError):
         pass
 
+
+
+# ------------------------------------------------------------------------------
+# AB ALIGN TOOL UPDATES
+
+# Store initial rotations
+initial_rotations = {}
+
+def update_align_orientation_x(self, context):
+    global initial_rotations
+    # Access the selected objects and target object
+    selected_objects = bpy.context.selected_objects
+    target_object = bpy.context.scene.alignment_list.target_objects
+
+    # Update or reset rotation based on align_orientation_x
+    for obj in selected_objects:
+        if self.align_orientation_x:
+            # Store initial rotation if not already stored
+            if obj.name not in initial_rotations:
+                initial_rotations[obj.name] = obj.rotation_euler.copy()
+
+            current_rotation = obj.rotation_euler
+
+            obj.rotation_euler = Euler((target_object.rotation_euler.x, current_rotation.y, current_rotation.z))
+        else:
+            # Reset rotation to initial value if checkbox is unchecked
+            if obj.name in initial_rotations:
+                obj.rotation_euler = initial_rotations[obj.name]
+
+    # Trigger update of the 3D view
+    bpy.context.view_layer.update()
+
+def update_align_orientation_y(self, context):
+    global initial_rotations
+    selected_objects = bpy.context.selected_objects
+    target_object = bpy.context.scene.alignment_list.target_objects
+
+    for obj in selected_objects:
+        if self.align_orientation_y:
+            if obj.name not in initial_rotations:
+                initial_rotations[obj.name] = obj.rotation_euler.copy()
+
+            current_rotation = obj.rotation_euler
+
+            obj.rotation_euler = Euler((current_rotation.x, target_object.rotation_euler.y, current_rotation.z))
+        else:
+            if obj.name in initial_rotations:
+                obj.rotation_euler = initial_rotations[obj.name]
+
+    bpy.context.view_layer.update()
+
+def update_align_orientation_z(self, context):
+    global initial_rotations
+    selected_objects = bpy.context.selected_objects
+    target_object = bpy.context.scene.alignment_list.target_objects
+
+    for obj in selected_objects:
+        if self.align_orientation_z:
+            if obj.name not in initial_rotations:
+                initial_rotations[obj.name] = obj.rotation_euler.copy()
+
+            current_rotation = obj.rotation_euler
+
+            obj.rotation_euler = Euler((current_rotation.x, current_rotation.y, target_object.rotation_euler.z))
+        else:
+            if obj.name in initial_rotations:
+                obj.rotation_euler = initial_rotations[obj.name]
+
+    bpy.context.view_layer.update()
+
+
+initial_scales = {}  # Define initial_scales dictionary outside any function or class scope
+
+# Then use the update_match_scale_x function as previously shown
+def update_match_scale_x(self, context):
+    global initial_scales
+    selected_objects = bpy.context.selected_objects
+    target_object = bpy.context.scene.alignment_list.target_objects
+
+    for obj in selected_objects:
+        if self.match_scale_x:
+            if obj.name not in initial_scales:
+                initial_scales[obj.name] = obj.scale.copy()
+
+            obj.scale.x = target_object.scale.x
+        else:
+            if obj.name in initial_scales:
+                obj.scale.x = initial_scales[obj.name].x
+
+    bpy.context.view_layer.update()
+
+
+def update_match_scale_y(self, context):
+    global initial_scales
+    selected_objects = bpy.context.selected_objects
+    target_object = bpy.context.scene.alignment_list.target_objects
+
+    for obj in selected_objects:
+        if self.match_scale_y:
+            if obj.name not in initial_scales:
+                initial_scales[obj.name] = obj.scale.copy()
+
+            obj.scale.y = target_object.scale.y
+        else:
+            if obj.name in initial_scales:
+                obj.scale.y = initial_scales[obj.name].y
+
+    bpy.context.view_layer.update()
+
+def update_match_scale_z(self, context):
+    global initial_scales
+    selected_objects = bpy.context.selected_objects
+    target_object = bpy.context.scene.alignment_list.target_objects
+
+    for obj in selected_objects:
+        if self.match_scale_z:
+            if obj.name not in initial_scales:
+                initial_scales[obj.name] = obj.scale.copy()
+
+            obj.scale.z = target_object.scale.z
+        else:
+            if obj.name in initial_scales:
+                obj.scale.z = initial_scales[obj.name].z
+
+    bpy.context.view_layer.update()
+
+
+
+
+class AlignPropertiesGroup(bpy.types.PropertyGroup):
+
+    x_copies: bpy.props.IntProperty(
+        name="X Copies",
+        default=1,
+        min=0,
+        description="Distribute X Copy"
+        )
+
+    x_distance: bpy.props.FloatProperty(
+        name="X Distance",
+        default=3.0,
+        min=0,
+        description="X Distance"
+        )
+
+    end_angle: bpy.props.StringProperty(
+        name="End Angle",
+        default="math.pi",
+        description="End angle for distribution",
+    )
+    
+    target_objects: bpy.props.PointerProperty(
+    type=bpy.types.Object,
+    name="Target Object",
+    description="Select the Curve Object",
+    )
+  
+    align_position_x: bpy.props.BoolProperty(
+        name="Align Position X",
+        default=False,
+        description="Aligns X Position",
+    )
+    
+    align_position_y: bpy.props.BoolProperty(
+        name="Align Position Y",
+        default=False,
+        description="Aligns Y Position",
+    )
+    
+    align_position_z: bpy.props.BoolProperty(
+        name="Align Position Z",
+        default=False,
+        description="Aligns Z Position",
+    )
+    
+    align_orientation_x: bpy.props.BoolProperty(
+        name="Align Orientation X",
+        default=False,
+        description="Aligns X Orientation",
+        update=update_align_orientation_x
+    )
+    
+    align_orientation_y: bpy.props.BoolProperty(
+        name="Align Orientation Y",
+        default=False,
+        description="AlignsY Orientation",
+        update=update_align_orientation_y
+    )
+    
+    align_orientation_z: bpy.props.BoolProperty(
+        name="Align Orientation Z",
+        default=False,
+        description="Aligns Z Orientation",
+        update=update_align_orientation_z
+    )
+    
+    match_scale_x : bpy.props.BoolProperty(
+        name="Align Match Scale X",
+        default=False,
+        description="Aligns Match Scales X",
+        update=update_match_scale_x
+    )
+    
+    match_scale_y : bpy.props.BoolProperty(
+        name="Align Match Scale Y",
+        default=False,
+        description="Aligns Match Scales Y",
+        update=update_match_scale_y
+    )
+    
+    match_scale_z : bpy.props.BoolProperty(
+        name="Align Match Scale Z",
+        default=False,
+        description="Aligns Match Scales Z",
+        update=update_match_scale_z
+    )
+    
+    selected_alignment: bpy.props.EnumProperty(
+        items=[
+            ('MINIMUM', 'Minimum', ''),
+            ('CENTER', 'Center', ''),
+            ('ORIGINS', 'Origins', ''),
+            ('MAXIMUM', 'Maximum', '')
+        ],
+        name="Selected Alignment",
+        description="Select the alignment type",
+        default='MINIMUM'
+    )
+    
+    target_alignment: bpy.props.EnumProperty(
+        items=[
+            ('MINIMUM', 'Minimum', ''),
+            ('CENTER', 'Center', ''),
+            ('ORIGINS', 'Origins', ''),
+            ('MAXIMUM', 'Maximum', '')
+        ],
+        name="Target Alignment",
+        description="Select the alignment type",
+        default='MINIMUM'
+    )
+
+
+
+class OBJECT_OT_AlignOperator(bpy.types.Operator):
+    bl_idname = "object.align_objects"
+    bl_label = "Align Objects"
+    
+    def execute(self, context):
+        selected_objects = bpy.context.selected_objects
+        current_objs = bpy.context.selected_objects
+        target_obj_name = bpy.context.scene.alignment_list.target_objects.name
+        # Get the target object
+        target_object = bpy.context.scene.alignment_list.target_objects
+        target_obj = bpy.context.scene.alignment_list.target_objects
+        
+
+        selected_alignment = bpy.context.scene.alignment_list.selected_alignment
+        target_alignment= bpy.context.scene.alignment_list.target_alignment
+        align_x = bpy.context.scene.alignment_list.align_position_x
+        align_y = bpy.context.scene.alignment_list.align_position_y
+        align_z = bpy.context.scene.alignment_list.align_position_z
+        align_orientation_x = bpy.context.scene.alignment_list.align_orientation_x
+        align_orientation_y = bpy.context.scene.alignment_list.align_orientation_y
+        align_orientation_z = bpy.context.scene.alignment_list.align_orientation_z
+        match_scale_x = bpy.context.scene.alignment_list.match_scale_x
+        match_scale_y = bpy.context.scene.alignment_list.match_scale_y
+        match_scale_z = bpy.context.scene.alignment_list.match_scale_z
+
+        
+        
+        # Check if the selected and target alignments are both set to 'MINIMUM'
+        if selected_alignment == 'MINIMUM' and target_alignment == 'MINIMUM':
+            if target_object and target_object.location:
+                # Get the target object's world matrix and bounding box
+                target_matrix = target_object.matrix_world
+                target_local_verts = [Vector(v[:]) for v in target_object.bound_box]
+                target_world_verts = [target_matrix @ v for v in target_local_verts]
+                
+                # Find the minimum X, Y, and Z-coordinates among the target object's bounding box vertices
+                target_min_x = min(v.x for v in target_world_verts)
+                target_min_y = min(v.y for v in target_world_verts)
+                target_min_z = min(v.z for v in target_world_verts)
+                
+                for obj in selected_objects:
+                    # Get the object's world matrix and bounding box
+                    obj_matrix = obj.matrix_world
+                    obj_local_verts = [Vector(v[:]) for v in obj.bound_box]
+                    obj_world_verts = [obj_matrix @ v for v in obj_local_verts]
+                    
+                    # Find the minimum X, Y, and Z-coordinates among the bounding box vertices
+                    obj_min_x = min(v.x for v in obj_world_verts)
+                    obj_min_y = min(v.y for v in obj_world_verts)
+                    obj_min_z = min(v.z for v in obj_world_verts)
+                    
+                    # Calculate the differences in X, Y, and Z-coordinates
+                    x_diff = target_min_x - obj_min_x if align_x else 0.0
+                    y_diff = target_min_y - obj_min_y if align_y else 0.0
+                    z_diff = target_min_z - obj_min_z if align_z else 0.0
+                    
+                    # Translate the object by the calculated differences in coordinates
+                    obj.location.x += x_diff
+                    obj.location.y += y_diff
+                    obj.location.z += z_diff
+
+            else:
+                print("Target object not found or has no location.")
+            
+            
+        elif selected_alignment == 'MINIMUM' and target_alignment == 'CENTER':
+                if target_object:
+                    target_location = target_object.location
+                    if target_location:
+                        # Get the target object's world matrix and bounding box
+                        target_matrix = target_object.matrix_world
+                        target_local_verts = [Vector(v[:]) for v in target_object.bound_box]
+                        target_world_verts = [target_matrix @ v for v in target_local_verts]
+                        
+                        # Find the center coordinates of the target object's bounding box
+                        target_center = sum(target_world_verts, Vector()) / 8  # Center of the target object
+                        
+                        for obj in selected_objects:
+                            obj_matrix = obj.matrix_world
+                            obj_local_verts = [Vector(v[:]) for v in obj.bound_box]
+                            obj_world_verts = [obj_matrix @ v for v in obj_local_verts]
+                            
+                            # Find the minimum X, Y, and Z-coordinates among the bounding box vertices
+                            obj_min_x = min(v.x for v in obj_world_verts)
+                            obj_min_y = min(v.y for v in obj_world_verts)
+                            obj_min_z = min(v.z for v in obj_world_verts)
+                            
+                            # Calculate the differences in X, Y, and Z-coordinates
+                            x_diff = target_center.x - obj_min_x if align_x else 0.0
+                            y_diff = target_center.y - obj_min_y if align_y else 0.0
+                            z_diff = target_center.z - obj_min_z if align_z else 0.0
+                            
+                            # Translate the object by the calculated differences in coordinates
+                            obj.location.x += x_diff
+                            obj.location.y += y_diff
+                            obj.location.z += z_diff
+                    else:
+                        print("Target object has no location.")
+                else:
+                    print("Target object not found.")
+        
+        elif selected_alignment == 'MINIMUM' and target_alignment == 'ORIGINS':
+            if target_object:
+                # Get the target object's origin location
+                target_origin = target_object.location
+                
+                for obj in selected_objects:
+                    # Get the object's bounding box in world coordinates
+                    world_verts = [obj.matrix_world @ Vector(point) for point in obj.bound_box]
+                    
+                    # Find the minimum coordinates among the bounding box vertices
+                    obj_min_x = min(v.x for v in world_verts)
+                    obj_min_y = min(v.y for v in world_verts)
+                    obj_min_z = min(v.z for v in world_verts)
+                    
+                    # Calculate the differences in X, Y, and Z-coordinates
+                    x_diff = target_origin.x - obj_min_x if align_x else 0.0
+                    y_diff = target_origin.y - obj_min_y if align_y else 0.0
+                    z_diff = target_origin.z - obj_min_z if align_z else 0.0
+                    
+                    # Translate the object by the calculated differences in coordinates
+                    obj.location.x += x_diff
+                    obj.location.y += y_diff
+                    obj.location.z += z_diff
+            else:
+                print("Target object not found.")
+                
+        elif selected_alignment == 'MINIMUM' and target_alignment == 'MAXIMUM':
+            if target_object:
+                # Get the target object's bounding box in world coordinates
+                target_verts = [target_object.matrix_world @ Vector(point) for point in target_object.bound_box]
+                
+                # Find the maximum coordinates among the target object's bounding box vertices
+                target_max_x = max(v.x for v in target_verts)
+                target_max_y = max(v.y for v in target_verts)
+                target_max_z = max(v.z for v in target_verts)
+                
+                for obj in selected_objects:
+                    # Get the object's bounding box in world coordinates
+                    world_verts = [obj.matrix_world @ Vector(point) for point in obj.bound_box]
+                    
+                    # Find the minimum coordinates among the bounding box vertices
+                    obj_min_x = min(v.x for v in world_verts)
+                    obj_min_y = min(v.y for v in world_verts)
+                    obj_min_z = min(v.z for v in world_verts)
+                    
+                    # Calculate the differences in X, Y, and Z-coordinates
+                    x_diff = target_max_x - obj_min_x if align_x else 0.0
+                    y_diff = target_max_y - obj_min_y if align_y else 0.0
+                    z_diff = target_max_z - obj_min_z if align_z else 0.0
+                    
+                    # Translate the object by the calculated differences in coordinates
+                    obj.location.x += x_diff
+                    obj.location.y += y_diff
+                    obj.location.z += z_diff
+            else:
+                print("Target object not found.")
+                
+                
+        elif selected_alignment == 'CENTER' and target_alignment == 'MINIMUM':
+                if target_object:
+                    # Get the target object's bounding box in world coordinates
+                    target_verts = [target_object.matrix_world @ Vector(point) for point in target_object.bound_box]
+                    
+                    # Find the minimum coordinates among the target object's bounding box vertices
+                    target_min_x = min(v.x for v in target_verts)
+                    target_min_y = min(v.y for v in target_verts)
+                    target_min_z = min(v.z for v in target_verts)
+                    
+                    for obj in selected_objects:
+                        # Get the object's bounding box in world coordinates
+                        world_verts = [obj.matrix_world @ Vector(point) for point in obj.bound_box]
+                        
+                        # Calculate the center coordinates of the object's bounding box
+                        obj_center = sum(world_verts, Vector()) / 8
+                        
+                        # Calculate the differences in X, Y, and Z-coordinates
+                        x_diff = target_min_x - obj_center.x if align_x else 0.0
+                        y_diff = target_min_y - obj_center.y if align_y else 0.0
+                        z_diff = target_min_z - obj_center.z if align_z else 0.0
+                        
+                        # Translate the object by the calculated differences in coordinates
+                        obj.location.x += x_diff
+                        obj.location.y += y_diff
+                        obj.location.z += z_diff
+                else:
+                     print("Target object not found.")
+                     
+                     
+        elif selected_alignment == 'CENTER' and target_alignment == 'CENTER':
+            if target_object:
+                # Get the target object's bounding box in world coordinates
+                target_verts = [target_object.matrix_world @ Vector(point) for point in target_object.bound_box]
+                
+                # Calculate the center coordinates of the target object's bounding box
+                target_center = sum(target_verts, Vector()) / 8
+                
+                for obj in selected_objects:
+                    # Get the object's bounding box in world coordinates
+                    world_verts = [obj.matrix_world @ Vector(point) for point in obj.bound_box]
+                    
+                    # Calculate the center coordinates of the object's bounding box
+                    obj_center = sum(world_verts, Vector()) / 8
+                    
+                    # Calculate the differences in X, Y, and Z-coordinates
+                    x_diff = target_center.x - obj_center.x if align_x else 0.0
+                    y_diff = target_center.y - obj_center.y if align_y else 0.0
+                    z_diff = target_center.z - obj_center.z if align_z else 0.0
+                    
+                    # Translate the object by the calculated differences in coordinates
+                    obj.location.x += x_diff
+                    obj.location.y += y_diff
+                    obj.location.z += z_diff
+            else:
+                print("Target object not found.")
+                
+        elif selected_alignment == 'CENTER' and target_alignment == 'ORIGINS':
+            if target_object:
+                # Get the target object's origin
+                target_origin = target_object.location
+                
+                for obj in selected_objects:
+                    # Calculate the center coordinates of the object's bounding box
+                    world_verts = [obj.matrix_world @ Vector(point) for point in obj.bound_box]
+                    obj_center = sum(world_verts, Vector()) / 8
+                    
+                    # Calculate the differences in X, Y, and Z-coordinates
+                    x_diff = target_origin.x - obj_center.x if align_x else 0.0
+                    y_diff = target_origin.y - obj_center.y if align_y else 0.0
+                    z_diff = target_origin.z - obj_center.z if align_z else 0.0
+                    
+                    # Translate the object by the calculated differences in coordinates
+                    obj.location.x += x_diff
+                    obj.location.y += y_diff
+                    obj.location.z += z_diff
+            else:
+                print("Target object not found.")
+                
+                
+        elif selected_alignment == 'CENTER' and target_alignment == 'MAXIMUM' and target_object:
+                # Get the target object's bounding box in world coordinates
+                target_verts = [target_object.matrix_world @ Vector(point) for point in target_object.bound_box]
+                
+                # Find the maximum coordinates among the bounding box vertices of the target object
+                target_max_x = max(v.x for v in target_verts)
+                target_max_y = max(v.y for v in target_verts)
+                target_max_z = max(v.z for v in target_verts)
+                
+                # Calculate the center of the target object's bounding box
+                target_center = sum(target_verts, Vector()) / 8  # Assuming a bounding box with 8 vertices
+                
+                for obj in selected_objects:
+                    # Get the object's bounding box in world coordinates
+                    obj_verts = [obj.matrix_world @ Vector(point) for point in obj.bound_box]
+                    
+                    # Find the center coordinates of the object
+                    obj_center = sum(obj_verts, Vector()) / 8  # Assuming a bounding box with 8 vertices
+                    
+                    # Calculate the differences in X, Y, and Z-coordinates from the object's center to the target's maximum
+                    x_diff = target_max_x - obj_center.x if align_x else 0.0
+                    y_diff = target_max_y - obj_center.y if align_y else 0.0
+                    z_diff = target_max_z - obj_center.z if align_z else 0.0
+                    
+                    # Translate the object by the calculated differences in coordinates
+                    obj.location.x += x_diff
+                    obj.location.y += y_diff
+                    obj.location.z += z_diff
+                    
+        elif selected_alignment == 'ORIGINS' and target_alignment == 'MINIMUM' and target_object:
+            # Get the target object's minimum location
+            target_min = target_object.matrix_world @ Vector(target_object.bound_box[0])
+            
+            for obj in selected_objects:
+                # Get the object's origin location
+                obj_origin = obj.matrix_world.translation
+                
+                # Calculate the differences in X, Y, and Z-coordinates from the object's origin to target's minimum
+                x_diff = target_min.x - obj_origin.x if align_x else 0.0
+                y_diff = target_min.y - obj_origin.y if align_y else 0.0
+                z_diff = target_min.z - obj_origin.z if align_z else 0.0
+                
+                # Translate the object by the calculated differences in coordinates
+                obj.location.x += x_diff
+                obj.location.y += y_diff
+                obj.location.z += z_diff
+                
+        elif selected_alignment == 'ORIGINS' and target_alignment == 'CENTER' and target_object:
+            # Get the target object's center location
+            target_center = target_object.location
+            
+            for obj in selected_objects:
+                # Get the object's origin location
+                obj_origin = obj.matrix_world.translation
+                
+                # Calculate the differences in X, Y, and Z-coordinates from the object's origin to target's center
+                x_diff = target_center.x - obj_origin.x if align_x else 0.0
+                y_diff = target_center.y - obj_origin.y if align_y else 0.0
+                z_diff = target_center.z - obj_origin.z if align_z else 0.0
+                
+                # Translate the object by the calculated differences in coordinates
+                obj.location.x += x_diff
+                obj.location.y += y_diff
+                obj.location.z += z_diff
+                
+        elif selected_alignment == 'ORIGINS' and target_alignment == 'ORIGINS' and target_object:
+            # Get the target object's origin location
+            target_origin = target_object.matrix_world.translation
+            
+            for obj in selected_objects:
+                # Get the object's origin location
+                obj_origin = obj.matrix_world.translation
+                
+                # Calculate the differences in X, Y, and Z-coordinates from the object's origin to target's origin
+                x_diff = target_origin.x - obj_origin.x if align_x else 0.0
+                y_diff = target_origin.y - obj_origin.y if align_y else 0.0
+                z_diff = target_origin.z - obj_origin.z if align_z else 0.0
+                
+                # Translate the object by the calculated differences in coordinates
+                obj.location.x += x_diff
+                obj.location.y += y_diff
+                obj.location.z += z_diff
+
+
+                
+        elif selected_alignment == 'ORIGINS' and target_alignment == 'MAXIMUM' and target_object:
+            # Get the maximum point of the target object
+            target_verts = [target_object.matrix_world @ Vector(point) for point in target_object.bound_box]
+            target_max = Vector((max(v.x for v in target_verts), max(v.y for v in target_verts), max(v.z for v in target_verts)))
+            
+            for obj in selected_objects:
+                # Get the object's origin location
+                obj_origin = obj.matrix_world.translation
+                
+                # Calculate the differences in X, Y, and Z-coordinates from the object's origin to target's maximum
+                x_diff = target_max.x - obj_origin.x if align_x else 0.0
+                y_diff = target_max.y - obj_origin.y if align_y else 0.0
+                z_diff = target_max.z - obj_origin.z if align_z else 0.0
+                
+                # Translate the object by the calculated differences in coordinates
+                obj.location.x += x_diff
+                obj.location.y += y_diff
+                obj.location.z += z_diff
+                
+        elif selected_alignment == 'MAXIMUM' and target_alignment == 'MINIMUM':
+            if target_object:
+                # Get the target object's bounding box in world coordinates
+                target_verts = [target_object.matrix_world @ Vector(point) for point in target_object.bound_box]
+                
+                # Find the minimum coordinates among the target object's bounding box vertices
+                target_min_x = min(v.x for v in target_verts)
+                target_min_y = min(v.y for v in target_verts)
+                target_min_z = min(v.z for v in target_verts)
+                
+                for obj in selected_objects:
+                    # Get the object's bounding box in world coordinates
+                    world_verts = [obj.matrix_world @ Vector(point) for point in obj.bound_box]
+                    
+                    # Find the maximum coordinates among the bounding box vertices
+                    obj_max_x = max(v.x for v in world_verts)
+                    obj_max_y = max(v.y for v in world_verts)
+                    obj_max_z = max(v.z for v in world_verts)
+                    
+                    # Calculate the differences in X, Y, and Z-coordinates
+                    x_diff = target_min_x - obj_max_x if align_x else 0.0
+                    y_diff = target_min_y - obj_max_y if align_y else 0.0
+                    z_diff = target_min_z - obj_max_z if align_z else 0.0
+                    
+                    # Translate the object by the calculated differences in coordinates
+                    obj.location.x += x_diff
+                    obj.location.y += y_diff
+                    obj.location.z += z_diff
+                
+        elif selected_alignment == 'MAXIMUM' and target_alignment == 'CENTER' and target_object:
+            # Get the target object's center location
+            target_center = target_object.location
+            
+            for obj in selected_objects:
+                # Get the object's bounding box in world coordinates
+                obj_verts = [obj.matrix_world @ Vector(point) for point in obj.bound_box]
+                
+                # Find the maximum coordinates among the bounding box vertices of each selected object
+                obj_max_x = max(v.x for v in obj_verts)
+                obj_max_y = max(v.y for v in obj_verts)
+                obj_max_z = max(v.z for v in obj_verts)
+                
+                # Calculate the differences in X, Y, and Z-coordinates from the object's maximum to target's center
+                x_diff = target_center.x - obj_max_x if align_x else 0.0
+                y_diff = target_center.y - obj_max_y if align_y else 0.0
+                z_diff = target_center.z - obj_max_z if align_z else 0.0
+                
+                # Translate the object by the calculated differences in coordinates
+                obj.location.x += x_diff
+                obj.location.y += y_diff
+                obj.location.z += z_diff
+                
+        elif selected_alignment == 'MAXIMUM' and target_alignment == 'ORIGINS' and target_object:
+            # Get the target object's origin location
+            target_origin = target_object.location
+            
+            for obj in selected_objects:
+                # Get the object's bounding box in world coordinates
+                obj_verts = [obj.matrix_world @ Vector(point) for point in obj.bound_box]
+                
+                # Find the maximum coordinates among the bounding box vertices of each selected object
+                obj_max_x = max(v.x for v in obj_verts)
+                obj_max_y = max(v.y for v in obj_verts)
+                obj_max_z = max(v.z for v in obj_verts)
+                
+                # Calculate the differences in X, Y, and Z-coordinates from the object's maximum to target's origin
+                x_diff = target_origin.x - obj_max_x if align_x else 0.0
+                y_diff = target_origin.y - obj_max_y if align_y else 0.0
+                z_diff = target_origin.z - obj_max_z if align_z else 0.0
+                
+                # Translate the object by the calculated differences in coordinates
+                obj.location.x += x_diff
+                obj.location.y += y_diff
+                obj.location.z += z_diff
+                
+        elif selected_alignment == 'MAXIMUM' and target_alignment == 'MAXIMUM' and target_object:
+            # Get the target object's bounding box in world coordinates
+            target_verts = [target_object.matrix_world @ Vector(point) for point in target_object.bound_box]
+            
+            # Find the maximum coordinates among the target object's bounding box vertices
+            target_max_x = max(v.x for v in target_verts)
+            target_max_y = max(v.y for v in target_verts)
+            target_max_z = max(v.z for v in target_verts)
+            
+            for obj in selected_objects:
+                # Get the object's bounding box in world coordinates
+                obj_verts = [obj.matrix_world @ Vector(point) for point in obj.bound_box]
+                
+                # Find the maximum coordinates among the bounding box vertices of each selected object
+                obj_max_x = max(v.x for v in obj_verts)
+                obj_max_y = max(v.y for v in obj_verts)
+                obj_max_z = max(v.z for v in obj_verts)
+                
+                # Calculate the differences in X, Y, and Z-coordinates from the object's maximum to target's maximum
+                x_diff = target_max_x - obj_max_x if align_x else 0.0
+                y_diff = target_max_y - obj_max_y if align_y else 0.0
+                z_diff = target_max_z - obj_max_z if align_z else 0.0
+                
+                # Translate the object by the calculated differences in coordinates
+                obj.location.x += x_diff
+                obj.location.y += y_diff
+                obj.location.z += z_diff
+        else:
+            print("Target object not found or alignment scenario not supported.")
+        
+        return {'FINISHED'}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # ------------------------------------------------------------------------------
 # ARRAY CLASS PROPERTYGROUP
 
@@ -1272,6 +2032,8 @@ class modifier_array_detail (bpy.types.PropertyGroup):
         name="Distribute Object Z", min=1, max=10000 , default=1)
     distribute_objects: bpy.props.BoolProperty(
         name="Distribute Objects : ", default=False)
+    align_objects_panel: bpy.props.BoolProperty(
+        name="Align Objects : ", default=False)
     # ----------RELATIVE OFFSET Check Box-----------------------------
     hide_unhide_Relative_Offset: bpy.props.BoolProperty(
         name="X Factor : ", default=True)
@@ -2176,7 +2938,10 @@ def register():
     bpy.utils.register_class(OBJECT_OT_DistributeOnFaces)
     bpy.utils.register_class(OBJECT_OT_DistributeOnFacesRotated)
     bpy.utils.register_class(OBJECT_OT_DistributeOnVerticesRotated)
-    
+    #AlignTool
+    bpy.utils.register_class(AlignPropertiesGroup)
+    bpy.types.Scene.alignment_list = bpy.props.PointerProperty(type=AlignPropertiesGroup)
+    bpy.utils.register_class(OBJECT_OT_AlignOperator)
     
 
 
@@ -2226,4 +2991,7 @@ def unregister():
     bpy.utils.unregister_class(OBJECT_OT_DistributeOnFaces)
     bpy.utils.unregister_class(OBJECT_OT_DistributeOnFacesRotated)
     bpy.utils.unregister_class(OBJECT_OT_DistributeOnVerticesRotated)
-    
+    #Align Tools
+    bpy.utils.unregister_class(AlignPropertiesGroup)
+    del bpy.types.Scene.alignment_list
+    bpy.utils.unregister_class(OBJECT_OT_AlignOperator)
