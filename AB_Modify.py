@@ -415,7 +415,7 @@ class TRANSFORM_PT_Edit_Object_Panel (bpy.types.Panel):
                     pass
                 
                 box.prop(Arc_Blend, "align_objects_panel",
-                         text="Align Objects ", icon="ALIGN_JUSTIFY")
+                         text="Align Tools ", icon="ALIGN_JUSTIFY")
                 if bpy.context.scene.Arc_Blend.align_objects_panel:
                     alignment_list = bpy.context.scene.alignment_list
                     col = layout.column()
