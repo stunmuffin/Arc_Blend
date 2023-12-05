@@ -36,6 +36,26 @@
 
 ![Distribute Objects](https://github.com/stunmuffin/Arc_Blend/assets/48792613/5a164496-c477-4b3e-921b-85897703bb58)
 
+• New Features Added "Align Tools" new Align Tool for Arc Blend (12/5/2023)
+
+• AB Modify > Object > Align Objects > Align Tools
+
+• Features:
+
+• Working principle of the new alignment tool: You need to select 1 target object. Then you need to select the objects you want to align.
+
+• You can start aligning. Choose how the selected entities will be aligned. Minimum is the lowest location of objects. Center is the center of objects. Origin is the origin of the objects. Maximum is the highest location of the objects.
+
+• Additionally, 2 more options have been added.
+
+• Align Orientation (Local) and Match Scale
+
+• Align Orientation (Local) rotates selected objects locally using the rotation of the target object.
+
+• Match Scale locally matches objects to the size of the target object.
+
+![Align Tools](https://github.com/stunmuffin/Arc_Blend/assets/48792613/2185e7e1-1214-4a37-9a5c-48f37bda44e0)
+
 # Installation
 
 1.) Go to main area :  https://github.com/stunmuffin/Arc_Blend
