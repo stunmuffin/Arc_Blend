@@ -1,4 +1,3 @@
-
 import random
 import sys
 from mathutils import Matrix, Vector
