@@ -1,4 +1,3 @@
-
 import random
 import sys
 from mathutils import Matrix, Vector
@@ -39,7 +38,7 @@ class THEMES_PT_Panel (bpy.types.Panel):
 # ------------------------------------------------------------------------------
 # THEMES PANEL 
 
-class VIEW3D_PT_view3d_properties(Panel):
+class VIEW3D_PT_AB_view3d_properties(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Arc Blend"
@@ -216,7 +215,7 @@ class themes_panel_reset (bpy.types.Operator):
 
 def register():
     bpy.utils.register_class(THEMES_PT_Panel)
-    bpy.utils.register_class(VIEW3D_PT_view3d_properties)
+    bpy.utils.register_class(VIEW3D_PT_AB_view3d_properties)
     bpy.utils.register_class(themes_panel_mak)
     bpy.utils.register_class(themes_panel_white_chalk)
     bpy.utils.register_class(themes_panel_reset)
@@ -226,7 +225,7 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(THEMES_PT_Panel)
-    bpy.utils.unregister_class(VIEW3D_PT_view3d_properties)
+    bpy.utils.unregister_class(VIEW3D_PT_AB__view3d_properties)
     bpy.utils.unregister_class(themes_panel_mak)
     bpy.utils.unregister_class(themes_panel_white_chalk)
     bpy.utils.unregister_class(themes_panel_reset)
