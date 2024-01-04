@@ -225,7 +225,7 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(THEMES_PT_Panel)
-    bpy.utils.unregister_class(VIEW3D_PT_AB__view3d_properties)
+    bpy.utils.unregister_class(VIEW3D_PT_AB_view3d_properties)
     bpy.utils.unregister_class(themes_panel_mak)
     bpy.utils.unregister_class(themes_panel_white_chalk)
     bpy.utils.unregister_class(themes_panel_reset)
