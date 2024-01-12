@@ -60,6 +60,15 @@
 
 ![CopyPasteMaterial](https://github.com/stunmuffin/Arc_Blend/assets/48792613/8bb7e603-aac9-4601-940f-b082b1dbc15f)
 
+• New Features Added AB Wall ( AB Wall) (1/12/2024)
+
+![AB Wall ](https://github.com/stunmuffin/Arc_Blend/assets/48792613/165f2805-eac5-4cd5-8eaa-e0620bb4b52f)
+
+![AB Wall 2 ](https://github.com/stunmuffin/Arc_Blend/assets/48792613/661838d4-3f26-457b-bb2e-9aa3fb4d24ec)
+
+![AB Wall 3](https://github.com/stunmuffin/Arc_Blend/assets/48792613/a2b1efe2-223a-4b57-a017-d19fa1a9c568)
+
+
 
 # Installation
 
