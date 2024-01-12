@@ -47,6 +47,7 @@ from . import AB_Proxy
 from . import AB_Light
 from . import AB_Material
 from . import AB_Color_Picker
+from . import AB_Wall
 
 
 
@@ -68,6 +69,7 @@ def register():
     AB_Light.register()
     AB_Material.register()
     AB_Color_Picker.register()
+    AB_Wall.register()
 
 
 
@@ -84,6 +86,7 @@ def unregister():
     AB_Light.unregister()
     AB_Material.unregister()
     AB_Color_Picker.unregister()
+    AB_Wall.unregister()
 
 
 # ------------------------------------------------------------------------------
