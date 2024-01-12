@@ -68,6 +68,14 @@
 
 ![AB Wall 3](https://github.com/stunmuffin/Arc_Blend/assets/48792613/a2b1efe2-223a-4b57-a017-d19fa1a9c568)
 
+• New Features Added AB Material Management ( AB Material Management) (1/12/2024)
+
+![AB Material Management ](https://github.com/stunmuffin/Arc_Blend/assets/48792613/bee63504-7e7d-4ab2-918e-499a78c31705)
+
+• How to use! ( AB Material Management) (1/12/2024)
+
+![AB Material Management ](https://github.com/stunmuffin/Arc_Blend/assets/48792613/8b2834d9-8cb9-4fe8-bdc3-8ad7a65e2b79)
+
 
 
 # Installation
