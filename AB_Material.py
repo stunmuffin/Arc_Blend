@@ -378,20 +378,17 @@ def register():
     bpy.utils.register_class(OBJECT_OT_CopyMaterial)
     bpy.utils.register_class(OBJECT_OT_PasteMaterial)
     
-    
-    
-
 def unregister():
     #Material Panel
-    bpy.utils.unregister_class(MATERIAL_PT_abpanel)
-    bpy.utils.unregister_class(MATERIAL_MT_ab_context_menu)
-    bpy.utils.unregister_class(MATERIAL_UL_ab_matslots)
-    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_context_material)
-    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_surface)
-    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_volume)
-    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_settings)
-    bpy.utils.unregister_class(MATERIAL_PT_ab_viewport)
-    bpy.utils.unregister_class(MATERIAL_PT_ab_viewport_settings)
-    bpy.utils.unregister_class(MATERIAL_PT_ab_lineart)
-    bpy.utils.unregister_class(OBJECT_OT_CopyMaterial)
     bpy.utils.unregister_class(OBJECT_OT_PasteMaterial)
+    bpy.utils.unregister_class(OBJECT_OT_CopyMaterial)
+    bpy.utils.unregister_class(MATERIAL_PT_ab_lineart)
+    bpy.utils.unregister_class(MATERIAL_PT_ab_viewport_settings)
+    bpy.utils.unregister_class(MATERIAL_PT_ab_viewport)
+    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_settings)
+    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_volume)
+    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_surface)
+    bpy.utils.unregister_class(EEVEE_MATERIAL_PT_ab_context_material)
+    bpy.utils.unregister_class(MATERIAL_UL_ab_matslots)
+    bpy.utils.unregister_class(MATERIAL_MT_ab_context_menu)
+    bpy.utils.unregister_class(MATERIAL_PT_abpanel)
