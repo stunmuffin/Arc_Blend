@@ -76,6 +76,11 @@
 
 ![AB Material Management ](https://github.com/stunmuffin/Arc_Blend/assets/48792613/8b2834d9-8cb9-4fe8-bdc3-8ad7a65e2b79)
 
+• Update and Fix News (Arc Blend Addon) [1/13/2024]
+The Activating Addon and Deactivating Problem solved.
+Cause :  code block "OFFSET_PT_Relative_Offset" is removed.
+
+![Fixed!](https://github.com/stunmuffin/Arc_Blend/assets/48792613/0c3cce2f-9bc4-4eee-9949-89b45bd0297c)
 
 
 # Installation
