@@ -2164,58 +2164,6 @@ class modifier_array_detail (bpy.types.PropertyGroup):
         description="Enable distribution on a Mesh vertices pattern",
     )
     
-# ------------------------------------------------------------------------------
-# RELATIVE OFFSET
-
-
-class OFFSET_PT_Relative_Offset (bpy.types.Panel):
-    bl_label = "Relative Offset"
-    bl_idname = "OFFSET_PT_Relative_Offset"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Arc Blend"
-    bl_parent_id = "ARRAY_PT_Panel"  # Parent ID
-    bl_options = {'DEFAULT_CLOSED'}
-
-    def draw(self, context):
-        layout = self.layout
-        obj = context.object
-        scene = context.scene
-        Arc_Blend = scene.Arc_Blend
-        row = layout.row()
-        col = layout.column()
-        box = layout.box()
-        if bpy.context.selected_objects != []:
-            row.prop(Arc_Blend, "relative_offset_a")
-            row.prop(Arc_Blend, "relative_offset_b")
-            row.prop(Arc_Blend, "relative_offset_c")
-            row = layout.row()
-            box.prop(Arc_Blend, "hide_unhide_Relative_Offset")
-            row = layout.row()
-            box.prop(Arc_Blend, "hide_unhide_Relative_Offset_Y")
-            box.prop(Arc_Blend, "hide_unhide_Relative_Offset_Z")
-            if Arc_Blend.hide_unhide_Relative_Offset == True:
-                # col.label(text="X Factor : ")
-                box.prop(Arc_Blend, "count_area_x")
-            else:
-                False
-            if Arc_Blend.hide_unhide_Relative_Offset_Y == True:
-                # col.label(text="Y Factor : ")
-                box.prop(Arc_Blend, "count_area_y2")
-            else:
-                False
-            if Arc_Blend.hide_unhide_Relative_Offset_Z == True:
-                # col.label(text="Z Factor : ")
-                box.prop(Arc_Blend, "count_area_z2")
-            else:
-                False
-        else:
-            pass
-
-
-
-
-
 
 # ------------------------------------------------------------------------------
 # DISPLAY PANEL
@@ -2956,7 +2904,6 @@ def unregister():
     bpy.utils.unregister_class(transform_edit_object_purge)
     bpy.utils.unregister_class(TRANSFORM_PT_Panel)
     bpy.utils.unregister_class(modifier_array_detail)
-    bpy.utils.unregister_class(OFFSET_PT_Relative_Offset)
     del bpy.types.Scene.Arc_Blend
     bpy.utils.unregister_class(DISPLAY_PT_Panel)
     bpy.utils.unregister_class(EXPORT_PT_Object)
