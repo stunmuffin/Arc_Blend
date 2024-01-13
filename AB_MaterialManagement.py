@@ -406,7 +406,7 @@ def preview_enum_update(wm, context):
     print("wm.my_previews = %s" % wm.my_previews)
     return None
      
-class OBJECT_OT_CopyMaterial(bpy.types.Operator):
+class OBJECT_OT_CopyMaterialManagement(bpy.types.Operator):
     bl_idname = "object.copy_material"
     bl_label = "Copy Material"
     bl_description = "Copy material name from active object"
@@ -424,7 +424,7 @@ class OBJECT_OT_CopyMaterial(bpy.types.Operator):
 
         return {'FINISHED'}
 
-class OBJECT_OT_PasteMaterial(bpy.types.Operator):
+class OBJECT_OT_PasteMaterialManagement(bpy.types.Operator):
     bl_idname = "object.paste_material"
     bl_label = "Paste Material"
     bl_description = "Paste material name from clipboard to selected objects"
@@ -889,8 +889,8 @@ def register():
     # Add custom_material_index to the scene
     bpy.types.Scene.custom_material_index = bpy.props.IntProperty()
     bpy.utils.register_class(CreateVisibleLightSpectrumOperator)
-    bpy.utils.register_class(OBJECT_OT_CopyMaterial)
-    bpy.utils.register_class(OBJECT_OT_PasteMaterial)
+    bpy.utils.register_class(OBJECT_OT_CopyMaterialManagement)
+    bpy.utils.register_class(OBJECT_OT_PasteMaterialManagement)
     bpy.utils.register_class(SelectSameMaterialOperator)
     #Packs the Textures in File
     bpy.utils.register_class(Pack_OT_Material)
@@ -921,8 +921,8 @@ def unregister():
     
     #del bpy.types.Scene.select_image
     bpy.utils.unregister_class(CreateVisibleLightSpectrumOperator)
-    bpy.utils.unregister_class(OBJECT_OT_CopyMaterial)
-    bpy.utils.unregister_class(OBJECT_OT_PasteMaterial)
+    bpy.utils.unregister_class(OBJECT_OT_CopyMaterialManagement)
+    bpy.utils.unregister_class(OBJECT_OT_PasteMaterialManagement)
     bpy.utils.unregister_class(SelectSameMaterialOperator)
     
     #------------------------------------------------------------
