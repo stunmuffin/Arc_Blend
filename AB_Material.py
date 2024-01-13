@@ -33,51 +33,6 @@ class MATERIAL_PT_abpanel (bpy.types.Panel):
         col=layout.column()
         col.label(text= "Material Options :")
         col=layout.column()
- 
- 
- 
- 
- 
-class OBJECT_OT_CopyMaterial(bpy.types.Operator):
-    bl_idname = "object.copy_material"
-    bl_label = "Copy Material"
-    bl_description = "Copy material name from active object"
-
-    def execute(self, context):
-        if context.active_object:
-            active_material = context.active_object.active_material
-            if active_material:
-                bpy.context.window_manager.clipboard = active_material.name
-                self.report({'INFO'}, f"Copied material name: {active_material.name}")
-            else:
-                self.report({'WARNING'}, "Active object has no material")
-        else:
-            self.report({'WARNING'}, "No active object")
-
-        return {'FINISHED'}
-
-class OBJECT_OT_PasteMaterial(bpy.types.Operator):
-    bl_idname = "object.paste_material"
-    bl_label = "Paste Material"
-    bl_description = "Paste material name from clipboard to selected objects"
-
-    def execute(self, context):
-        material_name = bpy.context.window_manager.clipboard
-        if material_name:
-            selected_objects = context.selected_objects
-            for obj in selected_objects:
-                if obj.type == 'MESH':  # Adjust the type check as per your requirement
-                    obj.active_material = bpy.data.materials.get(material_name)
-                    if obj.active_material:
-                        self.report({'INFO'}, f"Pasted material '{material_name}' to {obj.name}")
-                    else:
-                        self.report({'WARNING'}, f"Material '{material_name}' not found in the scene")
-                else:
-                    self.report({'WARNING'}, f"Object '{obj.name}' is not a mesh")
-        else:
-            self.report({'WARNING'}, "Clipboard has no material name")
-
-        return {'FINISHED'}
     
 class MATERIAL_MT_ab_context_menu(Menu):
     bl_label = "Material Specials"
@@ -375,8 +330,6 @@ def register():
     bpy.utils.register_class(MATERIAL_PT_ab_viewport)
     bpy.utils.register_class(MATERIAL_PT_ab_viewport_settings)
     bpy.utils.register_class(MATERIAL_PT_ab_lineart)
-    bpy.utils.register_class(OBJECT_OT_CopyMaterial)
-    bpy.utils.register_class(OBJECT_OT_PasteMaterial)
     
 def unregister():
     #Material Panel
@@ -390,5 +343,3 @@ def unregister():
     bpy.utils.unregister_class(MATERIAL_PT_ab_viewport)
     bpy.utils.unregister_class(MATERIAL_PT_ab_viewport_settings)
     bpy.utils.unregister_class(MATERIAL_PT_ab_lineart)
-    bpy.utils.unregister_class(OBJECT_OT_CopyMaterial)
-    bpy.utils.unregister_class(OBJECT_OT_PasteMaterial)
