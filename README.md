@@ -82,6 +82,13 @@ Cause :  code block "OFFSET_PT_Relative_Offset" is removed.
 
 ![Fixed!](https://github.com/stunmuffin/Arc_Blend/assets/48792613/0c3cce2f-9bc4-4eee-9949-89b45bd0297c)
 
+• Update and Fix News (Arc Blend Addon) [1/22/2024]
+Shade Auto Smooth Added for Data Mesh Panel. For Blender 4.1.0 Version
+
+![Mesh Panel](https://github.com/stunmuffin/Arc_Blend/assets/48792613/e4cb22e6-cdb8-4087-8d05-537f512f2e2e)
+
+
+
 
 # Installation
 
