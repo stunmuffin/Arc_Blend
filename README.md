@@ -87,6 +87,14 @@ Shade Auto Smooth Added for Data Mesh Panel. For Blender 4.1.0 Version
 
 ![Mesh Panel](https://github.com/stunmuffin/Arc_Blend/assets/48792613/e4cb22e6-cdb8-4087-8d05-537f512f2e2e)
 
+• Arc Blend News(UI improvement).Changed and fixed some version changes.
+•++Added 3.5.0 Fur and Empty Hair
+•++Changed 4.1.0 Light Probe names and operators
+•++ Improved UI for AB Create Panel
+
+![AB Create](https://github.com/stunmuffin/Arc_Blend/assets/48792613/e060d4f5-88f5-4e5d-bfcd-be405fa2b7df)
+
+
 
 
 
