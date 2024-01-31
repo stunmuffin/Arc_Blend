@@ -94,7 +94,11 @@ Shade Auto Smooth Added for Data Mesh Panel. For Blender 4.1.0 Version
 
 ![AB Create](https://github.com/stunmuffin/Arc_Blend/assets/48792613/e060d4f5-88f5-4e5d-bfcd-be405fa2b7df)
 
+• Added AB Profile Wizard for blender Profile Create & Manager
+• Now you can create & manage profiles easy
+• You can pick any profile to make moldings!
 
+![AB Profile Wizard](https://github.com/stunmuffin/Arc_Blend/assets/48792613/f7b1cc14-2c19-4513-8937-5e93b7b70358)
 
 
 
