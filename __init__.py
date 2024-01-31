@@ -44,6 +44,7 @@ from . import AB_Material
 from . import AB_Color_Picker
 from . import AB_Wall
 from . import AB_MaterialManagement
+from . import AB_Profile_Wizard
 
 # Check Blender version
 if bpy.app.version >= (4, 1, 0):
@@ -68,6 +69,7 @@ def register():
     AB_Color_Picker.register()
     AB_Wall.register()
     AB_MaterialManagement.register()
+    AB_Profile_Wizard.register()
 
     # Register Shade Auto Smooth if Blender version is compatible
     if bpy.app.version >= (4, 1, 0):
@@ -89,6 +91,7 @@ def unregister():
     AB_Color_Picker.unregister()
     AB_Wall.unregister()
     AB_MaterialManagement.unregister()
+    AB_Profile_Wizard.unregister()
 
     # Unregister Shade Auto Smooth if Blender version is compatible
     if bpy.app.version >= (4, 1, 0):
