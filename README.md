@@ -6,6 +6,14 @@
 
 •A free and opensource Blender add-on to help with your models.
 
+# Contributors
+
+•Thanks for the all contributors.
+
+•[@bkurdali](https://github.com/bkurdali)
+
+
+
 # Changes
 • Added View3D Views to AB Modelling Panel
 
