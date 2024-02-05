@@ -2328,21 +2328,37 @@ def get_position(obj, axis='X'):
 class OBJECT_OT_DistributeGrid3D(bpy.types.Operator):
     bl_idname = "object.distribute_grid_3d"
     bl_label = "Distribute in 3D Grid"
-    
+
     def execute(self, context):
-        # Accessing scene properties directly
-        scene = context.scene
-        x_copies = scene.Arc_Blend.distribute_x
-        y_copies = scene.Arc_Blend.distribute_y
-        z_copies = scene.Arc_Blend.distribute_z
-        x_distance = bpy.context.scene.Arc_Blend.x_distance
-        y_distance = bpy.context.scene.Arc_Blend.y_distance 
-        z_distance = bpy.context.scene.Arc_Blend.z_distance
-            
+        # Check if the necessary scene properties exist
+        if not hasattr(context.scene, "Arc_Blend"):
+            self.report({'ERROR'}, "Scene property 'Arc_Blend' not found.")
+            return {'CANCELLED'}
+
+        arc_blend = context.scene.Arc_Blend
+
+        # Accessing scene properties via local variables
+        x_copies = arc_blend.distribute_x
+        y_copies = arc_blend.distribute_y
+        z_copies = arc_blend.distribute_z
+
+        x_distance = arc_blend.x_distance
+        y_distance = arc_blend.y_distance
+        z_distance = arc_blend.z_distance
+
+        # Check for zero or negative distance values
+        if x_distance <= 0 or y_distance <= 0 or z_distance <= 0:
+            self.report({'ERROR'}, "Distance values must be greater than zero.")
+            return {'CANCELLED'}
+
         selected_objects = bpy.context.selected_objects
+
         if len(selected_objects) < 1:
             self.report({'ERROR'}, "Please select at least one object.")
             return {'CANCELLED'}
+
+        # Create a copy of the selected_objects list to preserve the original order
+        original_selection_order = selected_objects.copy()
 
         # Sort objects based on their positions along X, Y, and Z axes
         sorted_objects_x = sorted(selected_objects, key=lambda obj: obj.location.x)
@@ -2354,14 +2370,15 @@ class OBJECT_OT_DistributeGrid3D(bpy.types.Operator):
             for j in range(y_copies):
                 for k in range(x_copies):
                     index = i * (y_copies * x_copies) + j * x_copies + k
-                    if index < len(sorted_objects_x):
-                        obj = sorted_objects_x[index]
+
+                    if index < len(original_selection_order):
+                        obj = original_selection_order[index]
                         location = obj.location.copy()
                         location.x = k * x_distance  # Set X position
                         location.y = j * y_distance  # Set Y position
                         location.z = i * z_distance  # Set Z position
                         obj.location = location
-        
+
         return {'FINISHED'}
 
 
