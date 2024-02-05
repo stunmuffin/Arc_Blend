@@ -2357,6 +2357,9 @@ class OBJECT_OT_DistributeGrid3D(bpy.types.Operator):
             self.report({'ERROR'}, "Please select at least one object.")
             return {'CANCELLED'}
 
+        # Retrieve the active object
+        active_object = bpy.context.active_object
+
         # Create a copy of the selected_objects list to preserve the original order
         original_selection_order = selected_objects.copy()
 
@@ -2365,7 +2368,10 @@ class OBJECT_OT_DistributeGrid3D(bpy.types.Operator):
         sorted_objects_y = sorted(selected_objects, key=lambda obj: obj.location.y)
         sorted_objects_z = sorted(selected_objects, key=lambda obj: obj.location.z)
 
-        # Distribute objects in a 3D grid pattern along X, Y, and Z axes
+        # Get the starting position from the active object
+        start_position = active_object.location
+
+        # Distribute objects in a 3D grid pattern along X, Y, and Z axes relative to the active object
         for i in range(z_copies):
             for j in range(y_copies):
                 for k in range(x_copies):
@@ -2373,10 +2379,13 @@ class OBJECT_OT_DistributeGrid3D(bpy.types.Operator):
 
                     if index < len(original_selection_order):
                         obj = original_selection_order[index]
-                        location = obj.location.copy()
-                        location.x = k * x_distance  # Set X position
-                        location.y = j * y_distance  # Set Y position
-                        location.z = i * z_distance  # Set Z position
+                        location = start_position.copy()
+
+                        # Adjust the position relative to the active object
+                        location.x += k * x_distance
+                        location.y += j * y_distance
+                        location.z += i * z_distance
+
                         obj.location = location
 
         return {'FINISHED'}
