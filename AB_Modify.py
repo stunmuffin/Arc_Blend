@@ -2357,31 +2357,34 @@ class OBJECT_OT_DistributeGrid3D(bpy.types.Operator):
             self.report({'ERROR'}, "Please select at least one object.")
             return {'CANCELLED'}
 
-        # Retrieve the active object
-        active_object = bpy.context.active_object
+        # Retrieve the pin object (active object)
+        pin_object = bpy.context.active_object
+        if pin_object not in selected_objects:
+            self.report({'ERROR'}, "Active object must be selected.")
+            return {'CANCELLED'}
 
-        # Create a copy of the selected_objects list to preserve the original order
-        original_selection_order = selected_objects.copy()
+        # Sort the selected objects alphabetically
+        sorted_objects = sorted(selected_objects, key=lambda obj: obj.name)
 
-        # Sort objects based on their positions along X, Y, and Z axes
-        sorted_objects_x = sorted(selected_objects, key=lambda obj: obj.location.x)
-        sorted_objects_y = sorted(selected_objects, key=lambda obj: obj.location.y)
-        sorted_objects_z = sorted(selected_objects, key=lambda obj: obj.location.z)
+        # Remove the pin object from the sorted list if it's not the first object
+        if sorted_objects[0] != pin_object:
+            sorted_objects.remove(pin_object)
 
-        # Get the starting position from the active object
-        start_position = active_object.location
+        # Insert the pin object at the beginning of the list if it's not already there
+        if sorted_objects[0] != pin_object:
+            sorted_objects.insert(0, pin_object)
 
-        # Distribute objects in a 3D grid pattern along X, Y, and Z axes relative to the active object
+        # Distribute objects in a 3D grid pattern around the pin object
         for i in range(z_copies):
             for j in range(y_copies):
                 for k in range(x_copies):
                     index = i * (y_copies * x_copies) + j * x_copies + k
 
-                    if index < len(original_selection_order):
-                        obj = original_selection_order[index]
-                        location = start_position.copy()
+                    if index < len(sorted_objects):
+                        obj = sorted_objects[index]
+                        location = pin_object.location.copy()
 
-                        # Adjust the position relative to the active object
+                        # Adjust the position relative to the pin object
                         location.x += k * x_distance
                         location.y += j * y_distance
                         location.z += i * z_distance
