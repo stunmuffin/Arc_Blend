@@ -2422,6 +2422,7 @@ class OBJECT_OT_DistributeCircle(bpy.types.Operator):
 
 
 
+
 #Distribute objects in a Square pattern
 class OBJECT_OT_DistributeSquare(bpy.types.Operator):
     bl_idname = "object.distribute_square"
@@ -2436,21 +2437,31 @@ class OBJECT_OT_DistributeSquare(bpy.types.Operator):
         if num_objects < 1:
             print("Please select at least one object.")
             return
+        
+        # Retrieve the 3D cursor location
+        cursor_location = bpy.context.scene.cursor.location
 
         # Determine the number of objects per side
         objects_per_side = int(math.sqrt(num_objects))
 
+        # Calculate the total size of the square
+        square_size = side_length * objects_per_side
+
+        # Calculate the starting point (top-left corner) of the square
+        start_x = cursor_location.x - square_size / 2 + side_length / 2
+        start_y = cursor_location.y - square_size / 2 + side_length / 2
+
         # Sort objects based on their positions for even distribution
         sorted_objects = sorted(selected_objects, key=lambda obj: obj.name)
 
-        # Distribute objects along a square path
+        # Distribute objects around the 3D cursor along a square path
         for i, obj in enumerate(sorted_objects):
             row = i // objects_per_side
             col = i % objects_per_side
 
-            location = obj.location.copy()
-            location.x = (col - objects_per_side / 2) * side_length  # Calculate X position
-            location.y = (row - objects_per_side / 2) * side_length  # Calculate Y position
+            location = cursor_location.copy()  # Start with cursor location
+            location.x = start_x + col * side_length  # Calculate X position
+            location.y = start_y + row * side_length  # Calculate Y position
             obj.location = location
         return {'FINISHED'}
 
