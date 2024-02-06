@@ -2400,7 +2400,7 @@ class OBJECT_OT_DistributeCircle(bpy.types.Operator):
     bl_label = "Distribute in Circle"
     
     def execute(self, context):
-        radius= bpy.context.scene.Arc_Blend.radius
+        radius = bpy.context.scene.Arc_Blend.radius
         selected_objects = bpy.context.selected_objects
         num_objects = len(selected_objects)
 
@@ -2411,14 +2411,11 @@ class OBJECT_OT_DistributeCircle(bpy.types.Operator):
         angle_increment = (2 * math.pi) / num_objects
         angle = 0
 
-        # Sort objects based on their positions along the circle
-        sorted_objects = sorted(selected_objects, key=lambda obj: obj.name)
-
         # Distribute objects along a circular path
-        for obj in sorted_objects:
-            location = obj.location.copy()
-            location.x = radius * math.cos(angle)  # Calculate X position
-            location.y = radius * math.sin(angle)  # Calculate Y position
+        for obj in selected_objects:
+            location = bpy.context.scene.cursor.location.copy()  # Get 3D cursor location
+            location.x += radius * math.cos(angle)  # Calculate X position
+            location.y += radius * math.sin(angle)  # Calculate Y position
             obj.location = location
             angle += angle_increment
         return {'FINISHED'}
