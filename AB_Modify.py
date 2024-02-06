@@ -2475,8 +2475,6 @@ class OBJECT_OT_DistributeArc(bpy.types.Operator):
         radius = bpy.context.scene.Arc_Blend.radius_arc 
         start_angle = bpy.context.scene.Arc_Blend.start_angle 
         end_angle = eval(bpy.context.scene.Arc_Blend.end_angle.replace("'", ""))
-
-        
         
         selected_objects = bpy.context.selected_objects
         
@@ -2488,15 +2486,18 @@ class OBJECT_OT_DistributeArc(bpy.types.Operator):
 
         angle_increment = (end_angle - start_angle) / max(num_objects - 1, 1)
 
+        # Retrieve the 3D cursor location
+        cursor_location = bpy.context.scene.cursor.location
+
         # Sort objects based on their positions for even distribution
         sorted_objects = sorted(selected_objects, key=lambda obj: obj.name)
 
         # Distribute objects along an arc path
         angle = start_angle
         for obj in sorted_objects:
-            location = obj.location.copy()
-            location.x = radius * math.cos(angle)  # Calculate X position
-            location.y = radius * math.sin(angle)  # Calculate Y position
+            location = cursor_location.copy()  # Start with cursor location
+            location.x += radius * math.cos(angle)  # Calculate X position relative to cursor
+            location.y += radius * math.sin(angle)  # Calculate Y position relative to cursor
             obj.location = location
             angle += angle_increment
         return {'FINISHED'}
